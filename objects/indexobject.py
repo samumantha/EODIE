@@ -10,9 +10,9 @@ class IndexObject(RasterObject):
 
     def __init__(self, inpath, resolution, band):
         super().__init__(inpath, resolution, band)
-        self.indexarray = self.calculate_NDVI()
 
-    def calculate_NDVI(self):
+
+    def calculate_ndvi(self):
 
         bands= self.get_array()
         print(len(bands))

@@ -10,8 +10,6 @@ class CloudObject(RasterObject):
 
     def __init__(self,inpath, resolution, band):
         super().__init__(inpath,resolution, band)
-        print(self.get_array()[0])
-        self.cloudmask = self.resample_cloudmask(self.binarize_cloudmask(self.get_array()[0]))
 
     def binarize_cloudmask(self,sclarray):
         # one is cloud, 0 no cloud
@@ -25,3 +23,7 @@ class CloudObject(RasterObject):
     def resample_cloudmask(self,cloudarray):     
         #from 20m to 10m, one pixel becomes 4 with same value
         return np.kron(cloudarray, np.ones((2,2),dtype=float))
+
+    def create_cloudmask(self):
+        cloudmask = self.resample_cloudmask(self.binarize_cloudmask(self.get_array()[0]))
+        return cloudmask
