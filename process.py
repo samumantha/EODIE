@@ -39,7 +39,8 @@ for path in glob.glob(os.path.join(args.mydir,'*.SAFE')):
 
     geoobject = GeometryObject(args.shpbase + '_' + tile +'.shp')
 
-    shapefile = geoobject.reproject_to_epsg(indexobject.epsg).geometries
+    geoobject.reproject_to_epsg(indexobject.epsg)
+    shapefile = geoobject.geometries
 
     affine = indexobject.affine
 

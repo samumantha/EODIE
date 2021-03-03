@@ -14,7 +14,7 @@ class IndexObject(RasterObject):
 
     def calculate_ndvi(self):
 
-        bands= self.get_array()
+        bands= self.get_arrays()
         print(len(bands))
         red = bands[0]
         nir = bands[1]
@@ -25,5 +25,8 @@ class IndexObject(RasterObject):
         ndviarray = np.divide(up,down)
         
         return ndviarray
+
+
+
 
 

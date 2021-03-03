@@ -13,7 +13,7 @@ class RasterObject(object):
 
     def __init__(self, inpath, resolution, band):
         self.inpath = inpath # to IMG
-        self.bandfiles = self.get_bandfile(resolution,band)
+        self.bandfiles = self.get_bandfiles(resolution,band)
         self.affine = self.get_affine()
         self.epsg = self.get_epsg()
 
@@ -23,8 +23,7 @@ class RasterObject(object):
             #epsg = re.search(r'(?<=EPSG:)', str(src.crs)).group(0)
         return epsg
 
-
-    def get_array(self):
+    def get_arrays(self):
         arrays= []
         for bandfile in self.bandfiles:
             with rasterio.open(bandfile) as f:
@@ -32,10 +31,10 @@ class RasterObject(object):
             arrays.append(myarray)
         return arrays
 
-    def get_bandfile(self, resolution, band):
+    def get_bandfiles(self, resolution, band):
         bandfiles = []
         for oneband in band:
-            print(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+oneband+'_' + str(resolution) +'m.jp2'))
+            #print(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+oneband+'_' + str(resolution) +'m.jp2'))
             bandfile = glob.glob(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+oneband+'_' + str(resolution) +'m.jp2'))[0]
             bandfiles.append(bandfile)
         return bandfiles
