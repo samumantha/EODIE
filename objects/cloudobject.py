@@ -1,4 +1,7 @@
 """
+
+Class to create and adapt cloudmask array
+
 TODO:
     * hardcoded stuff in config
 """

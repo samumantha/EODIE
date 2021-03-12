@@ -1,5 +1,7 @@
 """
 
+class for testing functionality of all methods
+
 TODO: test content of files/arrays?, remove reprojected
 
 """

@@ -1,6 +1,10 @@
 """
+
+class to calculate indices
+
 TODO:
     * hardcoded stuff in config
+    * more indices
 """
 import numpy as np
 np.seterr(divide='ignore', invalid='ignore')

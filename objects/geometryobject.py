@@ -1,4 +1,7 @@
 """
+
+class to handle everything regarding the vectordata, atm only ESRI shapefile
+
 TODO:
     * no fileoutput from reprojection
 """

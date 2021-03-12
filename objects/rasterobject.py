@@ -1,4 +1,7 @@
 """
+
+class for everyhing around the rasterdata
+
 TODO:
     * hardcoded stuff in config
     * take care of 2017 naming and older

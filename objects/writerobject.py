@@ -1,3 +1,12 @@
+"""
+
+class for writing results into file
+
+TODO:
+* more options
+
+"""
+
 import os
 import csv
 

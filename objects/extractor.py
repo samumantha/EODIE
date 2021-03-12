@@ -1,3 +1,13 @@
+"""
+
+class to extract pixel values or statistics per polygon from rasterfile
+ 
+TODO: 
+* description of in/out
+
+"""
+
+
 import os
 import csv
 import numpy as np
