@@ -7,12 +7,12 @@ TODO:
 """
 import numpy as np
 
-from rasterobject import RasterObject
+from bandobject import BandObject
 
-class CloudObject(RasterObject):
+class CloudObject(BandObject):
 
-    def __init__(self,inpath, resolution, band):
-        super().__init__(inpath,resolution, band)
+    def __init__(self,inpath):
+        super().__init__(inpath)
 
     def binarize_cloudmask(self,sclarray):
         # one is cloud, 0 no cloud
@@ -41,6 +41,6 @@ class CloudObject(RasterObject):
         assert (resarray == rightarray).all(), 'Resampling fails'
 
     def create_cloudmask(self):
-        cloudmask = self.resample_cloudmask(self.binarize_cloudmask(self.get_arrays()[0]))
+        cloudmask = self.resample_cloudmask(self.binarize_cloudmask(self.get_array('SCL', 20)))
         return cloudmask
 

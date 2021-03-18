@@ -17,7 +17,7 @@ from cloudobject import CloudObject
 from extractor import Extractor
 from geometryobject import GeometryObject
 from indexobject import IndexObject
-from rasterobject import RasterObject
+from bandobject import BandObject
 from writerobject import WriterObject
 
 class Objecttesting(object):
@@ -29,9 +29,9 @@ class Objecttesting(object):
         self.alldone = 0
         if not os.path.exists(self.tmpdir):
             os.mkdir(self.tmpdir)
-        self.bands = ['B04','B08']
+        
         self.idname = 'ID'
-        self.test_raster()
+        self.test_band()
         self.test_cloud()
         self.test_index()
         self.test_geometry()
@@ -43,7 +43,7 @@ class Objecttesting(object):
                 #os.remove(reprofile)
 
     def test_cloud(self):
-        cloudobject = CloudObject(self.inpath, 20, ['SCL'])
+        cloudobject = CloudObject(self.inpath)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -52,7 +52,7 @@ class Objecttesting(object):
         self.alldone += 1
 
     def test_index(self):
-        indexobject = IndexObject(self.inpath, 10, self.bands)
+        indexobject = IndexObject(self.inpath, 10)
         indexarray = indexobject.calculate_ndvi()
         indexarrayshape = indexarray.shape
         rightindexarrayshape = (10980, 10980)
@@ -60,25 +60,22 @@ class Objecttesting(object):
         self.indexarray = indexarray
         self.alldone += 1
 
-    def test_raster(self):
-        rasterobject = RasterObject(self.inpath, 10, self.bands)
+    def test_band(self):
+        bandobject = BandObject(self.inpath)
 
-        bandfiles = rasterobject.bandfiles 
-        rightbandfiles = ['../testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2','../testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B08_10m.jp2']
-        assert (bandfiles == rightbandfiles), 'Bandfiles fails'
+        bandfile = bandobject.get_bandfile('B04', 10) 
+        rightbandfile = '../testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
+        assert (bandfile == rightbandfile), 'Bandfile fails'
 
-        epsg = rasterobject.get_epsg()
+        array = bandobject.get_array('B04', 10)
+        rightarrayshape = (10980, 10980)
+        assert (array.shape == rightarrayshape), 'Bandarray fails'
+
+        epsg = bandobject.get_epsg() 
         rightepsg = '32634'
         assert (epsg == rightepsg), 'Raster EPSG fails'
 
-        
-        arraylen = len(rasterobject.get_arrays())
-        #size of the jp2
-        rightarraylen = 2
-        assert (arraylen == rightarraylen), 'Arrays fail'
-        
-
-        affine = rasterobject.get_affine()
+        affine = bandobject.get_affine() 
         rightaffine = Affine(10.0, 0.0, 600000.0, 0.0, -10.0, 6800040.0)
         assert (affine == rightaffine), 'Affine fails'
         self.affine = affine

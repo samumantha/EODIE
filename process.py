@@ -10,7 +10,7 @@ from indexobject import IndexObject
 from geometryobject import GeometryObject
 from writerobject import WriterObject
 
-#to test: python plan.py --dir /u/58/wittkes3/unix/Desktop/eodie_example/S2 --shp /u/58/wittkes3/unix/Desktop/eodie_example/shp/example_parcels --out ./results --id PlotID --stat 1
+#to test: python process.py --dir /u/58/wittkes3/unix/Desktop/eodie_example/S2 --shp /u/58/wittkes3/unix/Desktop/eodie_example/shp/example_parcels --out ./results --id PlotID --stat 1
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dir', dest='mydir', help='directory where S2 data is stored')
@@ -25,10 +25,10 @@ for path in glob.glob(os.path.join(args.mydir,'*.SAFE')):
     imgpath = glob.glob(patternimg)[0]
     print(imgpath)
     
-    cloudobject = CloudObject(imgpath,20,['SCL'])
+    cloudobject = CloudObject(imgpath)
     cloudmask = cloudobject.create_cloudmask()
     print(cloudmask.shape)
-    indexobject = IndexObject(imgpath,10,['B04','B08'])
+    indexobject = IndexObject(imgpath,10)
     ndvi = indexobject.calculate_ndvi()
     print(ndvi.shape)
 
