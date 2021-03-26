@@ -8,56 +8,65 @@ from extractor import Extractor
 from cloudobject import CloudObject
 from indexobject import IndexObject
 from geometryobject import GeometryObject
-from writerobject import WriterObject
+from writer import WriterObject
+from userinput import UserInput
+import logging
+from datetime import datetime 
 
-#to test: python process.py --dir /u/58/wittkes3/unix/Desktop/eodie_example/S2 --shp /u/58/wittkes3/unix/Desktop/eodie_example/shp/example_parcels --out ./results --id PlotID --stat 1
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--dir', dest='mydir', help='directory where S2 data is stored')
-parser.add_argument('--shp', dest='shpbase', help='name of the shapefile (without extension)')
-parser.add_argument('--out', dest='outpath', help='directory where results shall be saved')
-parser.add_argument('--id', dest='idname', help='name of ID field in shapefile')
-parser.add_argument('--stat', dest='stat',default='1',help='1 for statistics, 0 for full array')
-args = parser.parse_args()
 
-for path in glob.glob(os.path.join(args.mydir,'*.SAFE')):
-    patternimg = os.path.join(args.mydir ,'*','*','*','IMG_DATA')
+#to test: python process.py --dir /u/58/wittkes3/unix/Desktop/eodie_example/S2 --shp /u/58/wittkes3/unix/Desktop/eodie_example/shp/example_parcels --out ./results --id PlotID --stat 1 --index ndvi
+
+userinput = UserInput()
+
+#setup logging 
+logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
+
+for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
+
+    patternimg = os.path.join(userinput.mydir ,'*','*','*','IMG_DATA')
     imgpath = glob.glob(patternimg)[0]
-    print(imgpath)
-    
-    cloudobject = CloudObject(imgpath)
-    cloudmask = cloudobject.create_cloudmask()
-    print(cloudmask.shape)
-    indexobject = IndexObject(imgpath,10)
-    ndvi = indexobject.calculate_ndvi()
-    print(ndvi.shape)
+    logging.info('Imagepath is {}'.format(imgpath))
 
     tile = re.search(r'(?<=T)[0-9]{2}[A-Z]{3}',imgpath).group(0)
-    print(tile)
-    date = re.search(r'20[0-2][0-9][0-1][0-9][0-3][0-9]',imgpath).group(0)
-    print(date)
+    logging.info('Tile is {}'.format(tile))
+    date = re.search(r'20[1-2][0-9][0-1][0-9][0-3][0-9]',imgpath).group(0)
+    logging.info('Date is {}'.format(date))
 
-    geoobject = GeometryObject(args.shpbase + '_' + tile +'.shp')
-
-    geoobject.reproject_to_epsg(indexobject.epsg)
-    shapefile = geoobject.geometries
-
-    affine = indexobject.affine
-
-
-    if int(args.stat) == 1: 
-        print('stat')
-        extractorobject = Extractor(cloudmask, ndvi, shapefile, args.idname,affine)
-        extractedarray = extractorobject.extract_arrays_stat()
-        writerobject = WriterObject(args.outpath, date, tile, extractedarray)
-        extractorobject.extract_arrays_stat()
-        writerobject.write_csv()
-
-    elif int(args.stat) == 0:
-        
-        extractorobject = Extractor(cloudmask, ndvi, shapefile, args.idname,affine)
-        extractedarray = extractorobject.extract_arrays()
-        writerobject = WriterObject(args.outpath, date, tile, extractedarray)
-        extractorobject.extract_arrays()
-        writerobject.write_csv_arr()
+    if int(date) <= int(userinput.enddate) and int(date) >= int(userinput.startdate):
     
+        cloudobject = CloudObject(imgpath)
+        cloudmask = cloudobject.create_cloudmask()
+        logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
+        indexobject = IndexObject(imgpath,10)
+
+        for index in userinput.indexlist:
+            indexarray = indexobject.calculate_index(index)
+
+            #ndvi = indexobject.calculate_ndvi()
+            logging.info('Shape of cloudmask is {}'.format(indexarray.shape))
+
+            geoobject = GeometryObject(userinput.shpbase + '_' + tile +'.shp')
+
+            geoobject.reproject_to_epsg(indexobject.epsg)
+            shapefile = geoobject.geometries
+
+            affine = indexobject.affine
+
+
+            if int(userinput.stat) == 1: 
+                logging.info('Statistics: {}'.format(tile))
+                extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine, userinput.statistics)
+                extractedarray = extractorobject.extract_arrays_stat()
+                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index, userinput.statistics)
+                extractorobject.extract_arrays_stat()
+                writerobject.write_csv()
+
+            elif int(userinput.stat) == 0:
+                
+                extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine)
+                extractedarray = extractorobject.extract_arrays()
+                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index)
+                extractorobject.extract_arrays()
+                writerobject.write_csv_arr()
+        
