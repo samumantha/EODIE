@@ -35,15 +35,17 @@ class BandObject(object):
         band = 'B04'
         resolution = 10
         with rasterio.open(self.get_bandfile(band, resolution)) as src:
-            return str(src.crs).split(':')[-1]
+            #return str(src.crs).split(':')[-1]
             #epsg = re.search(r'(?<=EPSG:)', str(src.crs)).group(0)
-        
+            self.epsg = str(src.crs).split(':')[-1]
+
 
     def get_affine(self):
         band = 'B04'
         resolution = 10
         with rasterio.open(self.get_bandfile(band, resolution)) as of:
-            return of.transform
+            #return of.transform
+            self.affine = of.transform
        
         
     """
