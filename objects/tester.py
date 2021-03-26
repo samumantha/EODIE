@@ -18,7 +18,7 @@ from extractor import Extractor
 from geometryobject import GeometryObject
 from indexobject import IndexObject
 from bandobject import BandObject
-from writerobject import WriterObject
+from writer import WriterObject
 
 class Objecttesting(object):
 
@@ -51,6 +51,9 @@ class Objecttesting(object):
         self.cloudmask = cloudmask
         self.alldone += 1
 
+        cloudobject.test_binarize()
+        cloudobject.test_resample()
+
     def test_index(self):
         indexobject = IndexObject(self.inpath, 10)
         indexarray = indexobject.calculate_ndvi()
@@ -71,11 +74,11 @@ class Objecttesting(object):
         rightarrayshape = (10980, 10980)
         assert (array.shape == rightarrayshape), 'Bandarray fails'
 
-        epsg = bandobject.get_epsg() 
+        epsg = bandobject.epsg 
         rightepsg = '32634'
         assert (epsg == rightepsg), 'Raster EPSG fails'
 
-        affine = bandobject.get_affine() 
+        affine = bandobject.affine 
         rightaffine = Affine(10.0, 0.0, 600000.0, 0.0, -10.0, 6800040.0)
         assert (affine == rightaffine), 'Affine fails'
         self.affine = affine
@@ -115,7 +118,7 @@ class Objecttesting(object):
         self.alldone += 1
 
     def test_extractor(self):
-        extractorobject = Extractor(self.cloudmask, self.indexarray, self.geometries, self.idname, self.affine)
+        extractorobject = Extractor(self.cloudmask, self.indexarray, self.geometries, self.idname, self.affine, ['median'])
         statarrays = extractorobject.extract_arrays_stat()
         statarrayslen = len(statarrays)
         rightstatarrayslen = 3
@@ -127,10 +130,12 @@ class Objecttesting(object):
         assert (arrayslen == rightarrayslen), 'Extract arrays fails'
         self.alldone += 1
 
+        extractorobject.test_masking()
+
     def test_writer(self):
         date = '20200626'
         tile = '34VFN'
-        writerobject = WriterObject(self.tmpdir, date, tile, self.extractedarrays)
+        writerobject = WriterObject(self.tmpdir, date, tile, self.extractedarrays, 'ndvi')
         writerobject.write_csv()
         
         assert os.path.exists(writerobject.outpath), 'Writer fails' 
