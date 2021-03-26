@@ -4,6 +4,8 @@ Class to create and adapt cloudmask array
 
 TODO:
     * hardcoded stuff in config
+    * exclude fully cloudcovered
+    
 """
 import numpy as np
 
@@ -24,19 +26,19 @@ class CloudObject(BandObject):
         return cloudarray
 
     def test_binarize(self):
-        inarray = np.array([[1,3,3,7,6,6,5,8,9][10,6,5,5,3,0,1,10,10]])
+        inarray = np.array([[1,3,3,7,6,6,5,8,9],[10,6,5,5,3,0,1,10,10]])
         binarray = self.binarize_cloudmask(inarray)
-        rightarray = np.array([[1,1,1,1,0,0,0,0,1,1][1,0,0,0,1,1,1,1,1]])
+        rightarray = np.array([[1,1,1,0,0,0,0,1,1],[1,0,0,0,1,1,1,1,1]])
         assert (binarray == rightarray).all(), 'Binarizing fails'
 
 
     def resample_cloudmask(self,cloudarray):     
         #from 20m to 10m, one pixel becomes 4 with same value
-        return np.kron(cloudarray, np.ones((2,2),dtype=float))
+        return np.kron(cloudarray, np.ones((2,2),dtype=int))
 
     def test_resample(self):
-        inarray = np.array([[0,1][1,0]])
-        rightarray = np.array([[[0,0,1,1][0,0,1,1]][[1,1,0,0][1,1,0,0]]])
+        inarray = np.array([[0,1],[1,0]])
+        rightarray = np.array([[0,0,1,1],[0,0,1,1],[1,1,0,0],[1,1,0,0]])
         resarray = self.resample_cloudmask(inarray)
         assert (resarray == rightarray).all(), 'Resampling fails'
 
