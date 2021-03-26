@@ -16,11 +16,12 @@ from geometryobject import GeometryObject
 
 class Extractor(object):
 
-    def __init__(self, cloudarray, indexarray, shapefile, idname, affine):
+    def __init__(self, cloudarray, indexarray, shapefile, idname, affine, statistics='count'):
         self.maskedarray = self.mask_index(indexarray,cloudarray)
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
+        self.statistics = statistics
         
 
     def mask_index(self, indexarray,cloudarray):
@@ -29,34 +30,33 @@ class Extractor(object):
 
     def test_masking(self):
 
-        inarray = np.array([[0.1,0.2,0.4][0.4,0.1,0.2]])
-        cloudarray  = np.array([[1,0,0][0,1,0]])
-        rightarray = np.array([[-99999,0.2,0.4][0.4,-99999,0.2]])
-        maskedarray = self.mask_index(inarray,cloudarray)
-        assert (maskedarray != rightarray).all(), 'Masking fails'
+        inarray = np.array([[0.1,0.2,0.4],[0.4,0.1,0.2]])
+        cloudarray  = np.array([[1,0,0],[0,1,0]])
+        rightarray = np.ma.array([[0,0.2,0.4],[0.4,0,0.2]], mask = [[True,False,False],[False,True,False]], fill_value=-99999).filled()
+        maskedarray = self.mask_index(inarray,cloudarray).filled()
+        assert (maskedarray == rightarray).all(), 'Masking fails'
 
     def extract_arrays_stat(self):
 
         filledraster = self.maskedarray.filled(-99999)
-        a=zonal_stats(self.shapefile, filledraster, stats=['mean', 'std', 'median'], band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:
-            mymean = x['properties']['mean']
-            mystd = x['properties']['std']
-            mymedian = x['properties']['median']
             myid = x['properties'][self.idname]
-            mystats = [str(mymean), str(mystd),str(mymedian)]
-            extractedarrays[myid] = mystats
+            statlist = []
+            for stat in self.statistics:
+                onestat = x['properties'][stat]
+                statlist.append(str(onestat))
+            extractedarrays[myid] = statlist
         return extractedarrays
 
 
     def extract_arrays(self):
 
         filledraster = self.maskedarray.filled(-99999)
-        a=zonal_stats(self.shapefile, filledraster, stats=['mean', 'std', 'median'], band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
-        
-        
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
+
         myarrays = []
         for x in a:
             myarray = x['properties']['mini_raster_array']
