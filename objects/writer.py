@@ -9,18 +9,21 @@ TODO:
 
 import os
 import csv
+import logging
 
 class WriterObject(object):
 
-    def __init__(self,outdir, date, tile, extractedarrays):
-        self.outpath = os.path.join(outdir ,'ndvi_statistics_' + date +'_'+ tile + '.csv')
+    def __init__(self,outdir, date, tile, extractedarrays, index, statistics):
+        self.outpath = os.path.join(outdir ,index+ '_statistics_' + date +'_'+ tile + '.csv')
         self.extractedarrays = extractedarrays
+        self.statistics = statistics
 
     def write_csv(self):
-    # this is writing the array in short rows, multiple lines? -> solve!
-        print(self.outpath)
-        with open(self.outpath, mode='a') as csv_file:
+    
+        logging.info(self.outpath)
+        with open(self.outpath, mode='w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',')
+            csv_writer.writerow(['id']+ self.statistics )
             for key in self.extractedarrays.keys():
                 onerow = [key] + self.extractedarrays[key]
                 csv_writer.writerow(onerow)
