@@ -61,12 +61,14 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
                 writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index, userinput.statistics)
                 extractorobject.extract_arrays_stat()
                 writerobject.write_csv()
+                
 
             elif int(userinput.stat) == 0:
                 
-                extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine)
+                extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine,['count'])
                 extractedarray = extractorobject.extract_arrays()
-                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index)
+                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index, ['array'])
                 extractorobject.extract_arrays()
-                writerobject.write_csv_arr()
+                #writerobject.write_csv_arr()
+                writerobject.write_pickle_arr()
         
