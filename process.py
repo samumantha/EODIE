@@ -24,21 +24,17 @@ logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strf
 
 for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
 
-    patternimg = os.path.join(userinput.mydir ,'*','*','*','IMG_DATA')
-    imgpath = glob.glob(patternimg)[0]
-    logging.info('Imagepath is {}'.format(imgpath))
+    pathfinderobject = pathfinder.Pathfinder(path)
+    logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
+    logging.info('Tile is {}'.format(pathfinderobject.tile))
+    logging.info('Date is {}'.format(pathfinderobject.date))
 
-    tile = re.search(r'(?<=T)[0-9]{2}[A-Z]{3}',imgpath).group(0)
-    logging.info('Tile is {}'.format(tile))
-    date = re.search(r'20[1-2][0-9][0-1][0-9][0-3][0-9]',imgpath).group(0)
-    logging.info('Date is {}'.format(date))
-
-    if int(date) <= int(userinput.enddate) and int(date) >= int(userinput.startdate):
+    if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate):
     
-        cloudobject = CloudObject(imgpath)
+        cloudobject = CloudObject(pathfinderobject.imgpath)
         cloudmask = cloudobject.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
-        indexobject = IndexObject(imgpath,10)
+        indexobject = IndexObject(pathfinderobject.imgpath,10)
 
         for index in userinput.indexlist:
             indexarray = indexobject.calculate_index(index)
@@ -46,7 +42,7 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
             #ndvi = indexobject.calculate_ndvi()
             logging.info('Shape of cloudmask is {}'.format(indexarray.shape))
 
-            geoobject = GeometryObject(userinput.shpbase + '_' + tile +'.shp')
+            geoobject = GeometryObject(userinput.shpbase + '_' + pathfinderobject.tile +'.shp')
 
             geoobject.reproject_to_epsg(indexobject.epsg)
             shapefile = geoobject.geometries
@@ -55,10 +51,10 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
 
 
             if int(userinput.stat) == 1: 
-                logging.info('Statistics: {}'.format(tile))
+                logging.info('Statistics: {}'.format(pathfinderobject.tile))
                 extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine, userinput.statistics)
                 extractedarray = extractorobject.extract_arrays_stat()
-                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index, userinput.statistics)
+                writerobject = WriterObject(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics)
                 extractorobject.extract_arrays_stat()
                 writerobject.write_csv()
                 
@@ -67,7 +63,7 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
                 
                 extractorobject = Extractor(cloudmask, indexarray, shapefile, userinput.idname,affine,['count'])
                 extractedarray = extractorobject.extract_arrays()
-                writerobject = WriterObject(userinput.outpath, date, tile, extractedarray, index, ['array'])
+                writerobject = WriterObject(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
                 extractorobject.extract_arrays()
                 #writerobject.write_csv_arr()
                 writerobject.write_pickle_arr()
