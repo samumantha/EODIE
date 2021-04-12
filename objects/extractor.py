@@ -26,7 +26,7 @@ class Extractor(object):
 
     def mask_index(self, indexarray,cloudarray):
 
-        return np.ma.array(indexarray, mask = cloudarray, fill_value=-99999) 
+        return np.ma.array(indexarray, mask = cloudarray, fill_value=-99999)
 
     def test_masking(self):
 
@@ -36,10 +36,12 @@ class Extractor(object):
         maskedarray = self.mask_index(inarray,cloudarray).filled()
         assert (maskedarray == rightarray).all(), 'Masking fails'
 
+
+
     def extract_arrays_stat(self):
 
         filledraster = self.maskedarray.filled(-99999)
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=['count']+self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:
@@ -51,7 +53,19 @@ class Extractor(object):
             extractedarrays[myid] = statlist
         return extractedarrays
 
+    def extract_arrays(self):
 
+        filledraster = self.maskedarray.filled(-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
+
+        extractedarrays = {}
+        for x in a:
+            myarray = x['properties']['mini_raster_array']
+            myid = x['properties'][self.idname]
+            extractedarrays[myid] = myarray.filled()
+        return extractedarrays
+
+    """
     def extract_arrays(self):
 
         filledraster = self.maskedarray.filled(-99999)
@@ -65,3 +79,4 @@ class Extractor(object):
             myid.extend(arr)
             myarrays.append(myid)
         return myarrays
+    """
