@@ -5,6 +5,7 @@ Class to create and adapt cloudmask array
 TODO:
     * hardcoded stuff in config
     * exclude fully cloudcovered
+    * flag for own binary (tilesized) georeferenced 20x20 m cloudmask
     
 """
 import numpy as np
@@ -13,8 +14,15 @@ from bandobject import BandObject
 
 class CloudObject(BandObject):
 
-    def __init__(self,inpath):
+    def __init__(self,inpath,external=None):
         super().__init__(inpath)
+        if external is not None:
+            self.load_cloudmask(external)
+
+    def load_cloudmask(self,external):
+        #for 10 meter cloudmasks
+        with rasterio.open(external) as f:
+            return np.array(f.read(1)).astype(float)
 
     def binarize_cloudmask(self,sclarray):
         # one is cloud, 0 no cloud
