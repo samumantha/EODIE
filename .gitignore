@@ -2,3 +2,5 @@
 *.pyc
 ./testfiles
 *testfiles*
+*.log
+*.csv
