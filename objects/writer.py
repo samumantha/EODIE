@@ -11,11 +11,12 @@ import os
 import csv
 import logging
 import pickle
+import pandas as pd
 
 class WriterObject(object):
 
     def __init__(self,outdir, date, tile, extractedarrays, index, statistics):
-        self.outpath = os.path.join(outdir ,index+ '_statistics_'+ date +'_'+ tile)
+        self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
         self.extractedarrays = extractedarrays
         self.statistics = statistics
 
@@ -36,6 +37,8 @@ class WriterObject(object):
             pickle.dump(self.extractedarrays,pkl_file)
 
 
+"""
+#following do not write full arrays
     def write_csv_arr(self):
         self.outpath = self.outpath + '_array.csv'
         logging.info('arrays to csv in: ' + self.outpath)
@@ -43,9 +46,16 @@ class WriterObject(object):
             writer = csv.writer(csv_file)
             for key, value in self.extractedarrays.items():
                 writer.writerow([key,value])
-            """
-            for key in self.extractedarrays.keys():
-                onerow = [key] + self.extractedarrays[key]
-                writer.writerow(onerow)
-            """
-            
+
+    def write_csv_arr_pd(self):
+        self.outpath = self.outpath + '_array_pd.csv'
+        logging.info('arrays to csv in: ' + self.outpath)
+        #df = pd.DataFrame.from_records(self.extractedarrays)
+        df = pd.Series(self.extractedarrays).to_frame()
+        print(df.columns)
+        print(df.index)
+        print(df.head(5))
+        print(df.iloc[0,0])
+        print(type(df.iloc[0,0]))
+        df.to_csv(self.outpath,reduced=False)
+"""
