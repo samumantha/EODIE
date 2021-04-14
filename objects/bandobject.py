@@ -5,6 +5,7 @@ class for everyhing around the rasterdata
 TODO:
     * hardcoded stuff in config
     * take care of 2017 naming and older
+    * make S2 independent
 """
 import numpy as np
 import glob
@@ -23,8 +24,9 @@ class BandObject(object):
         
         
     def get_bandfile(self, band, resolution):
-        return glob.glob(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+band+'_' + str(resolution) +'m.jp2'))[0]
+        return glob.glob(os.path.join(self.inpath, 'R'+ str(resolution) + 'm','*'+band+'_' + str(resolution) +'m.jp2'))[0]
 
+    
     def get_array(self,band, resolution):
         
         with rasterio.open(self.get_bandfile(band, resolution)) as f:
@@ -47,7 +49,15 @@ class BandObject(object):
             #return of.transform
             self.affine = of.transform
        
-        
+    """
+    def get_bandfile_ls(self,band):
+        # first date is the date, second is processing date
+
+        #LE07_L1TP_187018_20010503_20170205_01_T1_sr_cloud_qa.tif
+        #LE07_L1TP_187018_20010503_20170205_01_T1_sr_band7.tif
+        return glob.glob(os.path.join(self.inpath, '*' + '_band' + band + '.tif' ))[0]
+
+    """   
     """
     def get_arrays(self):
         arrays= []
