@@ -6,14 +6,15 @@ TODO:
     
 """
 import os
-from osgeo import osr
+from osgeo import osr, ogr
 import fiona
 import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
 import logging
+from shutil import copyfile
 
-class GeometryObject(object):
+class Geometry(object):
 
     def __init__(self, geometries):
         self.geometries = geometries 
@@ -85,32 +86,25 @@ class GeometryObject(object):
         inDriver = ogr.GetDriverByName("ESRI Shapefile")
         inDataSource = inDriver.Open(self.geometries, 0)
         inLayer = inDataSource.GetLayer()
-
         # Collect all Geometry
         geomcol = ogr.Geometry(ogr.wkbGeometryCollection)
         for feature in inLayer:
             geomcol.AddGeometry(feature.GetGeometryRef())
-
         # Calculate convex hull
         convexhull = geomcol.ConvexHull()
-
         # Save extent to a new Shapefile
         convexhullp = os.path.splitext(self.geometries)[0] + '_convexhull.shp'
         outDriver = ogr.GetDriverByName("ESRI Shapefile")
         copyfile(os.path.splitext(self.geometries)[0] + '.prj', os.path.splitext(convexhullp)[0] + '.prj' )
-
         # Remove output shapefile if it already exists
         if os.path.exists(convexhullp):
             outDriver.DeleteDataSource(convexhullp)
-
         # Create the output shapefile
         outDataSource = outDriver.CreateDataSource(convexhullp)
         outLayer = outDataSource.CreateLayer("convexhull", geom_type=ogr.wkbPolygon)
-
         # Add an ID field
         idField = ogr.FieldDefn("ID", ogr.OFTInteger)
         outLayer.CreateField(idField)
-
         # Create the feature and set values
         featureDefn = outLayer.GetLayerDefn()
         feature = ogr.Feature(featureDefn)
@@ -118,9 +112,7 @@ class GeometryObject(object):
         feature.SetField("ID", 1)
         outLayer.CreateFeature(feature)
         feature = None
-
         # Save and close DataSource
         inDataSource = None
         outDataSource = None
-
         return convexhullp
