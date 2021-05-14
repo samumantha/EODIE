@@ -123,18 +123,4 @@ class IndexObject(BandObject):
         kndvi = np.divide((1-knr),(1+knr))
         return kndvi
 
-    
-
-"""
-
-#Note: next: index name as user input (eg dictionary[key] = run_keyindex(), one or more, run everything through for every index,
-advanced: bands in configfile so that eg ndvi can be run with b8a instead of b8,
-more advanced: own functions)
-
-#not needed:
-    def calculate_index(self, formula):
-        p = re.compile('B[0,1][0-9]')
-        bands = np.unique(p.findall(fomula))
-        # how to get these into variables for the formula??
-        return ne.evaluate(formula)
-"""
+   
