@@ -1,6 +1,6 @@
 ./results
 *.pyc
-./testfiles
-*testfiles*
+testfiles/*
 *.log
 *.csv
+docs/_build/*
