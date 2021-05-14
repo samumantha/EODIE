@@ -20,8 +20,6 @@ import yaml
 with open("config.yml", "r") as ymlfile:
     cfg = yaml.safe_load(ymlfile)
 
-#to test: python process.py --dir /u/58/wittkes3/unix/Desktop/eodie_example/S2 --shp /u/58/wittkes3/unix/Desktop/eodie_example/shp/example_parcels --out ./results --id PlotID --stat 1 --index ndvi
-
 userinput = UserInput()
 
 #setup logging 
