@@ -62,23 +62,7 @@ class Extractor(object):
             myarray = x['properties']['mini_raster_array']
             myid = x['properties'][self.idname]
             extractedarrays[myid] = myarray.filled(-99999)
-            #print(myarray.filled(-99999))
         return extractedarrays
 
-    """
-    def extract_arrays(self):
-
-        filledraster = self.maskedarray.filled(-99999)
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
-
-        myarrays = []
-        for x in a:
-            myarray = x['properties']['mini_raster_array']
-            myid = [x['properties'][self.idname]]
-            arr = myarray.tolist()
-            myid.extend(arr)
-            myarrays.append(myid)
-        return myarrays
-    """
 
     
