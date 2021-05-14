@@ -37,25 +37,3 @@ class WriterObject(object):
             pickle.dump(self.extractedarrays,pkl_file)
 
 
-"""
-#following do not write full arrays
-    def write_csv_arr(self):
-        self.outpath = self.outpath + '_array.csv'
-        logging.info('arrays to csv in: ' + self.outpath)
-        with open(self.outpath, 'w') as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in self.extractedarrays.items():
-                writer.writerow([key,value])
-
-    def write_csv_arr_pd(self):
-        self.outpath = self.outpath + '_array_pd.csv'
-        logging.info('arrays to csv in: ' + self.outpath)
-        #df = pd.DataFrame.from_records(self.extractedarrays)
-        df = pd.Series(self.extractedarrays).to_frame()
-        print(df.columns)
-        print(df.index)
-        print(df.head(5))
-        print(df.iloc[0,0])
-        print(type(df.iloc[0,0]))
-        df.to_csv(self.outpath,reduced=False)
-"""
