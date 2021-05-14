@@ -1,9 +1,8 @@
+"""
 
+class to validate user inputs
 
-## validate software
-
-## below copied from old eodie, to be updated
-
+"""
 
 import os
 import datetime
@@ -35,7 +34,7 @@ class Validator(object):
 
     def file_exists_check(self, filename):
         if not os.path.exists(filename):
-            exit('Please check that file {} exists.'.format(filename)
+            exit('Please check that file {} exists.'.format(filename))
         else:
             return True
 
