@@ -11,7 +11,6 @@ import os
 import csv
 import logging
 import pickle
-import pandas as pd
 
 class WriterObject(object):
 
