@@ -49,60 +49,7 @@ class BandObject(object):
             #return of.transform
             self.affine = of.transform
        
-    """
-    def get_bandfile_ls(self,band):
-        # first date is the date, second is processing date
 
-        #LE07_L1TP_187018_20010503_20170205_01_T1_sr_cloud_qa.tif
-        #LE07_L1TP_187018_20010503_20170205_01_T1_sr_band7.tif
-        return glob.glob(os.path.join(self.inpath, '*' + '_band' + band + '.tif' ))[0]
-
-    """   
-    """
-    def get_arrays(self):
-        arrays= []
-        for bandfile in self.bandfiles:
-            with rasterio.open(bandfile) as f:
-                myarray = np.array(f.read(1)).astype(float)
-            arrays.append(myarray)
-        return arrays
-   
-
-    def get_bandfiles(self, resolution, band):
-        bandfiles = []
-        for oneband in band:
-            #print(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+oneband+'_' + str(resolution) +'m.jp2'))
-            bandfile = glob.glob(os.path.join(os.path.join(self.inpath, 'R'+ str(resolution) + 'm'),'*'+oneband+'_' + str(resolution) +'m.jp2'))[0]
-            bandfiles.append(bandfile)
-        return bandfiles
-    
-    
-    def get_bands(inpath):
-
-    rpath = os.path.join(inpath, 'R10m')
-    ajp2 = [jp2 for jp2 in os.listdir(rpath) if jp2.endswith('jp2')][0]
-    #print(jp2)
-    
-    
-    if re.search('2017\d\d\d\dT\d\d\d\d\d\d', ajp2): #its 2017 data
-        namelist = ajp2.split('_')[:3]
-    else:
-        namelist = ajp2.split('_')[:2]
-    name = '_'.join(namelist)
-    #print(name)
-    bands = ['B02','B03','B04','B08']
-    banddict = {}
-
-    for band in bands:
-        bandname = os.path.join(rpath,name +'_'+ band +'_10m.jp2')
-        if os.path.exists(bandname):
-            banddict[band] = arrayrize(bandname)
-        else:
-            print('exit bandfile ' + band)
-            sys.exit(0)
-    
-    return banddict
-    """
 
 
 
