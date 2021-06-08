@@ -29,7 +29,7 @@ Installation verification
 After activating the environment, you can verify that the installation succeeded by typing:
 
 - ``python --version`` 
-- ``python -c 'import numpy, shapely, rasterio, fiona, pyyaml'``
+- ``python -c 'import numpy, shapely, rasterio, fiona, yaml'``
 - ``python -c 'from osgeo import gdal'``
 
 In the first case, if the python version is displayed, the verification was successfull.
