@@ -26,7 +26,8 @@ userinput = UserInput()
 logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
 
 #create results dir 
-os.mkdir('./results')
+if not os.path.exists('./results'):
+    os.mkdir('./results')
 
 for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
 
