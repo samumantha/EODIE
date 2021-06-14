@@ -77,5 +77,14 @@ class IndexObject(BandObject):
 
         return nbrarray
 
+    def calculate_kndvi(self):
+        # according to https://github.com/IPL-UV/kNDVI
 
+        red = self.get_array('B04',self.resolution)
+        nir = self.get_array('B08',self.resolution)
+        
+        #pixelwise sigma calculation
+        sigma = 0.5(nir + red)
+        knr = np.exp(-(nir-red)**2/(2*sigma**2))
+        kndvi = (1-knr)/(1+knr)
    
