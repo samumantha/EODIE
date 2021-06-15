@@ -84,7 +84,8 @@ class IndexObject(BandObject):
         nir = self.get_array('B08',self.resolution)
         
         #pixelwise sigma calculation
-        sigma = 0.5(nir + red)
+        #sigma = 0.5(nir + red)
+        sigma = 1
         knr = np.exp(-(nir-red)**2/(2*sigma**2))
         kndvi = (1-knr)/(1+knr)
    
