@@ -4,6 +4,7 @@ before_script:
   - conda env create -f environment.yml
   - source activate eodie
   - python --version
+  - wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip 
 
 stages:
   - Test
