@@ -1,9 +1,9 @@
 image: continuumio/miniconda3:latest
 
 before_script:
-  - python --version
   - conda env create -f environment.yml
   - source activate eodie
+  - python --version
 
 stages:
   - Test
