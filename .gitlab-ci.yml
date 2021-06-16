@@ -3,7 +3,7 @@ image: continuumio/miniconda3:latest
 before_script:
   - python --version
   - conda env create -f environment.yml
-  - conda activate eodie
+  - source activate eodie
 
 stages:
   - Test
