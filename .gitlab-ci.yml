@@ -6,10 +6,7 @@ before_script:
   - conda activate eodie
 
 stages:
-  - Static Analysis
   - Test
-
-...
 
 pytest:
   stage: Test
