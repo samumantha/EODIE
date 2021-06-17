@@ -69,7 +69,7 @@ class TestObjects(object):
         bandobject = BandObject(self.inpath)
 
         bandfile = bandobject.get_bandfile('B04', 10) 
-        rightbandfile = '../testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
+        rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
         assert (bandfile == rightbandfile), 'Bandfile fails'
 
         array = bandobject.get_array('B04', 10)
@@ -92,11 +92,11 @@ class TestObjects(object):
 
         head,tail,root,ext = geometryobject.split_path() 
         splitpathlist = [head,tail,root,ext]
-        rightsplitpathlist = ['../testfiles/shp', 'test_parcels_32635_34VFN.shp','test_parcels_32635_34VFN', '.shp']
+        rightsplitpathlist = ['testfiles/shp', 'test_parcels_32635_34VFN.shp','test_parcels_32635_34VFN', '.shp']
         assert (splitpathlist == rightsplitpathlist), 'Splitpath fails'
 
         projectionfile = geometryobject.get_projectionfile()
-        rightprojectionfile = '../testfiles/shp/test_parcels_32635_34VFN.prj'
+        rightprojectionfile = 'testfiles/shp/test_parcels_32635_34VFN.prj'
 
         assert (projectionfile == rightprojectionfile), 'Projectionfile fails'
 
