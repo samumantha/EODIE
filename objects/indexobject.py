@@ -65,10 +65,11 @@ class IndexObject(BandObject):
     def calculate_nbr(self):
         #(B08 - B12) / (B08 + B12)
         nir = self.get_array('B08',self.resolution)
-        swir = self.get_array('B12',self.resolution)
+        swir = self.get_array('B12',20)
 
         #resample band 12 to 10m (original 20m), with all 4 10m cells having same value as one 20m cell
-        swir = np.kron(swir, np.ones((2,2),dtype=float))
+        if not self.resolution == 20:
+            swir = np.kron(swir, np.ones((2,2),dtype=float))
 
         up = nir - swir
         down = nir + swir
