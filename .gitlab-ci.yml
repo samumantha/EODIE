@@ -1,17 +1,15 @@
-image: "python:3.7"
+image: continuumio/miniconda3:latest
 
 before_script:
-  - python --version
   - conda env create -f environment.yml
-  - conda activate eodie
+  - source activate eodie
+  - python --version
+  - wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip 
 
 stages:
-  - Static Analysis
   - Test
-
-...
 
 pytest:
   stage: Test
   script:
-  - pytest
+  - python -m pytest
