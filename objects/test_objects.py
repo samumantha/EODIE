@@ -24,28 +24,10 @@ from writer import WriterObject
 
 class TestObjects(object):
 
-    def __init__(self):
-        self.inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        self.geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
-        self.tmpdir = 'testfiles/temp'
-        self.alldone = 0
-        if not os.path.exists(self.tmpdir):
-            os.mkdir(self.tmpdir)
-        
-        self.idname = 'ID'
-        self.test_band()
-        self.test_cloud()
-        self.test_index()
-        self.test_geometry()
-        self.test_extractor()
-        self.test_writer()
-        if self.alldone == 6:
-            shutil.rmtree(self.tmpdir)
-            #for reprofile in glob.glob(os.path.splitext(self.geometries)[0] + '.*'):
-                #os.remove(reprofile)
-
     def test_cloud(self):
-        cloudobject = CloudObject(self.inpath)
+        self.alldone = 0
+        inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        cloudobject = CloudObject(inpath)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -60,7 +42,8 @@ class TestObjects(object):
         del cloudmask
 
     def test_index(self):
-        indexobject = IndexObject(self.inpath, 10)
+        inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        indexobject = IndexObject(inpath, 10)
         indexarray = indexobject.calculate_ndvi()
         indexarrayshape = indexarray.shape
         rightindexarrayshape = (10980, 10980)
@@ -73,7 +56,8 @@ class TestObjects(object):
 
 
     def test_band(self):
-        bandobject = BandObject(self.inpath)
+        inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        bandobject = BandObject(inpath)
 
         bandfile = bandobject.get_bandfile('B04', 10) 
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
@@ -97,7 +81,8 @@ class TestObjects(object):
 
 
     def test_geometry(self):
-        geometryobject = Geometry(self.geometries)
+        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        geometryobject = Geometry(geometries)
 
         head,tail,root,ext = geometryobject.split_path() 
         splitpathlist = [head,tail,root,ext]
@@ -131,7 +116,9 @@ class TestObjects(object):
         del geometryobject
 
     def test_extractor(self):
-        extractorobject = Extractor(self.cloudmask, self.indexarray, self.geometries, self.idname, self.affine, ['median'])
+        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        idname = 'ID'
+        extractorobject = Extractor(self.cloudmask, self.indexarray, geometries, idname, self.affine, ['median'])
         statarrays = extractorobject.extract_arrays_stat()
         statarrayslen = len(statarrays)
         rightstatarrayslen = 3
@@ -148,15 +135,21 @@ class TestObjects(object):
         del extractorobject
 
     def test_writer(self):
+        tmpdir = 'testfiles/temp'
+        if not os.path.exists(tmpdir):
+            os.mkdir(tmpdir)
         date = '20200626'
         tile = '34VFN'
-        writerobject = WriterObject(self.tmpdir, date, tile, self.extractedarrays, 'ndvi',['mean','median','std'])
+        writerobject = WriterObject(tmpdir, date, tile, self.extractedarrays, 'ndvi', ['mean','median','std'])
         writerobject.write_csv()
         
         assert os.path.exists(writerobject.outpath), 'Writer fails' 
         self.alldone += 1
 
         del writerobject
+
+        if self.alldone == 6:
+            shutil.rmtree(tmpdir)
 
 
 TestObjects()
