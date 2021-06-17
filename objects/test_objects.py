@@ -25,15 +25,12 @@ from writer import WriterObject
 class TestObjects(object):
 
     def test_cloud(self):
-        self.alldone = 0
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         cloudobject = CloudObject(inpath)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
         assert (cloudmaskshape == rightcloudmaskshape), 'Cloudmask fails'
-        self.cloudmask = cloudmask
-        self.alldone += 1
 
         cloudobject.test_binarize()
         cloudobject.test_resample()
@@ -48,8 +45,6 @@ class TestObjects(object):
         indexarrayshape = indexarray.shape
         rightindexarrayshape = (10980, 10980)
         assert (indexarrayshape == rightindexarrayshape), 'Index fails'
-        self.indexarray = indexarray
-        self.alldone += 1
 
         del indexobject
         del indexarray
@@ -74,9 +69,7 @@ class TestObjects(object):
         affine = bandobject.affine 
         rightaffine = Affine(10.0, 0.0, 600000.0, 0.0, -10.0, 6800040.0)
         assert (affine == rightaffine), 'Affine fails'
-        self.affine = affine
-        self.alldone += 1
-
+ 
         del bandobject
 
 
@@ -111,24 +104,28 @@ class TestObjects(object):
         rightboundingbox = (348640.62425182585, 6786396.860003678, 349315.8119208717, 6787458.534407418)
         assert (boundingbox == rightboundingbox), 'Boundingbox fails'
         """
-        self.alldone += 1
 
         del geometryobject
 
     def test_extractor(self):
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        extractorobject = Extractor(self.cloudmask, self.indexarray, geometries, idname, self.affine, ['median'])
+        cloudobject = CloudObject(inpath)
+        cloudmask = cloudobject.create_cloudmask()
+        indexobject = IndexObject(inpath, 10)
+        indexarray = indexobject.calculate_ndvi()
+        bandobject = BandObject(inpath)
+        affine = bandobject.affine 
+        extractorobject = Extractor(cloudmask, indexarray, geometries, idname, affine, ['median'])
         statarrays = extractorobject.extract_arrays_stat()
         statarrayslen = len(statarrays)
         rightstatarrayslen = 3
         assert (statarrayslen == rightstatarrayslen), 'Exract Statarrays fails'
 
-        self.extractedarrays = statarrays
         arrayslen = len(extractorobject.extract_arrays())
         rightarrayslen = 3
         assert (arrayslen == rightarrayslen), 'Extract arrays fails'
-        self.alldone += 1
 
         extractorobject.test_masking()
 
@@ -138,18 +135,25 @@ class TestObjects(object):
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
+        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        idname = 'ID'
+        cloudobject = CloudObject(inpath)
+        cloudmask = cloudobject.create_cloudmask()
+        indexobject = IndexObject(inpath, 10)
+        indexarray = indexobject.calculate_ndvi()
+        bandobject = BandObject(inpath)
+        affine = bandobject.affine 
+        extractorobject = Extractor(cloudmask, indexarray, geometries, idname, affine, ['median'])
+        statarrays = extractorobject.extract_arrays_stat()
         date = '20200626'
         tile = '34VFN'
-        writerobject = WriterObject(tmpdir, date, tile, self.extractedarrays, 'ndvi', ['mean','median','std'])
+        writerobject = WriterObject(tmpdir, date, tile, statarrays, 'ndvi', ['mean','median','std'])
         writerobject.write_csv()
         
         assert os.path.exists(writerobject.outpath), 'Writer fails' 
-        self.alldone += 1
 
         del writerobject
-
-        if self.alldone == 6:
-            shutil.rmtree(tmpdir)
 
 
 TestObjects()
