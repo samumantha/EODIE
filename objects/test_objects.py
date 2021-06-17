@@ -56,6 +56,9 @@ class TestObjects(object):
         cloudobject.test_binarize()
         cloudobject.test_resample()
 
+        del cloudobject
+        del cloudmask
+
     def test_index(self):
         indexobject = IndexObject(self.inpath, 10)
         indexarray = indexobject.calculate_ndvi()
@@ -64,6 +67,10 @@ class TestObjects(object):
         assert (indexarrayshape == rightindexarrayshape), 'Index fails'
         self.indexarray = indexarray
         self.alldone += 1
+
+        del indexobject
+        del indexarray
+
 
     def test_band(self):
         bandobject = BandObject(self.inpath)
@@ -85,6 +92,8 @@ class TestObjects(object):
         assert (affine == rightaffine), 'Affine fails'
         self.affine = affine
         self.alldone += 1
+
+        del bandobject
 
 
     def test_geometry(self):
@@ -119,6 +128,8 @@ class TestObjects(object):
         """
         self.alldone += 1
 
+        del geometryobject
+
     def test_extractor(self):
         extractorobject = Extractor(self.cloudmask, self.indexarray, self.geometries, self.idname, self.affine, ['median'])
         statarrays = extractorobject.extract_arrays_stat()
@@ -134,6 +145,8 @@ class TestObjects(object):
 
         extractorobject.test_masking()
 
+        del extractorobject
+
     def test_writer(self):
         date = '20200626'
         tile = '34VFN'
@@ -143,6 +156,7 @@ class TestObjects(object):
         assert os.path.exists(writerobject.outpath), 'Writer fails' 
         self.alldone += 1
 
+        del writerobject
 
 
 TestObjects()
