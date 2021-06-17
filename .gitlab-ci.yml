@@ -1,6 +1,7 @@
 image: continuumio/miniconda3:latest
 
 before_script:
+  - apt-get install zip unzip
   - conda env create -f environment.yml
   - source activate eodie
   - python --version
