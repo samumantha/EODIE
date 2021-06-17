@@ -24,7 +24,7 @@ from writer import WriterObject
 
 class TestObjects(object):
 
-    def run(self):
+    def __init__(self):
         self.inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         self.geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         self.tmpdir = 'testfiles/temp'
@@ -159,4 +159,4 @@ class TestObjects(object):
         del writerobject
 
 
-TestObjects().run()
+TestObjects()
