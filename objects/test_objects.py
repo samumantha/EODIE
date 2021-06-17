@@ -12,15 +12,17 @@ import shutil
 from collections import OrderedDict
 from affine import Affine
 import glob
-
+import sys
+print(os.getcwd())
+sys.path.append("./objects")
 from cloudobject import CloudObject
 from extractor import Extractor
-from geometryobject import GeometryObject
+from geometry import Geometry
 from indexobject import IndexObject
 from bandobject import BandObject
 from writer import WriterObject
 
-class Objecttesting(object):
+class TestObjects(object):
 
     def __init__(self):
         self.inpath = '../testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
@@ -86,7 +88,7 @@ class Objecttesting(object):
 
 
     def test_geometry(self):
-        geometryobject = GeometryObject(self.geometries)
+        geometryobject = Geometry(self.geometries)
 
         head,tail,root,ext = geometryobject.split_path() 
         splitpathlist = [head,tail,root,ext]
@@ -135,7 +137,7 @@ class Objecttesting(object):
     def test_writer(self):
         date = '20200626'
         tile = '34VFN'
-        writerobject = WriterObject(self.tmpdir, date, tile, self.extractedarrays, 'ndvi')
+        writerobject = WriterObject(self.tmpdir, date, tile, self.extractedarrays, 'ndvi',['mean','median','std'])
         writerobject.write_csv()
         
         assert os.path.exists(writerobject.outpath), 'Writer fails' 
@@ -143,4 +145,4 @@ class Objecttesting(object):
 
 
 
-Objecttesting()
+TestObjects()
