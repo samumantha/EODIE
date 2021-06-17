@@ -1,3 +1,5 @@
+import sys
+sys.path.append("./objects")
 from test_objects import TestObjects
 
 
