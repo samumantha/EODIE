@@ -159,4 +159,4 @@ class TestObjects(object):
         del writerobject
 
 
-TestObjects()
+#TestObjects()
