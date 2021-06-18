@@ -12,6 +12,7 @@ class UserInput(object):
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--dir', dest='mydir', help='directory where S2 data is stored')
+        parser.add_argument('--file', dest='myfile', help='if only one file shall be processed give name here')
         parser.add_argument('--shp', dest='shpbase', help='name of the shapefile (without extension)')
         parser.add_argument('--out', dest='outpath', help='directory where results shall be saved')
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile')
@@ -23,6 +24,7 @@ class UserInput(object):
         args = parser.parse_args()
 
         self.mydir = args.mydir
+        self.myfile = args.myfile
         self.shpbase = args.shpbase
         self.outpath = args.outpath
         self.idname = args.idname
