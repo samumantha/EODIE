@@ -45,9 +45,9 @@ class Validator(object):
             
             if prjfile not in os.listdir(ishapepath):
                 exit('Please provide a .prj file for the inputshapefile!')
-            else
+            else:
                 return True
-        else
+        else:
             exit('Please provide a shapefile with polygons')
 
 
