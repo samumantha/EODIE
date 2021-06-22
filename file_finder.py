@@ -14,24 +14,29 @@ class FileFinder(object):
             self.wrong_format = True
 
     def check_index(self, index):
-        return self.index in index
+        if 'all' in index:
+            return True
+        else:
+            return self.index in index
 
     def check_date(self, startdate, enddate):
         return (self.date >= startdate and self.date < enddate)
 
-    def check_tile(self, tilename):
-        return self.tile == tilename
+    def check_tile(self, tiles):
+        if 'all' in tiles:
+            return True
+        return self.tile in tiles
     
     def check_end(self):
         return self.end == "array"
 
 
-    def check_file(self, index, startdate, enddate, tilename):
+    def check_file(self, index, startdate, enddate, tiles):
         if self.wrong_format:
             return False
         bool_index = self.check_index(index)
         bool_date = self.check_date(startdate, enddate)
-        bool_tile = self.check_tile(tilename)
+        bool_tile = self.check_tile(tiles)
         bool_end = self.check_end()
         isWanted = (bool_index and bool_date and bool_tile and bool_end)
         return isWanted

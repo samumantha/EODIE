@@ -4,4 +4,3 @@ testfiles/*
 *.log
 *.csv
 docs/_build/*
-*.txt
