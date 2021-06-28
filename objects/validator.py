@@ -11,10 +11,29 @@ import datetime
 class Validator(object):
 
     def __init__(self, args):
-        
+        self.input_amount_check(args.mydir, args.myfile)
+        self.input_exists_check(args.mydir, args.myfile)
         self.prjCheck(args.inputshape)
         self.dateValidityCheck(args.startdate)
         self.dateValidityCheck(args.enddate)
+
+    def input_amount_check(self,dir, file):
+        if dir is None and file is None:
+            exit('Please give either a filename or a directory with files to process')
+        elif dir is not None and file is not None:
+            exit('Please give only one of filename and path to directory of files')
+        
+    def input_exists_check(self,dir, file):
+        if dir is not None:
+            try:
+                os.path.isdir(dir)
+            except:
+                exit('Please check the path to your input data directory: ' + dir )
+        if file is not None:
+            try:
+                os.path.isfile(file)
+            except:
+                exit('Please check the path to yout input file and make sure it exists: ' + file)
 
 
     def date_check(self, date):
@@ -32,12 +51,6 @@ class Validator(object):
             exit('Please make sure your dates are in the past')
         return True
 
-    def file_exists_check(self, filename):
-        if not os.path.exists(filename):
-            exit('Please check that file {} exists.'.format(filename))
-        else:
-            return True
-
     def prj_check(self, inputshape):
         if inputshape is not None:
             ishapepath, ishapename = os.path.split(inputshape)
@@ -45,9 +58,9 @@ class Validator(object):
             
             if prjfile not in os.listdir(ishapepath):
                 exit('Please provide a .prj file for the inputshapefile!')
-            else
+            else:
                 return True
-        else
+        else:
             exit('Please provide a shapefile with polygons')
 
 
