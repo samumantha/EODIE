@@ -29,7 +29,8 @@ if not os.path.exists('./results'):
 #setup logging 
 logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
 
-for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
+#running through either one file, if file was given or multiple files if dir was given
+for path in userinput.input:
 
     pathfinderobject = Pathfinder(path)
     
