@@ -1,4 +1,5 @@
 import argparse
+import os
 from datetime import datetime 
 import glob
 from validator import Validator
@@ -31,10 +32,10 @@ class UserInput(object):
         if args.myfile is not None:
             self.input = [args.myfile]
         else:
-            self.input = glob.glob(os.path.join(userinput.mydir,'*.SAFE'))
+            self.input = glob.glob(os.path.join(args.mydir,'*.SAFE'))
         # remove extension if given by mistake
-        if args.shapebase.endswith('.shp'):
-            self.shapebase = os.path.splitext(args.shapebase)[0]
+        if args.shpbase.endswith('.shp'):
+            self.shpbase = os.path.splitext(args.shpbase)[0]
         else:
             self.shpbase = args.shpbase
         self.outpath = args.outpath

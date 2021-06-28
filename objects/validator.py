@@ -13,9 +13,9 @@ class Validator(object):
     def __init__(self, args):
         self.input_amount_check(args.mydir, args.myfile)
         self.input_exists_check(args.mydir, args.myfile)
-        self.prjCheck(args.inputshape)
-        self.dateValidityCheck(args.startdate)
-        self.dateValidityCheck(args.enddate)
+        #self.prj_check(args.inputshape)
+        self.date_check(args.startdate)
+        self.date_check(args.enddate)
 
     def input_amount_check(self,dir, file):
         if dir is None and file is None:
