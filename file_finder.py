@@ -21,9 +21,8 @@ class FileFinder(object):
             return self.index in index
 
     def check_date(self, startdate, enddate):
-        return (self.date >= startdate and self.date < enddate) 
-        # Note: startdate is included but enddate is excluded atm.
-        #  So startdate=20200101 enddate=20200102 only takes files from date 20200101
+        return (self.date >= startdate and self.date <= enddate) 
+        # Note: startdate and enddate both included
 
     def check_tile(self, tiles): 
         if 'all' in tiles:
