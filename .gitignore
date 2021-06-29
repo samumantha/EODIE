@@ -3,4 +3,5 @@
 testfiles/*
 *.log
 *.csv
+*.png
 docs/_build/*
