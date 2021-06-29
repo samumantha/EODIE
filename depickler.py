@@ -10,6 +10,10 @@ import yaml
 
 from file_finder import FileFinder
 
+with open('dep_cfg.yml', 'r') as f:
+    cfg = yaml.full_load(f)
+indexTable = cfg['indexdict']
+
 # About the inputs: --dir has directory to EODIE result files
 # --lookup has full path to the lookup table, which is a textfile containing all the tiles in
 # the results and what IDs are in the tiles. Format: 34VFN:1,2,3 (this is one row, there is one per tile).
@@ -17,22 +21,19 @@ from file_finder import FileFinder
 # --id and --index take lists (1 or more inputs) or all. If list has all in it, it acts as just all
 # --cmap can change the used colormap/scale, see https://matplotlib.org/stable/tutorials/colors/colormaps.html for more maps
 # Output will be a png with name index_id_date.png in the directory --out. To also open each figure window while running, use --show 1 
-# Most of the default-values are just for debugging 
+# Defaults are defined in the dep_cfg.yml file 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dir', dest='mydir', default='/home/petteri/EODIE/results/', help='directory where data is stored')
-parser.add_argument('--lookup', dest='lookup_table', default='/home/petteri/EODIE/results/script_test/lookuptable.txt', help='complete path to lookup table')
-parser.add_argument('--out', dest='outdir', default='/home/petteri/EODIE/pngresults', help='directory where the results will be stored')
-parser.add_argument('--index', dest='index', default=['nbr'], nargs='*', help='index or list of indices wanted')
-parser.add_argument('--start', dest='startdate', default='20200101', help='start date for the wanted time period')
-parser.add_argument('--end', dest='enddate', default='20201231', help='end date for the wanted time period')
-parser.add_argument('--id', dest='id', default=['all'], nargs='*', help='ID or list of IDs of the field parcel we want to plot')
-parser.add_argument('--show', dest='show', default='1', help='1 for opening each figure window, default is 0 to not open')
-parser.add_argument('--cmap', dest='cmap', default='viridis', help='which colormap/scale to use, viridis by default')
-parser.add_argument('--series', dest='timeseries', default='0', help='1 if you want timeseries over whole timeperiod')
+parser.add_argument('--dir', dest='mydir', default=cfg['default_dir'], help='directory where data is stored')
+parser.add_argument('--lookup', dest='lookup_table', default=cfg['default_lookup'], help='complete path to lookup table')
+parser.add_argument('--out', dest='outdir', default=cfg['default_out'], help='directory where the results will be stored')
+parser.add_argument('--index', dest='index', default=cfg['default_index'], nargs='*', help='index or list of indices wanted')
+parser.add_argument('--start', dest='startdate', default=cfg['default_start'], help='start date for the wanted time period')
+parser.add_argument('--end', dest='enddate', default=cfg['default_end'], help='end date for the wanted time period')
+parser.add_argument('--id', dest='id', default=cfg['default_id'], nargs='*', help='ID or list of IDs of the field parcel we want to plot')
+parser.add_argument('--show', dest='show', default=cfg['default_show'], help='1 for opening each figure window, default is 0 to not open')
+parser.add_argument('--cmap', dest='cmap', default=cfg['default_cmap'], help='which colormap/scale to use, viridis by default')
+parser.add_argument('--series', dest='timeseries', default=cfg['default_series'], help='1 if you want timeseries over whole timeperiod')
 input = parser.parse_args()
-
-with open('/home/petteri/EODIE/indexdict.yml') as f:
-    indexTable = yaml.full_load(f)
 
 my_cmap = copy(cm.get_cmap(input.cmap)) # Getting (and copying) the wanted colormap
 my_cmap.set_under('k') # pixel values < min are black
@@ -70,7 +71,7 @@ if not int(input.timeseries): # Individual plots for each timepoint
 
                         title = fileFinder.index + '_' + str(id_key) + '_' + fileFinder.date
 
-                        # Just take values from the valid range of this index based on the index lookup table:
+                        # Just take values from the valid range of this index based on the config file:
                         indexLimits = indexTable[fileFinder.index]
                         my_norm = colors.Normalize(vmin = indexLimits['min'], vmax = indexLimits['max'], clip=False) 
                         img = ax.imshow(pickle_arr, norm=my_norm, cmap=my_cmap)
@@ -132,7 +133,7 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
                             pickle_arr = new_dict[id_key] # find correct array based on wantedID
                     ax = plt.subplot(grid_height, grid_width, grid_index) # Plotting in the correct spot
 
-                    # Just take values from the valid range of this index based on the index lookup table:
+                    # Just take values from the valid range of this index based on the config file:
                     indexLimits = indexTable[index]
                     my_norm = colors.Normalize(vmin = indexLimits['min'], vmax = indexLimits['max'], clip=False) 
                     img = plt.imshow(pickle_arr, norm=my_norm, cmap=my_cmap)
