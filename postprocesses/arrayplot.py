@@ -6,13 +6,14 @@ from matplotlib import colors
 from copy import copy
 import argparse
 import os
+import sys
 import yaml
 
-from file_finder import FileFinder
+from file_checker import FileChecker
 
-with open('dep_cfg.yml', 'r') as f:
+with open('ap_cfg.yml', 'r') as f:
     cfg = yaml.full_load(f)
-indexTable = cfg['indexdict']
+indexTable = cfg['indexTable']
 
 # About the inputs: --dir has directory to EODIE result files
 # --lookup has full path to the lookup table, which is a textfile containing all the tiles in
@@ -59,8 +60,8 @@ if not int(input.timeseries): # Individual plots for each timepoint
 
     if len(tiles): # This is true only if we found any fitting tiles for the wanted IDs
         for entry in os.scandir(input.mydir):
-            fileFinder = FileFinder(entry.name) # FileFinder checks if the file mathces the input
-            if (entry.is_file() and fileFinder.check_file(input.index, input.startdate, input.enddate, tiles)):
+            fileChecker = FileChecker(entry.name) # FileChecker checks if the file mathces the input
+            if (entry.is_file() and fileChecker.check_file(input.index, input.startdate, input.enddate, tiles)):
                 with open(entry, 'rb') as f:
                     new_dict = pickle.load(f) # Data goes into a dictionary where IDs are keys and the arrays are values
                 for id_key in new_dict: # Loop through all IDs in the dictionary
@@ -69,10 +70,10 @@ if not int(input.timeseries): # Individual plots for each timepoint
 
                         fig, ax = plt.subplots(1,1)
 
-                        title = fileFinder.index + '_' + str(id_key) + '_' + fileFinder.date
+                        title = fileChecker.index + '_' + str(id_key) + '_' + fileChecker.date
 
                         # Just take values from the valid range of this index based on the config file:
-                        indexLimits = indexTable[fileFinder.index]
+                        indexLimits = indexTable[fileChecker.index]
                         my_norm = colors.Normalize(vmin = indexLimits['min'], vmax = indexLimits['max'], clip=False) 
                         img = ax.imshow(pickle_arr, norm=my_norm, cmap=my_cmap)
                         ax.set_xticks([]) # Getting rid of axis ticks
@@ -104,16 +105,16 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
         if 'all' in input.index: # If input is 'all', we want all indices available
             wantedIndices=[]
             for entry in os.scandir(input.mydir):
-                fileFinder = FileFinder(entry.name)
-                if(entry.is_file() and fileFinder.check_file(input.index, input.startdate, input.enddate, tiles)):
-                    wantedIndices.append(fileFinder.index) #Add index to list for each wanted file
+                fileChecker = FileChecker(entry.name)
+                if(entry.is_file() and fileChecker.check_file(input.index, input.startdate, input.enddate, tiles)):
+                    wantedIndices.append(fileChecker.index) #Add index to list for each wanted file
             wantedIndices = list(dict.fromkeys(wantedIndices)) # Removes duplicates
 
         for index in wantedIndices:
             files = []
             for entry in os.scandir(input.mydir):
-                fileFinder = FileFinder(entry.name)
-                if(entry.is_file() and fileFinder.check_file([index], input.startdate, input.enddate, tiles)):
+                fileChecker = FileChecker(entry.name)
+                if(entry.is_file() and fileChecker.check_file([index], input.startdate, input.enddate, tiles)):
                     files.append(entry) # Add all the files with correct index and ID to a list 
             if len(files): # Try to loop thorugh them only if the list is not empty
                 grid_size = len(files) # Needed grid size is amount of files

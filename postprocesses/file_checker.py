@@ -1,7 +1,7 @@
 import os
 
 # Checks for a file if it has the wanted properties based on the input
-class FileFinder(object):
+class FileChecker(object):
 
     def __init__(self, filename):
         parts = filename.split('_')
