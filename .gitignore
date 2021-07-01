@@ -5,3 +5,4 @@ testfiles/*
 *.csv
 docs/_build/*
 *.json
+.DS_Store

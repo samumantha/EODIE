@@ -22,14 +22,15 @@ with open("config.yml", "r") as ymlfile:
 
 userinput = UserInput()
 
-#setup logging 
-logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
-
 #create results dir 
 if not os.path.exists('./results'):
     os.mkdir('./results')
 
-for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
+#setup logging 
+logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
+
+#running through either one file, if file was given or multiple files if dir was given
+for path in userinput.input:
 
     pathfinderobject = Pathfinder(path)
     

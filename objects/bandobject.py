@@ -30,7 +30,9 @@ class BandObject(object):
     def get_array(self,band, resolution):
         
         with rasterio.open(self.get_bandfile(band, resolution)) as f:
-            return np.array(f.read(1)).astype(float)
+            #return np.array(f.read(1)).astype(float)
+            #for float 32
+            return np.array(f.read(1)).astype('f4')
         
 
     def get_epsg(self):
