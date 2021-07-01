@@ -73,3 +73,7 @@ print("The files can now be found in a directory called 'combined_statistics'")
 #Feature (/Problem): When sorting, the ID is sorted by the first number first (not by value)
 #for example [2,12,3,22,415,11] --> [11,12,2,22,3,415] 
 
+#Happens because they are sorted as strings. Problem would be solved if the type is changed to int or float
+# Tried when writing row to change to: writer.writerow([date,tile].append(int(row[0]))+row[1:])  
+# And writer.writerow([date,tile]+[int(row[0])]+row[1:])   But they didn't work as wanted
+ 

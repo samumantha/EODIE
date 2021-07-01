@@ -21,7 +21,7 @@ class IndexObject(BandObject):
     def __init__(self, inpath, resolution):
         super().__init__(inpath)
         self.resolution = resolution 
-        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi','ppi'] #Add ppi when ready
+        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi'] #Add ppi when ready
 
     def get_band(self, band):
         return self.get_array(band,self.resolution)
@@ -90,7 +90,8 @@ class IndexObject(BandObject):
         kndvi = (1-knr)/(1+knr)
 
         return kndvi
-   
+
+    '''
     def calculate_ppi(self):
         red = self.get_array('B04',self.resolution)
         nir = self.get_array('B08',self.resolution)
@@ -105,7 +106,7 @@ class IndexObject(BandObject):
         #PPI = np.multiply(K,np.log(np.divide(DVI_max-DVI,DVI_max-DVI_soil)))
         #return PPI
         #Code does not work because something wrong with angles. Get array probably not designed for this
-        
+        '''
 
 
 
