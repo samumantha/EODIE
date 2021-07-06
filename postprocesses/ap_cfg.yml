@@ -1,4 +1,7 @@
-indexTable:
+fig_size:
+  w: 15
+  h: 15
+index_table:
   ndvi:
     min: -1
     max: 1

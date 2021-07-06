@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
+from matplotlib import gridspec
 from copy import copy
 import argparse
 import os
@@ -13,7 +14,7 @@ from file_checker import FileChecker
 
 with open('ap_cfg.yml', 'r') as f:
     cfg = yaml.full_load(f)
-indexTable = cfg['indexTable']
+indexTable = cfg['index_table']
 
 # About the inputs: --dir has directory to EODIE result files
 # --lookup has full path to the lookup table, which is a textfile containing all the tiles in
@@ -117,12 +118,16 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
                 if(entry.is_file() and fileChecker.check_file([index], input.startdate, input.enddate, tiles)):
                     files.append(entry) # Add all the files with correct index and ID to a list 
             if len(files): # Try to loop thorugh them only if the list is not empty
+                fig_size=cfg['fig_size']
+                fig_w=fig_size['w']
+                fig_h=fig_size['h']
+                fig = plt.figure(figsize=(fig_w,fig_h))
                 grid_size = len(files) # Needed grid size is amount of files
-                grid_width = int(np.floor(np.sqrt(grid_size))) # This will make width less than or equal to height
-                grid_height = int(np.ceil(np.divide(grid_size, grid_width)))
-                fig, axs = plt.subplots(grid_height, grid_width)
+                x = np.sqrt(np.divide(grid_size, np.multiply(fig_w, fig_h)))
+                grid_height = max(1, int(np.floor(np.multiply(fig_h, x)))) # This will make height less than or equal to width
+                grid_width = int(np.ceil(np.divide(grid_size, grid_height)))
                 title = index + '_' + wantedID
-                plt.suptitle(title)
+                plt.suptitle(title, size='xx-large')
 
                 grid_index = 1 # We start from subplot 1 (indexing starts from 1 here because of how plt.subplot works)
                 files = sorted(files, key=lambda x: x.name.split('_')[1]) # Sort the list of files based on time
@@ -133,6 +138,7 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
                         if str(id_key) == wantedID:
                             pickle_arr = new_dict[id_key] # find correct array based on wantedID
                     ax = plt.subplot(grid_height, grid_width, grid_index) # Plotting in the correct spot
+                    fig.tight_layout(pad=3.0)
 
                     # Just take values from the valid range of this index based on the config file:
                     indexLimits = indexTable[index]
@@ -148,6 +154,7 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
                 cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
                 fig.colorbar(img, cax=cbar_ax)
                 
+                fig.subplots_adjust(top=0.9)
                 if int(input.show):
                     plt.show()
                 fig.savefig(os.path.join(input.outdir, title + '_timeseries.png'))
