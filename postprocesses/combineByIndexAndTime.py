@@ -5,21 +5,26 @@ import csv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dir', dest= 'directory' , help = 'Write the directory path where the csv files are as absolute path')
+parser.add_argument('--out',dest= 'output_directory',default='.',help= 'Write the directory path where you want the files to be outputted')
 input=parser.parse_args()
 #Takes the directory where the csv files are stored as an input
 
-#directory=input.directory
-testingDirectory='/home/jvarho/EODIE/testCSVs/'
 directory=input.directory
+outputDir=input.output_directory
+
+if directory is None or len(directory)==0: #Checks if argument is given
+    print("please enter the directory path as argument starting with '--dir'")
+    quit()
+
 
 #Creates own directory for the results to be in (Not sure if wanted, might delete)
-if not os.path.exists('./combined_statistics'):
-    os.mkdir('./combined_statistics')
+if not os.path.exists(outputDir+'/combined_statistics'):
+    os.mkdir(outputDir+'/combined_statistics')
 
 
 def k(a,b): #Function to give multiple keys to sorted
     def _k(item):
-        return (item[a],item[b])
+        return (item[a],int(item[b]))
     return _k #Return the list of numbers as items that can be given to sorted key 
 
 
@@ -36,11 +41,15 @@ for entry in os.scandir(directory):
 #and the date in [1]
 
 
+if len(indexlist)==0: #Checks if there were any files to be found in the directory
+    print("No correct csv files found in this directory")
+    quit()
+
 
 
 for index in indexlist: #Creates a new file for every index
     for date in datelist: #New file for every date
-        filename = './combined_statisticsTESTI/combined_' + index + '_' + date +'.csv' #directory and name of the new file
+        filename = outputDir+'/combined_statistics/combined_' + index + '_' + date +'.csv' #directory and name of the new file
         with open(filename,'w', newline='') as newfile: #Makes new file for every index
             writer=csv.writer(newfile)
             entrycount=0
@@ -80,13 +89,5 @@ for index in indexlist: #Creates a new file for every index
         readingFile.close()
         sorting.close()
 
-print("The files can now be found in a directory called 'combined_statistics'")
+print("The files can now be found in a directory called 'combined_statistics' in directory " + outputDir)
 
-#Feature (/Problem): When sorting, the ID is sorted by the first number first (not by value)
-#for example [2,12,3,22,415,11] --> [11,12,2,22,3,415] 
-#Happens because they are sorted as strings. Problem would be solved if the type is changed to int or float
-# 
-#Happens because they are sorted as strings. Problem would be solved if the type is changed to int or float
-# Tried when writing row to change to: writer.writerow([date,tile].append(int(row[0]))+row[1:])  
-# And writer.writerow([date,tile]+[int(row[0])]+row[1:])   But they didn't work as wanted
- 
