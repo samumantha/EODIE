@@ -137,7 +137,7 @@ class IndexObject(BandObject):
         evi = G * np.divide(num, denom)
         return evi
 
-    def calculate_evi2(self): # Jiang, Huete, Didan & Miura (2008)
+    def calculate_evi2(self): # Jiang, Huete, Didan & Miura (2008) https://doi.org/10.1016%2Fj.rse.2008.06.006
         nir = self.get_array('B08', self.resolution)
         red = self.get_array('B04', self.resolution)
 
@@ -146,6 +146,40 @@ class IndexObject(BandObject):
         G = 2.5
 
         num = nir-red
-        denom = nir + C * red + L
+        denom = np.multiply(nir + C, red) + L
         evi2 = G * np.divide(num, denom)
         return evi2
+
+    def calculate_dvi(self):   #https://iopscience.iop.org/article/10.1088/1742-6596/1003/1/012083/pdf
+        nir = self.get_array('B08', self.resolution)
+        red = self.get_array('B04', self.resolution)
+
+        dvi = nir - red
+        return dvi
+
+    def calculate_cvi(self): #https://doi.org/10.3390/rs9050405
+        nir = self.get_array('B08', self.resolution)
+        red = self.get_array('B04', self.resolution)
+        green = self.get_array('B03', self.resolution)
+
+        cvi = np.divide(np.multiply(nir, red), green**2)
+        return cvi
+
+    def calculate_mcari(self):
+        red = self.get_array('B04', self.resolution)
+        green = self.get_array('B03', self.resolution)
+        r_edge = self.get_array('B05', 20)
+
+        r_edge = self.resample(r_edge, 20)
+
+        mcari = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
+        return mcari
+
+    def calculate_ndi45m(self): #https://www.researchgate.net/profile/Praveen-Kumar-221/publication/350389170_An_Approach_for_Fraction_of_Vegetation_Cover_Estimation_in_Forest_Above-Ground_Biomass_Assessment_Using_Sentinel-2_Images/links/6064149b299bf173677ddd9a/An-Approach-for-Fraction-of-Vegetation-Cover-Estimation-in-Forest-Above-Ground-Biomass-Assessment-Using-Sentinel-2-Images.pdf
+        nir = self.get_array('B05', 20)
+        red = self.get_array('B04', self.resolution)
+
+        nir = self.resample(nir, 20)
+
+        ndi45m = self.norm_diff(nir, red)
+        return ndi45m
