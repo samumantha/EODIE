@@ -24,8 +24,8 @@ class IndexObject(BandObject):
         self.quantification_value = quantification_value
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45m']
 
-    def get_band(self, band):
-        return np.divide(self.get_array(band,self.resolution), self.quantification_value)
+    def get_band(self, band, resolution):
+        return np.divide(self.get_array(band, max(resolution, self.resolution)), self.quantification_value)
 
     def norm_diff(self, a, b):
         return np.divide(a-b, a+b)

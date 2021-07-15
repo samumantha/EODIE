@@ -21,8 +21,13 @@ default_dir: '/home/petteri/EODIE/results/'
 default_lookup: '/home/petteri/EODIE/results/script_test/lookuptable.txt'
 default_out: '/home/petteri/EODIE/pngresults'
 default_index: ['ndvi']
+<<<<<<< Updated upstream
 default_start: '20200101'
 default_end: '20201231'
+=======
+default_start: '20160101'
+default_end: '99999999'
+>>>>>>> Stashed changes
 default_id: ['all']
 default_show: '0'
 default_cmap: 'viridis'

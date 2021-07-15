@@ -60,7 +60,13 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
                 if index in indexobject.supportedindices:
                     array = indexobject.calculate_index(index)
                 elif re.match('B[0-1]\d', index) or index == 'B8A':
-                    array = indexobject.get_band(index)
+                    if re.match('B0[2348]', index):
+                        res = 10
+                    elif re.match('B0[567]', index) or re.match('B1[12]', index) or index == 'B8A':
+                        res = 20
+                    else:
+                        res = 60
+                    array = indexobject.get_band(index, res)
                 else:
                     logging.warning('Chosen index {} not available, continuing with next index.'.format(index))
                     
