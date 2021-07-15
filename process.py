@@ -43,7 +43,7 @@ for path in glob.glob(os.path.join(userinput.mydir,'*.SAFE')):
         cloudobject = CloudObject(pathfinderobject.imgpath)
         cloudmask = cloudobject.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
-        indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'])
+        indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'], cfg['quantification_value'])
         geoobject = Geometry(userinput.shpbase + '_' + pathfinderobject.tile +'.shp')
         geoobject.reproject_to_epsg(indexobject.epsg)
         shapefile = geoobject.geometries
