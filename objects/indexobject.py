@@ -24,15 +24,25 @@ class IndexObject(BandObject):
         self.quantification_value = quantification_value
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45m']
 
-    def get_band(self, band, resolution):
-        return np.divide(self.get_array(band, max(resolution, self.resolution)), self.quantification_value)
+    def get_band(self, band):
+        if re.match('B0[2348]', band):
+            bandres = 10
+        elif re.match('B0[567]', band) or re.match('B1[12]', band) or band == 'B8A':
+            bandres = 20
+        else:
+            bandres = 60
+        try:
+            array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution), self.quantification_value)
+        except IndexError:
+            array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
+        return array
 
     def norm_diff(self, a, b):
         return np.divide(a-b, a+b)
 
     def resample(self, band, bandres):
         if self.resolution != bandres:
-            a = bandres / self.resolution
+            a = int(bandres / self.resolution)
             band = np.kron(band, np.ones((a,a),dtype=float))
         return band
 
@@ -44,8 +54,8 @@ class IndexObject(BandObject):
 
     def calculate_ndvi(self):
 
-        red = self.get_band('B04',self.resolution)
-        nir = self.get_band('B08',self.resolution)
+        red = self.get_band('B04')
+        nir = self.get_band('B08')
 
         ndviarray = self.norm_diff(nir, red)
         
@@ -53,8 +63,8 @@ class IndexObject(BandObject):
 
     def calculate_rvi(self):
 
-        red = self.get_band('B04',self.resolution)
-        nir = self.get_band('B08',self.resolution)
+        red = self.get_band('B04')
+        nir = self.get_band('B08')
 
         rviarray = np.divide(nir,red)
 
@@ -62,8 +72,8 @@ class IndexObject(BandObject):
 
     def calculate_savi(self): 
 
-        red = self.get_band('B04',self.resolution)
-        nir = self.get_band('B08',self.resolution)
+        red = self.get_band('B04')
+        nir = self.get_band('B08')
 
         saviarray=np.divide(1.5*(nir-red),nir+red+0.5)
 
@@ -71,25 +81,20 @@ class IndexObject(BandObject):
 
     def calculate_nbr(self):
         #(B08 - B12) / (B08 + B12)
-        nir = self.get_band('B08',self.resolution)
-        swir = self.get_band('B12',20)
+        nir = self.get_band('B08')
+        swir = self.get_band('B12')
 
-        #resample band 12 to 10m (original 20m), with all 4 10m cells having same value as one 20m cell
-        if not self.resolution == 20:
-            swir = np.kron(swir, np.ones((2,2),dtype=float))
+        #swir = self.resample(swir ,20)
 
-        up = nir - swir
-        down = nir + swir
-
-        nbrarray = np.divide(up,down)
+        nbrarray = self.norm_diff(nir, swir)
 
         return nbrarray
 
     def calculate_kndvi(self):
         # according to https://github.com/IPL-UV/kNDVI
 
-        red = self.get_band('B04',self.resolution)
-        nir = self.get_band('B08',self.resolution)
+        red = self.get_band('B04')
+        nir = self.get_band('B08')
         
         #pixelwise sigma calculation
         sigma = 0.5*(nir + red)
@@ -100,20 +105,20 @@ class IndexObject(BandObject):
 
 
     def calculate_ndmi(self): # NDMI (moisture) as it is used by Wilson (2002) similar to the Gao (1996) NDWI, NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index
-        nir = self.get_band('B08', self.resolution) # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
-        swir = self.get_band('B11', 20)
+        nir = self.get_band('B08') # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
+        swir = self.get_band('B11')
 
-        swir = self.resample(swir, 20)
+        #swir = self.resample(swir, 20)
 
         ndmi = self.norm_diff(nir, swir)
 
         return ndmi
 
     def calculate_mndwi(self): #https://d1wqtxts1xzle7.cloudfront.net/47301066/Modification_of_normalised_difference_water_index_NDWI_to_enhance_openwater_features_in_remotely_sensed_imagery_1-with-cover-page-v2.pdf?Expires=1626274448&Signature=Ui~MJhkT2CLPYTzDsM-xOWcf7VKsMQTn16NXkNiqtTseHecbvqtWFYCeJ~UWFOZZwRwpnMS0yHQN3PdRIM29HwGeThyJnagpLBcLkveIok7nXgfieSclMUKmh7KHgtU2-294dC9nHyoZ40wr~kn71sZkGfb2ckvY3CzZ7s0JNlmGKVNA0A~C9bvTjPW4kOTDjjrriq7N3f9wZlW3Nfa8T0V0CP5o-0zEo6-a-s4bon~AdX7OhLe-rG6-cIdrfRtLDAr2x0L9jJXSNWe58P~~pz4Dm3OWJDpN6D7YmUELUyx-2PI--ql-r4Dr8~Y4EXxi-s-smRwaWsCFCyxeiMMpww__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA
-        green = self.get_band('B03', self.resolution) # Modified from McFeeters NDWI
-        mir = self.get_band('B11', 20)
+        green = self.get_band('B03') # Modified from McFeeters NDWI
+        mir = self.get_band('B11')
 
-        mir = self.resample(mir, 20)
+        #mir = self.resample(mir, 20)
 
         mndwi = self.norm_diff(green, mir)
         return mndwi
@@ -121,9 +126,9 @@ class IndexObject(BandObject):
 
 
     def calculate_evi(self):                            # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3965234/
-        nir = self.get_band('B08', self.resolution)    # IDB used different bands, no idea why (B09, B05 and B01 respectively)
-        red = self.get_band('B04', self.resolution)
-        blue = self.get_band('B02', self.resolution)
+        nir = self.get_band('B08')    # IDB used different bands, no idea why (B09, B05 and B01 respectively)
+        red = self.get_band('B04')
+        blue = self.get_band('B02')
 
         L = 1
         C1 = 6
@@ -136,8 +141,8 @@ class IndexObject(BandObject):
         return evi
 
     def calculate_evi2(self): # Jiang, Huete, Didan & Miura (2008) https://doi.org/10.1016%2Fj.rse.2008.06.006
-        nir = self.get_band('B08', self.resolution)
-        red = self.get_band('B04', self.resolution)
+        nir = self.get_band('B08')
+        red = self.get_band('B04')
 
         L = 1
         C = 2.4
@@ -149,35 +154,39 @@ class IndexObject(BandObject):
         return evi2
 
     def calculate_dvi(self):   #https://iopscience.iop.org/article/10.1088/1742-6596/1003/1/012083/pdf
-        nir = self.get_band('B08', self.resolution)
-        red = self.get_band('B04', self.resolution)
+        nir = self.get_band('B08')
+        red = self.get_band('B04')
 
         dvi = nir - red
         return dvi
 
     def calculate_cvi(self): #https://doi.org/10.3390/rs9050405
-        nir = self.get_band('B08', self.resolution)
-        red = self.get_band('B04', self.resolution)
-        green = self.get_band('B03', self.resolution)
+        nir = self.get_band('B08')
+        red = self.get_band('B04')
+        green = self.get_band('B03')
 
         cvi = np.divide(np.multiply(nir, red), green**2)
         return cvi
 
     def calculate_mcari(self):
-        red = self.get_band('B04', self.resolution)
-        green = self.get_band('B03', self.resolution)
-        r_edge = self.get_band('B05', 20)
+        red = self.get_band('B04')
+        green = self.get_band('B03')
+        r_edge = self.get_band('B05')
 
-        r_edge = self.resample(r_edge, 20)
+        #r_edge = self.resample(r_edge, 20)
 
         mcari = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
         return mcari
 
     def calculate_ndi45m(self): #https://www.researchgate.net/profile/Praveen-Kumar-221/publication/350389170_An_Approach_for_Fraction_of_Vegetation_Cover_Estimation_in_Forest_Above-Ground_Biomass_Assessment_Using_Sentinel-2_Images/links/6064149b299bf173677ddd9a/An-Approach-for-Fraction-of-Vegetation-Cover-Estimation-in-Forest-Above-Ground-Biomass-Assessment-Using-Sentinel-2-Images.pdf
-        nir = self.get_band('B05', 20)
-        red = self.get_band('B04', self.resolution)
+        nir = self.get_band('B05')
+        red = self.get_band('B04')
 
-        nir = self.resample(nir, 20)
+        #nir = self.resample(nir)
 
         ndi45m = self.norm_diff(nir, red)
         return ndi45m
+
+    def resampled_band(self, band, resolution):
+        presampled = self.get_band(band, resolution)
+        return self.resample(presampled, resolution)
