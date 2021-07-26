@@ -12,12 +12,16 @@ import logging
 
 class SplitshpObject(object):
 
-    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, output_directory):
+    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory):
+        self.output_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
+        self.tiles = []
+        if not os.path.exists(self.output_directory):
+            os.mkdir(self.output_directory)
         #all input shapefiles to EPSG: 4326
         self.small_polygon_shapefile = self.reproject_to_epsg(small_polygon_shapefile,'4326')
         self.large_polygon_shapefile = self.reproject_to_epsg(large_polygon_shapefile,'4326')
-        self.output_directory = output_directory
-        self.tiles = []
+
+
 
     def reproject_to_epsg(self, myshp,myepsg):
         logging.info('checking the projection of the inputfile now')
@@ -35,7 +39,7 @@ class SplitshpObject(object):
             logging.info('input shapefile has EPSG '  +myepsg + ' that works!')
             return myshp
         else:
-            reprojectedshape = os.path.join(head, root + '_reprojected_' + myepsg +  ext)
+            reprojectedshape = os.path.join(self.output_directory, root + '_reprojected_' + myepsg +  ext)
             if not os.path.exists(reprojectedshape):
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + myshp
                 #print(reprojectcommand)
@@ -106,6 +110,7 @@ class SplitshpObject(object):
                 for tile in s2shp:
                     one_tile_geometry = self.make_geometryobject(self.get_parameter_content(tile,'geometry'))
                     if one_tile_geometry.intersects(bounding_box_small_poly_shp):
+                        self.tiles.append(tile['properties']['Name'])
                         outputshp.write({                                 
                             'properties': tile['properties'], 
                             'geometry': tile['geometry']})
@@ -113,12 +118,17 @@ class SplitshpObject(object):
 
     def splitshp(self):
         self.splitshp_world()
-        self.splitshp_mp()
-        large_polygon_filename = os.path.splitext(self.large_polygon_shapefile)[0]
-        removelist = (glob.glob(large_polygon_filename + '.*'))
-        for item in removelist:
-            os.remove(item)
-        logging.info('splitted shapefiles now exist')
+        root = os.path.split(os.path.splitext(self.small_polygon_shapefile)[0])[1]
+        exists = False
+        for tile in self.tiles:
+            exists = os.path.exists(os.path.join(self.output_directory, root + '_' + tile + '.shp' ))
+            if not exists:
+                break         
+        if not exists:
+            self.splitshp_mp()
+            logging.info('splitted shapefiles now exist')
+        else:
+            logging.info('splitted shapefiles already exist')
 
     def splitshp_world(self):
         #build the output name from both input files
@@ -138,7 +148,6 @@ class SplitshpObject(object):
 
         with fiona.open(self.large_polygon_shapefile,'r') as s2shp:
             for tile in s2shp:
-                self.tiles.append(tile['properties']['Name'])
                 pool.apply_async(self.write_splitted_shapefiles, args = (bounding_box_small_poly_shp, tile, self.output_directory, self.small_polygon_shapefile))
             pool.close()
             pool.join()

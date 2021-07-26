@@ -1,6 +1,14 @@
 # Process only files with less than xx % cloudcover
-maxcloudcover: 10
+maxcloudcover: 95
 
 # Extract files with xx m spatial resolution 
 # options: 10,20
 resolution: 10
+
+# Quantification value used to multiple the reflectance to get DN
+# This could be read from metadata but for now at least is here
+quantification_value: 10000
+
+# If we want to keep the splitted shapefiles in order to save the time of splitting them everytime, use 1.
+# If we want to always delete them and create them again (recommended for small to medium sized shapefiles) use 0
+keep_shapes: 0
