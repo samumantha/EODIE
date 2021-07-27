@@ -15,13 +15,6 @@ from sklearn.ensemble import IsolationForest
 import numpy as np
 
 
-
-import sys
-print(sys.argv)
-parser = argparse.ArgumentParser(description="no description this time")
-
-
-
 parser = argparse.ArgumentParser(prog="myprogram",description="foo")
 
 #parser.add_argument('-f' , dest="f",help="testing, error wanted this inserted")
@@ -50,10 +43,10 @@ indices_list=input.index.split(',')
 startDate=input.startDate
 endDate=input.endDate
 format=input.fileFormat
-seeDatapoints=bool(input.seeDatapoints)
-detectOutliers=bool(int(input.detectOutliers))
-seeSmoothing=bool(int(input.seeSmoothened))
-seeInterval=bool(int(input.seeInterval))
+seeDatapoints=input.seeDatapoints
+detectOutliers=input.detectOutliers
+seeSmoothing=input.seeSmoothened
+seeInterval=input.seeInterval
 
 
 mainDataFrame=pd.DataFrame()
@@ -118,11 +111,12 @@ for id in ID_list:
             plot_df.query("mean>=lower and mean<=upper", inplace=True) #Takes out the outliers
             plot_df['smoothing']=smoother.smooth(plot_df['mean']).smooth_data.reshape(-1,1) #Adds new column of smooth values 
             
-            invalid_points.plot(marker='x',markersize=15, style='.', color='r',label='outliers')
+            invalid_points.plot(style='x', markersize=15, color='r',label='outliers')
         else:
-            plot_df['smoothing']=smoother.smooth_data.reshape(-1,1) #If outliers are to be ignored, adds the original smoothened curve to the dataframe
+            plot_df['smoothing']=smoother.smooth_data.reshape(-1,1) 
+            #If outliers are to be ignored, adds the original smoothened curve to the dataframe
 
-        
+
         if seeSmoothing:    
             plt.plot(plot_df['smoothing'],linewidth=3.5,label='Smoothened data')
 
@@ -138,9 +132,6 @@ for id in ID_list:
         plt.ylabel(str(index)+", " + str(stat))
 
         plt.show()
-    break #Remove later
     
 
-#Now works for mean values. Try to change it so it works for any statistic        
-
-
+#Now works for mean values. Try to change it so it works for any statistic
