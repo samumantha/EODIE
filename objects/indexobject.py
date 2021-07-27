@@ -22,7 +22,7 @@ class IndexObject(BandObject):
         super().__init__(inpath)
         self.resolution = resolution 
         self.quantification_value = quantification_value
-        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45m', 'tctb', 'tctg', 'tctw', 'ndwi']
+        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
 
     def get_band(self, band):
         if re.match('B0[2348]', band):
@@ -173,12 +173,12 @@ class IndexObject(BandObject):
         mcariarray = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
         return mcariarray
 
-    def calculate_ndi45m(self): #https://doi.org/10.1007/978-981-16-1086-8_1 
+    def calculate_ndi45(self): #https://doi.org/10.1007/978-981-16-1086-8_1 
         nir = self.get_band('B05')
         red = self.get_band('B04')
 
-        ndi45marray = self.norm_diff(nir, red)
-        return ndi45marray
+        ndi45array = self.norm_diff(nir, red)
+        return ndi45array
 
     def calculate_tct(self, coeffs):    #https://doi.org/10.1109/JSTARS.2019.2938388
         blue = self.get_band('B02')
