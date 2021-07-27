@@ -32,9 +32,9 @@ parser.add_argument('--index', dest='index', default=cfg['default_index'], nargs
 parser.add_argument('--start', dest='startdate', default=cfg['default_start'], help='start date for the wanted time period')
 parser.add_argument('--end', dest='enddate', default=cfg['default_end'], help='end date for the wanted time period')
 parser.add_argument('--id', dest='id', default=cfg['default_id'], nargs='*', help='ID or list of IDs of the field parcel we want to plot')
-parser.add_argument('--show', dest='show', default=cfg['default_show'], help='1 for opening each figure window, default is 0 to not open')
+parser.add_argument('--show', dest='show', type=int, default=cfg['default_show'], help='1 for opening each figure window, default is 0 to not open')
 parser.add_argument('--cmap', dest='cmap', default=cfg['default_cmap'], help='which colormap/scale to use, viridis by default')
-parser.add_argument('--series', dest='timeseries', default=cfg['default_series'], help='1 if you want timeseries over whole timeperiod')
+parser.add_argument('--series', dest='timeseries', type=int, default=cfg['default_series'], help='1 if you want timeseries over whole timeperiod')
 input = parser.parse_args()
 
 my_cmap = copy(cm.get_cmap(input.cmap)) # Getting (and copying) the wanted colormap
@@ -47,7 +47,7 @@ with open(input.lookup_table, 'r') as f:
     table = f.read().splitlines()
 
 
-if not int(input.timeseries): # Individual plots for each timepoint
+if not input.timeseries: # Individual plots for each timepoint
     # Finding the wanted tiles based on --id input and the lookup table:
     tiles=[]
     if 'all' in input.id:
@@ -81,13 +81,13 @@ if not int(input.timeseries): # Individual plots for each timepoint
                         ax.set_yticks([])
                         fig.colorbar(img)
                         plt.title(title)
-                        if int(input.show):
+                        if input.show:
                             plt.show()
                         fig.savefig(os.path.join(input.outdir, title + '.png'))
                         plt.close()
 
 
-elif int(input.timeseries): # Timeseries where id and index stay the same
+elif input.timeseries: # Timeseries where id and index stay the same
     wantedIDs = input.id 
     if 'all' in input.id: # If input is 'all', we want all the IDs available
         wantedIDs=[]
@@ -155,7 +155,7 @@ elif int(input.timeseries): # Timeseries where id and index stay the same
                 fig.colorbar(img, cax=cbar_ax)
                 
                 fig.subplots_adjust(top=0.9)
-                if int(input.show):
+                if input.show:
                     plt.show()
                 fig.savefig(os.path.join(input.outdir, title + '_timeseries.png'))
                 plt.close()
