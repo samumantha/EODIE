@@ -92,9 +92,9 @@ class IndexObject(BandObject):
         #pixelwise sigma calculation
         sigma = 0.5*(nir + red)
         knr = np.exp(-(nir-red)**2/(2*sigma**2))
-        kndvi = (1-knr)/(1+knr)
+        kndviarray = (1-knr)/(1+knr)
 
-        return kndvi
+        return kndviarray
 
 
     def calculate_ndmi(self): # NDMI (moisture) as it is used by Wilson (2002) https://doi.org/10.1016/S0034-4257(01)00318-2
@@ -102,23 +102,23 @@ class IndexObject(BandObject):
         nir = self.get_band('B08') # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
         swir = self.get_band('B11')
 
-        ndmi = self.norm_diff(nir, swir)
+        ndmiarray = self.norm_diff(nir, swir)
 
-        return ndmi
+        return ndmiarray
 
     def calculate_ndwi(self): # McFeeters NDWI https://doi.org/10.1080/01431169608948714
         green = self.get_band('B03')
         nir = self.get_band('B08')
 
-        ndwi = self.norm_diff(green, nir)
-        return ndwi
+        ndwiarray = self.norm_diff(green, nir)
+        return ndwiarray
 
     def calculate_mndwi(self): #https://doi.org/10.1080/01431160600589179
         green = self.get_band('B03') # Modified from McFeeters NDWI
         mir = self.get_band('B11')
 
-        mndwi = self.norm_diff(green, mir)
-        return mndwi
+        mndwiarray = self.norm_diff(green, mir)
+        return mndwiarray
 
 
 
@@ -134,8 +134,8 @@ class IndexObject(BandObject):
 
         num = nir - red
         denom = nir + C1 * red - C2 * blue + L
-        evi = G * np.divide(num, denom)
-        return evi
+        eviarray = G * np.divide(num, denom)
+        return eviarray
 
     def calculate_evi2(self): # Jiang, Huete, Didan & Miura (2008) https://doi.org/10.1016%2Fj.rse.2008.06.006
         nir = self.get_band('B08')
@@ -147,38 +147,38 @@ class IndexObject(BandObject):
 
         num = nir-red
         denom = np.multiply(C, red) + nir + L
-        evi2 = G * np.divide(num, denom)
-        return evi2
+        evi2array = G * np.divide(num, denom)
+        return evi2array
 
     def calculate_dvi(self):   #https://doi.org/10.1088/1742-6596/1003/1/012083
         nir = self.get_band('B08')
         red = self.get_band('B04')
 
-        dvi = nir - red
-        return dvi
+        dviarray = nir - red
+        return dviarray
 
     def calculate_cvi(self): #https://doi.org/10.3390/rs9050405
         nir = self.get_band('B08')
         red = self.get_band('B04')
         green = self.get_band('B03')
 
-        cvi = np.divide(np.multiply(nir, red), green**2)
-        return cvi
+        cviarray = np.divide(np.multiply(nir, red), green**2)
+        return cviarray
 
     def calculate_mcari(self):  #https://doi.org/10.1016/S0034-4257(00)00113-9
         red = self.get_band('B04')
         green = self.get_band('B03')
         r_edge = self.get_band('B05')
 
-        mcari = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
-        return mcari
+        mcariarray = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
+        return mcariarray
 
     def calculate_ndi45m(self): #https://doi.org/10.1007/978-981-16-1086-8_1 
         nir = self.get_band('B05')
         red = self.get_band('B04')
 
-        ndi45m = self.norm_diff(nir, red)
-        return ndi45m
+        ndi45marray = self.norm_diff(nir, red)
+        return ndi45marray
 
     def calculate_tct(self, coeffs):    #https://doi.org/10.1109/JSTARS.2019.2938388
         blue = self.get_band('B02')
@@ -191,25 +191,25 @@ class IndexObject(BandObject):
         weighted_bands = []
         for i in range(len(bands)):
             weighted_bands.append(np.multiply(coeffs[i], bands[i]))
-        tct = sum(weighted_bands)
-        return tct
+        tctarray = sum(weighted_bands)
+        return tctarray
 
     def calculate_tctb(self):
         coeffs = [0.3510, 0.3813, 0.3437, 0.7196, 0.2396, 0.1949]
 
-        tctb = self.calculate_tct(coeffs)
-        return tctb
+        tctbarray = self.calculate_tct(coeffs)
+        return tctbarray
 
     def calculate_tctg(self):
         coeffs = [-0.3599, -0.3533, -0.4734, 0.6633, 0.0087, -0.2856]
         
-        tctg = self.calculate_tct(coeffs)
-        return tctg
+        tctgarray = self.calculate_tct(coeffs)
+        return tctgarray
 
     def calculate_tctw(self):
         coeffs = [0.2578, 0.2305, 0.0883, 0.1071, -0.7611, -0.5308]
         
-        tctw = self.calculate_tct(coeffs)
-        return tctw
+        tctwarray = self.calculate_tct(coeffs)
+        return tctwarray
 
 
