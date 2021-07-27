@@ -104,7 +104,7 @@ for path in userinput.input:
             logging.warning('Cloudcovered or no data in Area of interest!')
 
 keep_shapes = cfg['keep_shapes'] 
-if keep_shapes == 0: 
+if not keep_shapes: 
     shp_remove_list = glob.glob(os.path.join(shapesplitter.output_directory, '*'))  
     for file in shp_remove_list:
         os.remove(file)
