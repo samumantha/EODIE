@@ -22,7 +22,7 @@ class IndexObject(BandObject):
         super().__init__(inpath)
         self.resolution = resolution 
         self.quantification_value = quantification_value
-        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45m']
+        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45m', 'tctb', 'tctg', 'tctw', 'ndwi']
 
     def get_band(self, band):
         if re.match('B0[2348]', band):
@@ -40,11 +40,6 @@ class IndexObject(BandObject):
     def norm_diff(self, a, b):
         return np.divide(a-b, a+b)
 
-    def resample(self, band, bandres):
-        if self.resolution != bandres:
-            a = int(bandres / self.resolution)
-            band = np.kron(band, np.ones((a,a),dtype=float))
-        return band
 
     def calculate_index(self, index):
         """ runs own class method based on index given """
@@ -84,8 +79,6 @@ class IndexObject(BandObject):
         nir = self.get_band('B08')
         swir = self.get_band('B12')
 
-        #swir = self.resample(swir ,20)
-
         nbrarray = self.norm_diff(nir, swir)
 
         return nbrarray
@@ -104,28 +97,32 @@ class IndexObject(BandObject):
         return kndvi
 
 
-    def calculate_ndmi(self): # NDMI (moisture) as it is used by Wilson (2002) similar to the Gao (1996) NDWI, NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index
+    def calculate_ndmi(self): # NDMI (moisture) as it is used by Wilson (2002) https://doi.org/10.1016/S0034-4257(01)00318-2
+        #similar to the Gao (1996) NDWI, NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index
         nir = self.get_band('B08') # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
         swir = self.get_band('B11')
-
-        #swir = self.resample(swir, 20)
 
         ndmi = self.norm_diff(nir, swir)
 
         return ndmi
 
-    def calculate_mndwi(self): #https://d1wqtxts1xzle7.cloudfront.net/47301066/Modification_of_normalised_difference_water_index_NDWI_to_enhance_openwater_features_in_remotely_sensed_imagery_1-with-cover-page-v2.pdf?Expires=1626274448&Signature=Ui~MJhkT2CLPYTzDsM-xOWcf7VKsMQTn16NXkNiqtTseHecbvqtWFYCeJ~UWFOZZwRwpnMS0yHQN3PdRIM29HwGeThyJnagpLBcLkveIok7nXgfieSclMUKmh7KHgtU2-294dC9nHyoZ40wr~kn71sZkGfb2ckvY3CzZ7s0JNlmGKVNA0A~C9bvTjPW4kOTDjjrriq7N3f9wZlW3Nfa8T0V0CP5o-0zEo6-a-s4bon~AdX7OhLe-rG6-cIdrfRtLDAr2x0L9jJXSNWe58P~~pz4Dm3OWJDpN6D7YmUELUyx-2PI--ql-r4Dr8~Y4EXxi-s-smRwaWsCFCyxeiMMpww__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA
+    def calculate_ndwi(self): # McFeeters NDWI https://doi.org/10.1080/01431169608948714
+        green = self.get_band('B03')
+        nir = self.get_band('B08')
+
+        ndwi = self.norm_diff(green, nir)
+        return ndwi
+
+    def calculate_mndwi(self): #https://doi.org/10.1080/01431160600589179
         green = self.get_band('B03') # Modified from McFeeters NDWI
         mir = self.get_band('B11')
-
-        #mir = self.resample(mir, 20)
 
         mndwi = self.norm_diff(green, mir)
         return mndwi
 
 
 
-    def calculate_evi(self):                            # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3965234/
+    def calculate_evi(self):                            # https://doi.org/10.3390/s7112636
         nir = self.get_band('B08')    # IDB used different bands, no idea why (B09, B05 and B01 respectively)
         red = self.get_band('B04')
         blue = self.get_band('B02')
@@ -149,11 +146,11 @@ class IndexObject(BandObject):
         G = 2.5
 
         num = nir-red
-        denom = np.multiply(nir + C, red) + L
+        denom = np.multiply(C, red) + nir + L
         evi2 = G * np.divide(num, denom)
         return evi2
 
-    def calculate_dvi(self):   #https://iopscience.iop.org/article/10.1088/1742-6596/1003/1/012083/pdf
+    def calculate_dvi(self):   #https://doi.org/10.1088/1742-6596/1003/1/012083
         nir = self.get_band('B08')
         red = self.get_band('B04')
 
@@ -168,25 +165,51 @@ class IndexObject(BandObject):
         cvi = np.divide(np.multiply(nir, red), green**2)
         return cvi
 
-    def calculate_mcari(self):
+    def calculate_mcari(self):  #https://doi.org/10.1016/S0034-4257(00)00113-9
         red = self.get_band('B04')
         green = self.get_band('B03')
         r_edge = self.get_band('B05')
 
-        #r_edge = self.resample(r_edge, 20)
-
         mcari = np.multiply(r_edge - red - 0.2 * (r_edge - green), np.divide(r_edge, red))
         return mcari
 
-    def calculate_ndi45m(self): #https://www.researchgate.net/profile/Praveen-Kumar-221/publication/350389170_An_Approach_for_Fraction_of_Vegetation_Cover_Estimation_in_Forest_Above-Ground_Biomass_Assessment_Using_Sentinel-2_Images/links/6064149b299bf173677ddd9a/An-Approach-for-Fraction-of-Vegetation-Cover-Estimation-in-Forest-Above-Ground-Biomass-Assessment-Using-Sentinel-2-Images.pdf
+    def calculate_ndi45m(self): #https://doi.org/10.1007/978-981-16-1086-8_1 
         nir = self.get_band('B05')
         red = self.get_band('B04')
-
-        #nir = self.resample(nir)
 
         ndi45m = self.norm_diff(nir, red)
         return ndi45m
 
-    def resampled_band(self, band, resolution):
-        presampled = self.get_band(band, resolution)
-        return self.resample(presampled, resolution)
+    def calculate_tct(self, coeffs):    #https://doi.org/10.1109/JSTARS.2019.2938388
+        blue = self.get_band('B02')
+        green = self.get_band('B03')
+        red = self.get_band('B04')
+        nir = self.get_band('B08')
+        swir1 = self.get_band('B11')
+        swir2 = self.get_band('B12')
+        bands = [blue, green, red, nir, swir1, swir2]
+        weighted_bands = []
+        for i in range(len(bands)):
+            weighted_bands.append(np.multiply(coeffs[i], bands[i]))
+        tct = sum(weighted_bands)
+        return tct
+
+    def calculate_tctb(self):
+        coeffs = [0.3510, 0.3813, 0.3437, 0.7196, 0.2396, 0.1949]
+
+        tctb = self.calculate_tct(coeffs)
+        return tctb
+
+    def calculate_tctg(self):
+        coeffs = [-0.3599, -0.3533, -0.4734, 0.6633, 0.0087, -0.2856]
+        
+        tctg = self.calculate_tct(coeffs)
+        return tctg
+
+    def calculate_tctw(self):
+        coeffs = [0.2578, 0.2305, 0.0883, 0.1071, -0.7611, -0.5308]
+        
+        tctw = self.calculate_tct(coeffs)
+        return tctw
+
+

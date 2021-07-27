@@ -44,7 +44,7 @@ class BandObject(object):
                 out_shape=(int(dataset.height * upscale_factor),
                     int(dataset.width * upscale_factor)
                 ),
-                resampling=Resampling.lanczos
+                resampling=Resampling.bilinear
             )
 
             data = data.reshape(data.shape[1], data.shape[2])
