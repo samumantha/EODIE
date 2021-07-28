@@ -129,6 +129,10 @@ class SplitshpObject(object):
             logging.info('splitted shapefiles now exist')
         else:
             logging.info('splitted shapefiles already exist')
+        removelist = glob.glob(os.path.join(self.output_directory, 'sentinel2_tiles_world_' + root + '.*'))
+        for file in removelist:
+            os.remove(file)
+        logging.info('deleted splitted worldtiles')
 
     def splitshp_world(self):
         #build the output name from both input files
