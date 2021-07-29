@@ -1,3 +1,4 @@
+# %%
 import os
 import argparse
 from matplotlib import lines
@@ -17,8 +18,8 @@ import numpy as np
 #parser = argparse.ArgumentParser(prog="myprogram",description="foo")
 parser = argparse.ArgumentParser()
 
-#parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
-parser.add_argument('--dir', dest= 'directory' , default="/home/jvarho/EODIE/testCSVs/combined_statistics",help = 'Write the directory path where the csv files are as absolute path')
+parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
+parser.add_argument('--dir', dest= 'directory' , default="/home/jvarho/EODIE/testTimeseries/stats_with_count/combined_kndvi.csv",help = 'Write the directory path where the csv files are as absolute path')
 parser.add_argument('--out',dest= 'output_directory',default="/home/jvarho/EODIE/testTimeseries",help= 'Write the directory path where you want the files to be outputted')
 parser.add_argument('--id', dest='ID', default="1,63,52,72,3" ,help="Write a list of id's separated by a comma")
 parser.add_argument('--index', dest= 'index', default="ndvi,kndvi,rvi,savi" ,help='write a list of indices you want to be plotted separated by a comma')
@@ -31,6 +32,7 @@ parser.add_argument('--seePoints',dest="seeDatapoints",default=1,type=int, help=
 parser.add_argument('--outlierDetection',dest='detectOutliers',default=1, type=int, help="By creating a prediction interval, anomalies can be detected outside of it. 1 for show, 0 for hide")
 parser.add_argument("--seeInterval", dest="seeInterval", default=1,type=int ,help="Visualise the prediction interval which is used for the outlier detection. 1 for show, 0 for hide")
 parser.add_argument('--seeSmoothened', dest="seeSmoothened", default=1, type=int, help="See a smoothened curve made of the data points. Uses Lowess smoothening. 1 for show, 0 for hide")
+parser.add_argument("--seeError", dest="standardError",default=1,type=int, help="You can see the standard error of each individual point. 1 for show, 0 for hide ")
 input=parser.parse_args()
 
 
@@ -47,6 +49,7 @@ seeDatapoints=input.seeDatapoints
 detectOutliers=input.detectOutliers
 seeSmoothing=input.seeSmoothened
 seeInterval=input.seeInterval
+standardError=input.standardError
 
 # Data collection: 
 mainDataFrame=pd.DataFrame()
@@ -94,7 +97,7 @@ if bool(endDate):
 stat='mean'
 wanted_data=['Dates',stat]
 
-print(mainDataFrame.to_string())
+#print(mainDataFrame.to_string())
 
 # Plotting:
 for id in ID_list:
@@ -106,14 +109,14 @@ for id in ID_list:
 
         plot_df['mean']=plot_df['mean'].astype(float)
         
+
         #operate smoothing
         smoother=LowessSmoother(smooth_fraction=0.2,iterations=1)
         smoother.smooth(plot_df['mean']) #Inputs the original data to tsmoothie
-        
-  
+         
         #generate intervals
         low, up = smoother.get_intervals('prediction_interval') #Interval can be changed to something else
-       
+        
         plot_df['lower']=low.reshape(-1,1)
         plot_df['upper']=up.reshape(-1,1) 
         
@@ -142,7 +145,18 @@ for id in ID_list:
 
         if seeDatapoints: 
             plt.plot(plot_df['mean'],'k.-', label='data points',linewidth=1)
-     
+
+        if standardError: #Integer value will be interpreted as boolean
+            plot_df['std']=plot_df['std'].astype(float)
+            plot_df['SE']= plot_df['std']/((plot_df['count'])**(1/2))  # the formula for standard deviation
+            z=1.96 #for 95% interval
+            plt.errorbar(x=plot_df.index ,fmt='.k', ecolor='r', y= plot_df["mean"], yerr= z*plot_df["SE"],linewidth=2)
+            #print(plot_df.to_string())
+      
+                
+
+        
+                         
         plt.legend()
         plt.xlim(plot_df.index[0],plot_df.index[-1]) #smallest date is first and biggest is last
         plt.title(str(index)+ " time series of id "+ str(id)  )
