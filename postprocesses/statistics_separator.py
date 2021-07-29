@@ -18,10 +18,10 @@ if directory is None or len(directory)==0: #Checks if argument is given
 
 
 
-stat_list=[]
+stat_list=[] #Takes note of every kind of statistics
 for entry in os.scandir(directory):
-    if entry.name.endswith('.csv') and entry.is_file: 
-        with open(entry,'r',newline='') as file:
+    if entry.name.endswith('.csv') and entry.is_file: #Makes sure it is a correct kind of file
+        with open(entry,'r',newline='') as file: 
             reader=csv.reader(file, delimiter=',')
             titles=next(reader) #The first row of csv file
             if not stat_list.__contains__(titles):
@@ -40,4 +40,6 @@ print('The files should now be copied in separate directories based on their sta
 
 #Can be its separate script or possibly be connected with the combine_statistics -scripts
 
+#Should the files be copied or moved? 
+# Should this script be separate or joined with the combine_statistics one?
 
