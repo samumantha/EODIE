@@ -55,11 +55,6 @@ for path in userinput.input:
         cloudmask = cloudobject.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
         indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'])
-<<<<<<< HEAD
-        shpname = userinput.shpbase + '_' + pathfinderobject.tile +'.shp'
-        geoobject = Geometry(shpname)
-        geoobject.reproject_to_epsg(indexobject.epsg)
-=======
         try:
             shpname = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
             geoobject = Geometry(shpname)
@@ -71,7 +66,6 @@ for path in userinput.input:
                 geoobject.reproject_to_epsg(indexobject.epsg)
             except FileNotFoundError:
                 continue
->>>>>>> c0cc517723357fbc6b3e53ec33401b5980eb8096
         shapefile = geoobject.geometries
 
         maxcloudcover = cfg['maxcloudcover']
