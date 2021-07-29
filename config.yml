@@ -4,3 +4,7 @@ maxcloudcover: 10
 # Extract files with xx m spatial resolution 
 # options: 10,20
 resolution: 10
+
+# Lookup table for storing the tiles and the IDs they include for every tile processed by EODIE with --stat 0
+# Table needed for array plotting
+lookup: "./postprocesses/testlookuptable.txt"
