@@ -55,11 +55,13 @@ for path in userinput.input:
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
         indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'])
         try:
-            geoobject = Geometry(os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp'))
+            shpname = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
+            geoobject = Geometry(shpname)
             geoobject.reproject_to_epsg(indexobject.epsg)
         except FileNotFoundError:
             try:
-                geoobject = Geometry(os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp'))
+                shpname = os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
+                geoobject = Geometry(shpname)
                 geoobject.reproject_to_epsg(indexobject.epsg)
             except FileNotFoundError:
                 continue
@@ -105,8 +107,4 @@ for path in userinput.input:
 
 keep_shapes = cfg['keep_shapes'] 
 if not keep_shapes: 
-    shp_remove_list = glob.glob(os.path.join(shapesplitter.output_directory, '*'))  
-    for file in shp_remove_list:
-        os.remove(file)
-    os.rmdir(shapesplitter.output_directory)
-    logging.info('deleted splitted shapefiles')
+    shapesplitter.delete_splitted_files()

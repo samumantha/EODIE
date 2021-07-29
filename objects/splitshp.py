@@ -155,3 +155,10 @@ class SplitshpObject(object):
                 pool.apply_async(self.write_splitted_shapefiles, args = (bounding_box_small_poly_shp, tile, self.output_directory, self.small_polygon_shapefile))
             pool.close()
             pool.join()
+
+    def delete_splitted_files(self):
+        shp_remove_list = glob.glob(os.path.join(self.output_directory, '*'))  
+        for file in shp_remove_list:
+            os.remove(file)
+        os.rmdir(self.output_directory)
+        logging.info('deleted splitted shapefiles')
