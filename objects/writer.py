@@ -19,6 +19,7 @@ class WriterObject(object):
         self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
         self.extractedarrays = extractedarrays
         self.statistics = statistics
+        self.tile = tile
 
     def write_csv(self):
         self.outpath = self.outpath + '_stat.csv'
@@ -36,7 +37,7 @@ class WriterObject(object):
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
 
-    def write_lookup(self, lookup, shapefile, tile, idname):
+    def write_lookup(self, lookup, shapefile, idname):
         with open(lookup) as f:
                 table = f.read().splitlines()
 
@@ -48,9 +49,9 @@ class WriterObject(object):
         lookup_tiles = []
         for line in table:
             lookup_tiles.append(line.split(':')[0])
-        intable = tile in lookup_tiles
+        intable = self.tile in lookup_tiles
 
         if not intable:
             with open(lookup, 'a') as f:
-                f.write(tile + ':' + ','.join(str(id) for id in IDs) + "\n")
-            logging.info('appended tile ' + tile + ' to lookup table')
+                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
+            logging.info('appended tile ' + self.tile + ' to lookup table')

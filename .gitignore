@@ -5,3 +5,4 @@ testfiles/*
 *.csv
 docs/_build/*
 .DS_Store
+*.png
