@@ -1,4 +1,3 @@
-
 import os
 import argparse
 from matplotlib import lines
@@ -12,7 +11,7 @@ from scipy.sparse import data
 from tsmoothie.smoother import LowessSmoother
 
 
-from sklearn.ensemble import IsolationForest
+#from sklearn.ensemble import IsolationForest
 import numpy as np
 
 #parser = argparse.ArgumentParser(prog="myprogram",description="foo")
