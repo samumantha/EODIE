@@ -9,6 +9,7 @@ from osgeo import osr
 import subprocess
 import glob
 import logging
+import re
 
 class SplitshpObject(object):
 
@@ -39,6 +40,7 @@ class SplitshpObject(object):
             logging.info('input shapefile has EPSG '  +myepsg + ' that works!')
             return myshp
         else:
+            root = re.sub('_reprojected_\d*', '', root)
             reprojectedshape = os.path.join(self.output_directory, root + '_reprojected_' + myepsg +  ext)
             if not os.path.exists(reprojectedshape):
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + myshp
