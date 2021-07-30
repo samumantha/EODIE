@@ -146,15 +146,16 @@ for id in ID_list:
             plt.plot(plot_df['mean'],'k.-', label='data points',linewidth=1)
 
         if standardError: #Integer value will be interpreted as boolean
-            plot_df['std']=plot_df['std'].astype(float)
-            plot_df['SE']= plot_df['std']/((plot_df['count'])**(1/2))  # the formula for standard deviation
-            z=1.96 #for 95% interval
-            plt.errorbar(x=plot_df.index ,fmt='.k', ecolor='r', y= plot_df["mean"], yerr= z*plot_df["SE"],linewidth=2)
+            try:
+                plot_df['std']=plot_df['std'].astype(float)
+                plot_df['SE']= plot_df['std']/((plot_df['count'])**(1/2))  # the formula for standard deviation
+                z=1.96 #for 95% interval
+                plt.errorbar(x=plot_df.index ,fmt='.k', ecolor='r', y= plot_df["mean"], yerr= z*plot_df["SE"],linewidth=2)
+            except:
+                print("The files you inputted do not have 'count' statistic in them which is why errorbars can't be shown")
             #print(plot_df.to_string())
       
-                
-
-        
+            
                          
         plt.legend()
         plt.xlim(plot_df.index[0],plot_df.index[-1]) #smallest date is first and biggest is last
