@@ -31,7 +31,7 @@ parser.add_argument('--seePoints',dest="seeDatapoints",default=1,type=int, help=
 parser.add_argument('--outlierDetection',dest='detectOutliers',default=1, type=int, help="By creating a prediction interval, anomalies can be detected outside of it. 1 for show, 0 for hide")
 parser.add_argument("--seeInterval", dest="seeInterval", default=1,type=int ,help="Visualise the prediction interval which is used for the outlier detection. 1 for show, 0 for hide")
 parser.add_argument('--seeSmoothened', dest="seeSmoothened", default=1, type=int, help="See a smoothened curve made of the data points. Uses Lowess smoothening. 1 for show, 0 for hide")
-parser.add_argument("--seeError", dest="standardError",default=1,type=int, help="You can see the standard error of each individual point. 1 for show, 0 for hide ")
+parser.add_argument("--seeError", dest="standardError",default=0,type=int, help="You can see the standard error of each individual point. 1 for show, 0 for hide ")
 input=parser.parse_args()
 
 
