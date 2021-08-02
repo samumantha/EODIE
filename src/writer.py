@@ -12,7 +12,7 @@ import csv
 import logging
 import pickle
 
-class WriterObject(object):
+class Writer(object):
 
     def __init__(self,outdir, date, tile, extractedarrays, index, statistics):
         self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
@@ -20,6 +20,7 @@ class WriterObject(object):
         self.statistics = statistics
 
     def write_csv(self):
+        """ writing statistics results from json into csv"""
         self.outpath = self.outpath + '_stat.csv'
         logging.info('stat to csv in: ' + self.outpath)
         with open(self.outpath, mode='w') as csv_file:
@@ -30,6 +31,7 @@ class WriterObject(object):
                 csv_writer.writerow(onerow)
 
     def write_pickle_arr(self):
+        """ writing extracted arrays to pickle"""
         self.outpath = self.outpath + '_array'
         logging.info('arrays to pickle in: ' + self.outpath)
         with open(self.outpath, mode='wb') as pkl_file:

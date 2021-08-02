@@ -63,6 +63,8 @@ class Validator(object):
         else:
             exit('Please provide a shapefile with polygons')
 
+            
+
 
     
  
