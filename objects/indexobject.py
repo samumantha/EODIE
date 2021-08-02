@@ -91,23 +91,6 @@ class IndexObject(BandObject):
 
         return kndvi
 
-    '''
-    def calculate_ppi(self):
-        red = self.get_array('B04',self.resolution)
-        nir = self.get_array('B08',self.resolution)
-        angles = self.get_array('sunZenithAngles', self.resolution) #sun zenith angles in degrees (valus of 15-80)
-        G = 0.5 #Valid for needle- and flat leafs when assuming spherical leaf angle distribution
-        d_c = 0.0336+ np.divide(0.0477,np.cos(angles))
-        Q_e = d_c + np.multiply((1-d_c), np.divide(G,np.cos(angles)))
-        #DVI_max =  #??? Estimated individually for each pixel and no default value found
-        DVI_soil = 0.09 #Value gotten by estimating 41 major soil types
-        DVI = nir-red
-        #K = np.multiply(np.divide(1,4*Q_e),np.divide(1+DVI_max,1-DVI_max))
-        #PPI = np.multiply(K,np.log(np.divide(DVI_max-DVI,DVI_max-DVI_soil)))
-        #return PPI
-        #Code does not work because something wrong with angles. Get array probably not designed for this
-        '''
-
 
 
 
