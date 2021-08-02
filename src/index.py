@@ -34,7 +34,8 @@ class Index(RasterData):
         return getattr(self, 'calculate_' + index, lambda: default)()
 
     def get_band(self, band):
-        band = self.cfg[band]
+        if not re.match('B\d+A*',band):
+            band = self.cfg[band]
         if re.match('B0[2348]', band):
             bandres = 10
         elif re.match('B0[567]', band) or re.match('B1[12]', band) or band == 'B8A':

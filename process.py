@@ -78,7 +78,6 @@ for path in userinput.input:
         if rastervalidatorobject.cloudcovered and rastervalidatorobject.datacovered:
 
             for index in userinput.indexlist:
-                # check if bands are re
                 if index in vegindex.supportedindices:
                     array = vegindex.calculate_index(index)
                 elif re.match(cfg['band_designation'], index):
