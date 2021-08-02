@@ -46,8 +46,8 @@ for path in userinput.input:
         cloudmask = cloudobject.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
         indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'])
-        shpname = userinput.shpbase + '_' + pathfinderobject.tile +'.shp'
-        geoobject = Geometry(shpname)
+        shp_str = userinput.shpbase + '_' + pathfinderobject.tile +'.shp'
+        geoobject = Geometry(shp_str)
         geoobject.reproject_to_epsg(indexobject.epsg)
         shapefile = geoobject.geometries
 
@@ -87,7 +87,7 @@ for path in userinput.input:
                     writerobject.write_pickle_arr()
 
                     lookup_file = cfg['lookup']
-                    writerobject.write_lookup(lookup_file, shpname, userinput.idname)
+                    writerobject.write_lookup(lookup_file, shp_str, userinput.idname)
             
         else:
             logging.warning('Cloudcovered or no data in Area of interest!')
