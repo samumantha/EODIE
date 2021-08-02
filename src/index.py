@@ -34,32 +34,24 @@ class Index(RasterData):
         return getattr(self, 'calculate_' + index, lambda: default)()
 
     def get_band(self, band):
-        print('get band start')
-        print(band)
         band = self.cfg[band]
-        print(band)
         if re.match('B0[2348]', band):
             bandres = 10
         elif re.match('B0[567]', band) or re.match('B1[12]', band) or band == 'B8A':
             bandres = 20
         else:
             bandres = 60
-        print('matching done')
-        print(bandres)
-        print(self.resolution)
         try:
             array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution), self.quantification_value)
         except IndexError:
             array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
-        print('array done')
+
         return array
 
     def norm_diff(self, a, b):
-        print('calc diff start')
         return np.divide(a-b, a+b)
         
     def calculate_ndvi(self):
-        print('calc ndvi start')
         """ Calculates NDVI (Kriegler FJ, Malila WA, Nalepka RF, Richardson W (1969) Preprocessing transformations and their effect on multispectral recognition. Remote Sens Environ VI:97–132)
         from red and nir bands"""
 

@@ -61,8 +61,6 @@ class RasterData(object):
         upscale_factor = resolution/targetres
         band = self.get_bandfile(band)
         with rasterio.open(band) as dataset:
-            print('opened')
-            #data1 =  np.array(f.read(1)).astype('f4')
             # resample data to target shape
             data = dataset.read(
                 out_shape=(int(dataset.height * upscale_factor),
@@ -70,11 +68,7 @@ class RasterData(object):
                 ),
                 resampling=Resampling.bilinear
             ).astype('f4')
-            print('resampled')
-            print(data.dtype)
             data = data.reshape(data.shape[1], data.shape[2])
-            print('reshaped')
-            print(data.dtype)
         #return data.astype('f4')
         return data
 
