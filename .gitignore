@@ -4,5 +4,10 @@ testfiles/*
 *.log
 *.csv
 docs/_build/*
-*.json
 .DS_Store
+__pycache__
+.pytest_cache
+*.json
+*sentinel2_tiles_world*
+.ipynb_checkpoints
+.vscode

@@ -12,25 +12,26 @@ from shapely.geometry import Polygon
 import logging
 from shutil import copyfile
 
-class Geometry(object):
+class VectorData(object):
 
     def __init__(self, geometries):
         self.geometries = geometries 
     
-    def split_path(self):
-        #split shapefile path into parts for later use
+    def _split_path(self):
+        """split shapefile path into parts"""
         head, tail = os.path.split(self.geometries)
         root, ext = os.path.splitext(tail)
         return head,tail,root,ext
 
     def get_projectionfile(self):
-        head,tail,root,ext = self.split_path()
+        """get path to the projectionfile that is associated with the shapefile"""
+        head,_ ,root,_ = self._split_path()
         rootprj = root + '.prj'
         projectionfile = os.path.join(head, rootprj)
         return projectionfile
 
     def get_epsg(self):
-        #ectract epsg code from prj file
+        """extract epsg code from prj file"""
         #open and read prj file
         projectionfile = self.get_projectionfile()
         prj_file = open(projectionfile , 'r')
@@ -45,10 +46,11 @@ class Geometry(object):
         return epsgcode
 
     def reproject_to_epsg(self, myepsg):
+        """ reproject shapefile to given EPSG code, save as new shapefile file"""
         # reproject and save shapefiles to given EPSG code
         logging.info('Checking the projection of the inputfile now')
         epsgcode = self.get_epsg()
-        head,tail,root,ext = self.split_path()
+        head,_,root,ext = self._split_path()
 
         # check if the shapefile is already in right projection
         if epsgcode == myepsg:
@@ -65,7 +67,7 @@ class Geometry(object):
             self.geometries = reprojectedshape
 
     def get_properties(self):
-        # extract driver, schema and crs from shapefile
+        """ extract driver, schema and crs from shapefile """
         with fiona.open(self.geometries,'r') as opengeom:
             driver = opengeom.driver
             schema = deepcopy(opengeom.schema)
@@ -73,13 +75,14 @@ class Geometry(object):
             return driver,schema,crs
     
     def get_boundingbox(self):
-        # extract bounding box Polygon object from shapefile 
+        """ extract bounding box Polygon object from shapefile """
         with fiona.open(self.geometries,'r') as open_shp:
             bounding_box_coordinates = open_shp.bounds
             logging.info(bounding_box_coordinates)
         return Polygon.from_bounds(bounding_box_coordinates[0], bounding_box_coordinates[1], bounding_box_coordinates[2], bounding_box_coordinates[3] )
         
     def get_convex_hull(self):
+        """ extract convex hull of given shapefile, save to new shapefile"""
         # Get a Layer
         inDriver = ogr.GetDriverByName("ESRI Shapefile")
         inDataSource = inDriver.Open(self.geometries, 0)
