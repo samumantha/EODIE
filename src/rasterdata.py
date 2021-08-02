@@ -30,22 +30,22 @@ class RasterData(object):
         
     def get_bandfile(self,bandname):
         """ get bandfile given a band name and config file, returns the inpath for anything that is not Sentinel-2 or Landat8 and ends with tif"""
-        print(self.cfg['platform'])
+        #print(self.cfg['platform'])
         if self.cfg['platform'] == 's2':
             try:
-                return glob.glob(os.path.join(self.inpath, 'R'+ str(self.cfg['pixelsize']) + 'm','*'+self.cfg[bandname]+'_' + str(self.cfg['pixelsize']) +'m.jp2'))[0]
+                return glob.glob(os.path.join(self.inpath, 'R'+ str(self.cfg['pixelsize']) + 'm','*'+bandname+'_' + str(self.cfg['pixelsize']) +'m.jp2'))[0]
             except:
                 #all bands exist in 20m
-                return glob.glob(os.path.join(self.inpath, 'R20m','*'+self.cfg[bandname]+'_20m.jp2'))[0]
+                return glob.glob(os.path.join(self.inpath, 'R20m','*'+bandname+'_20m.jp2'))[0]
         elif self.cfg['platform'] == 'ls8':
-            return glob.glob(os.path.join(self.inpath, '*'+ self.cfg[bandname]+ '*' + '.tif'))[0]
+            return glob.glob(os.path.join(self.inpath, '*'+ bandname+ '*' + '.tif'))[0]
         elif self.cfg['platform'] is None:
             if self.inpath.endswith('.tif'):
                 return self.inpath
 
     def get_metadata(self):
         """ get affine from red band file as representation for all"""
-        with rasterio.open(self.get_bandfile('red')) as src:
+        with rasterio.open(self.get_bandfile(self.cfg['red'])) as src:
             self.epsg = str(src.crs).split(':')[-1]
             self.affine = src.transform
 
@@ -59,19 +59,24 @@ class RasterData(object):
     #from Petteri
     def get_resampled_array(self, band, resolution, targetres):
         upscale_factor = resolution/targetres
-        with rasterio.open(self.get_bandfile(band, resolution)) as dataset:
-        
+        band = self.get_bandfile(band)
+        with rasterio.open(band) as dataset:
+            print('opened')
+            #data1 =  np.array(f.read(1)).astype('f4')
             # resample data to target shape
             data = dataset.read(
                 out_shape=(int(dataset.height * upscale_factor),
                     int(dataset.width * upscale_factor)
                 ),
                 resampling=Resampling.bilinear
-            )
-
+            ).astype('f4')
+            print('resampled')
+            print(data.dtype)
             data = data.reshape(data.shape[1], data.shape[2])
-            return data.astype('f4')
-        
+            print('reshaped')
+            print(data.dtype)
+        #return data.astype('f4')
+        return data
 
        
 

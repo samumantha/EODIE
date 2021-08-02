@@ -39,6 +39,10 @@ datepattern: '20[1-2][0-9][0-1][0-9][0-3][0-9]'
 
 band_designation: 'B[0-1]?\dA?'
 
+# Quantification value used to multiple the reflectance to get DN
+# This could be read from metadata but for now at least is here
+quantification_value: 10000
+
 
 
 

@@ -20,6 +20,7 @@ class Index(RasterData):
     def __init__(self, inpath, configfile):
         super().__init__(inpath,configfile)
         self.quantification_value = self.cfg['quantification_value']
+        self.resolution = self.cfg['pixelsize']
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
     
     def mask_array(self, array,maskarray):
@@ -33,22 +34,32 @@ class Index(RasterData):
         return getattr(self, 'calculate_' + index, lambda: default)()
 
     def get_band(self, band):
+        print('get band start')
+        print(band)
+        band = self.cfg[band]
+        print(band)
         if re.match('B0[2348]', band):
             bandres = 10
         elif re.match('B0[567]', band) or re.match('B1[12]', band) or band == 'B8A':
             bandres = 20
         else:
             bandres = 60
+        print('matching done')
+        print(bandres)
+        print(self.resolution)
         try:
             array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution), self.quantification_value)
         except IndexError:
             array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
+        print('array done')
         return array
 
     def norm_diff(self, a, b):
+        print('calc diff start')
         return np.divide(a-b, a+b)
         
     def calculate_ndvi(self):
+        print('calc ndvi start')
         """ Calculates NDVI (Kriegler FJ, Malila WA, Nalepka RF, Richardson W (1969) Preprocessing transformations and their effect on multispectral recognition. Remote Sens Environ VI:97–132)
         from red and nir bands"""
 
@@ -106,7 +117,7 @@ class Index(RasterData):
     def calculate_ndmi(self): # NDMI (moisture) as it is used by Wilson (2002) https://doi.org/10.1016/S0034-4257(01)00318-2
         #similar to the Gao (1996) NDWI, NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index
         nir = self.get_band('nir') # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
-        swir = self.get_band('swir1')
+        swir1 = self.get_band('swir1')
 
         ndmiarray = self.norm_diff(nir, swir1)
 
@@ -123,7 +134,7 @@ class Index(RasterData):
         green = self.get_band('green') # Modified from McFeeters NDWI
         swir1 = self.get_band('swir1') #mir, band11 for Sentinel-2
 
-        mndwiarray = self.norm_diff(green, swir)
+        mndwiarray = self.norm_diff(green, swir1)
         return mndwiarray
 
 

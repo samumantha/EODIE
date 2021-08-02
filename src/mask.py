@@ -36,6 +36,6 @@ class Mask(RasterData):
 
     def create_cloudmask(self):
         """ creates a mask from a file with mask information (eg about cloudy pixels), binarizes it, and resamples it to 10m pixel size """
-        cloudmask = self._resample(self.binarize_cloudmask(self.get_array('cloudfilename')), int)
+        cloudmask = self._resample(self.binarize_cloudmask(self.get_array(self.cfg['cloudfilename'])), int)
         return cloudmask
 
