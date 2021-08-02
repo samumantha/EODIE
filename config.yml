@@ -1,6 +1,0 @@
-# Process only files with less than xx % cloudcover
-maxcloudcover: 10
-
-# Extract files with xx m spatial resolution 
-# options: 10,20
-resolution: 10

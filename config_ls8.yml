@@ -1,0 +1,37 @@
+platform: 'ls8'
+
+# Process only files with less than xx % cloudcover
+maxcloudcover: 10
+
+# for landsat only one resolution given
+pixelsize:
+
+# Values to be to be included in cloudmask
+# https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-1-level-1-quality-assessment-band?qt-science_support_page_related_con=0#qt-science_support_page_related_con
+# default [2,3,4,6]
+tobemaskedlist: 
+  - 2 #radiometric saturation
+  - 3 #cloud
+  - 4 #cloud shadow
+  - 6 #cirrus
+
+#all bands are located in parent directory directly
+bandlocation: ./
+
+#indicator for cloudfile
+cloudfilename: 'pixel_qa'
+
+# LS8 bands
+# https://www.usgs.gov/media/images/landsat-8-band-designations
+red : 'band4'
+green: 'band3'
+blue: 'band2'
+nir: 'band5'
+swir2: 'band7'
+
+tilepattern: '[0-9]{6}'
+
+# the first that is found is used
+datepattern: '20[1-2][0-9][0-1][0-9][0-3][0-9]'
+
+band_designation: 'band\d?\d'

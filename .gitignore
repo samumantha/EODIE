@@ -5,3 +5,9 @@ testfiles/*
 *.csv
 docs/_build/*
 .DS_Store
+__pycache__
+.pytest_cache
+*.json
+*sentinel2_tiles_world*
+.ipynb_checkpoints
+.vscode
