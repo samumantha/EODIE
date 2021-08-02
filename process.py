@@ -56,13 +56,13 @@ for path in userinput.input:
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
         indexobject = IndexObject(pathfinderobject.imgpath,cfg['resolution'])
         try:
-            shpname = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
-            geoobject = Geometry(shpname)
+            shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
+            geoobject = Geometry(shp_str)
             geoobject.reproject_to_epsg(indexobject.epsg)
         except FileNotFoundError:
             try:
-                shpname = os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
-                geoobject = Geometry(shpname)
+                shp_str = os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
+                geoobject = Geometry(shp_str)
                 geoobject.reproject_to_epsg(indexobject.epsg)
             except FileNotFoundError:
                 continue
@@ -104,7 +104,7 @@ for path in userinput.input:
                     writerobject.write_pickle_arr()
 
                     lookup_file = cfg['lookup']
-                    writerobject.write_lookup(lookup_file, shpname, userinput.idname)
+                    writerobject.write_lookup(lookup_file, shp_str, userinput.idname)
             
         else:
             logging.warning('Cloudcovered or no data in Area of interest!')
