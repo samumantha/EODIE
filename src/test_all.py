@@ -70,11 +70,11 @@ class TestAll(object):
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         rasterdata = RasterData(inpath, 'config_s2.yml')
 
-        bandfile = rasterdata.get_bandfile('red') 
+        bandfile = rasterdata.get_bandfile('B04') 
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
         assert (bandfile == rightbandfile), 'Bandfile fails'
 
-        array = rasterdata.get_array('red')
+        array = rasterdata.get_array('B04')
         rightarrayshape = (10980, 10980)
         assert (array.shape == rightarrayshape), 'Bandarray fails'
 
