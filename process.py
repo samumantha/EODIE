@@ -44,7 +44,7 @@ for path in userinput.input:
         mask = Mask(pathfinderobject.imgpath, userinput.configfile)
         cloudmask = mask.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
-        vegindex = Index(pathfinderobject.imgpath,userinput.configfile)
+        vegindex = Index(pathfinderobject.imgpath,cfg['resolution'], cfg['quantification_value'])
         geoobject = VectorData(userinput.shpbase + '_' + pathfinderobject.tile +'.shp')
         geoobject.reproject_to_epsg(vegindex.epsg)
         shapefile = geoobject.geometries

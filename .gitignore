@@ -11,3 +11,5 @@ __pycache__
 *sentinel2_tiles_world*
 .ipynb_checkpoints
 .vscode
+*.png
+docs/_build/*

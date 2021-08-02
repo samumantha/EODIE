@@ -12,6 +12,8 @@ import glob
 import os
 import rasterio
 import yaml
+#Petteris resampling
+from rasterio.enums import Resampling
 
 
 class RasterData(object):
@@ -53,6 +55,22 @@ class RasterData(object):
             #return np.array(f.read(1)).astype(float)
             #for float 32
             return np.array(f.read(1)).astype(dtype)
+
+    #from Petteri
+    def get_resampled_array(self, band, resolution, targetres):
+        upscale_factor = resolution/targetres
+        with rasterio.open(self.get_bandfile(band, resolution)) as dataset:
+        
+            # resample data to target shape
+            data = dataset.read(
+                out_shape=(int(dataset.height * upscale_factor),
+                    int(dataset.width * upscale_factor)
+                ),
+                resampling=Resampling.bilinear
+            )
+
+            data = data.reshape(data.shape[1], data.shape[2])
+            return data.astype('f4')
         
 
        

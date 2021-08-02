@@ -28,7 +28,9 @@ red : 'B04'
 green: 'B03'
 blue: 'B02'
 nir: 'B08'
+swir1: 'B11'
 swir2: 'B12'
+r_edge: 'B05'
 
 tilepattern: '(?<=T)[0-9]{2}[A-Z]{3}'
 
