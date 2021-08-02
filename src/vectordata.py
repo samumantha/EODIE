@@ -11,6 +11,7 @@ from copy import deepcopy
 from shapely.geometry import Polygon
 import logging
 from shutil import copyfile
+import re
 
 class VectorData(object):
 
@@ -56,6 +57,7 @@ class VectorData(object):
         if epsgcode == myepsg:
             logging.info('Input shapefile has EPSG {} that works!'.format(epsgcode))
         else:
+            root = re.sub('_reprojected_\d*', '', root)
             reprojectedshape = os.path.join(head, root + '_reprojected_' + myepsg +  ext)
             if not os.path.exists(reprojectedshape):
                 # use ogr commandline utility to reproject and save shapefile

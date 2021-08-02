@@ -12,9 +12,11 @@ from pathfinder import Pathfinder
 from rastervalidator_s2 import RasterValidatorS2
 from writer import Writer
 from userinput import UserInput
+from splitshp import SplitshpObject
 import logging
 from datetime import datetime 
 import yaml
+import fiona
 
 userinput = UserInput()
 
@@ -29,6 +31,14 @@ if not os.path.exists(userinput.outpath):
 #setup logging 
 logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
 
+
+#Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+small_polygon_shapefile = userinput.shpbase + '.shp'
+shp_directory, shp_name = os.path.split(userinput.shpbase)
+world_tiles = 'shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world.shp'
+shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory)
+shapesplitter.splitshp()
+
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
 
@@ -37,16 +47,26 @@ for path in userinput.input:
     logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
     logging.info('Tile is {}'.format(pathfinderobject.tile))
     logging.info('Date is {}'.format(pathfinderobject.date))
-    
 
-    if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate):
+    if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
     
         mask = Mask(pathfinderobject.imgpath, userinput.configfile)
         cloudmask = mask.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
+
         vegindex = Index(pathfinderobject.imgpath,userinput.configfile)
-        geoobject = VectorData(userinput.shpbase + '_' + pathfinderobject.tile +'.shp')
-        geoobject.reproject_to_epsg(vegindex.epsg)
+        try:
+            shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
+            geoobject = VectorData(shp_str)
+            geoobject.reproject_to_epsg(vegindex.epsg)
+        except FileNotFoundError:
+            try:
+                shp_str = os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
+                geoobject = VectorData(shp_str)
+                geoobject.reproject_to_epsg(vegindex.epsg)
+            except FileNotFoundError:
+                continue
+
         shapefile = geoobject.geometries
 
         maxcloudcover = cfg['maxcloudcover']
@@ -86,7 +106,12 @@ for path in userinput.input:
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
                     extractorobject.extract_arrays()
                     writerobject.write_pickle_arr()
+
+                    lookup_file = cfg['lookup']
+                    writerobject.write_lookup(lookup_file, shp_str, userinput.idname)
             
         else:
             logging.warning('Cloudcovered or no data in Area of interest!')
-            
+
+if not userinput.keep_shp: 
+    shapesplitter.delete_splitted_files()
