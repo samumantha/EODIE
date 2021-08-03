@@ -48,6 +48,7 @@ class RasterData(object):
     def get_metadata(self):
         """ get affine from red band file as representation for all"""
         with rasterio.open(self.get_bandfile(self.cfg['red'])) as src:
+            self.crs = src.crs
             self.epsg = str(src.crs).split(':')[-1]
             self.affine = src.transform
 
