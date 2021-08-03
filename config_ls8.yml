@@ -1,3 +1,6 @@
+#location of Ls8-world shapefile
+tileshp: 
+
 platform: 'ls8'
 
 # Process only files with less than xx % cloudcover

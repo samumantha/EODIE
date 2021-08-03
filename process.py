@@ -35,7 +35,7 @@ logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strf
 #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
 small_polygon_shapefile = userinput.shpbase + '.shp'
 shp_directory, shp_name = os.path.split(userinput.shpbase)
-world_tiles = 'shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world.shp'
+world_tiles = cfg['tileshp']+'.shp'
 shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory)
 shapesplitter.splitshp()
 

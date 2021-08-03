@@ -45,7 +45,7 @@ class Index(RasterData):
         # B08 is the only one that only exists in 10m resolution
         if band != 'B08':
             try:
-                array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution, RasterData.BILINEAR), self.quantification_value)
+                array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution), self.quantification_value)
             except IndexError:
                 array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
         else:
