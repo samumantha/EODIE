@@ -34,19 +34,22 @@ class Index(RasterData):
         return getattr(self, 'calculate_' + index, lambda: default)()
 
     def get_band(self, band):
-        if not re.match('B\d+A*',band):
+        if not re.match(r'B\d+A*',band):
             band = self.cfg[band]
-        if re.match('B0[2348]', band):
+        if re.match(r'B0[2348]', band):
             bandres = 10
-        elif re.match('B0[567]', band) or re.match('B1[12]', band) or band == 'B8A':
+        elif re.match(r'B0[567]', band) or re.match(r'B1[12]', band) or band == 'B8A':
             bandres = 20
         else:
             bandres = 60
-        try:
-            array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution), self.quantification_value)
-        except IndexError:
-            array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
-
+        # B08 is the only one that only exists in 10m resolution
+        if band != 'B08':
+            try:
+                array = np.divide(self.get_resampled_array(band, max(bandres, self.resolution), self.resolution, RasterData.BILINEAR), self.quantification_value)
+            except IndexError:
+                array =  np.divide(self.get_resampled_array(band, min(bandres, self.resolution), self.resolution), self.quantification_value)
+        else:
+            array = np.divide(self.get_resampled_array(band, bandres, self.resolution), self.quantification_value)
         return array
 
     def norm_diff(self, a, b):
@@ -129,8 +132,6 @@ class Index(RasterData):
 
         mndwiarray = self.norm_diff(green, swir1)
         return mndwiarray
-
-
 
     def calculate_evi(self):                            # https://doi.org/10.3390/s7112636
         nir = self.get_band('nir')    # IDB used different bands, no idea why (B09, B05 and B01 respectively)

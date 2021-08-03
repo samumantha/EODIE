@@ -15,7 +15,6 @@ import yaml
 #Petteris resampling
 from rasterio.enums import Resampling
 
-
 class RasterData(object):
 
     def __init__(self, inpath, configfile):
@@ -35,8 +34,11 @@ class RasterData(object):
             try:
                 return glob.glob(os.path.join(self.inpath, 'R'+ str(self.cfg['pixelsize']) + 'm','*'+bandname+'_' + str(self.cfg['pixelsize']) +'m.jp2'))[0]
             except:
-                #all bands exist in 20m
-                return glob.glob(os.path.join(self.inpath, 'R20m','*'+bandname+'_20m.jp2'))[0]
+                #all bands exist in 20m (except for B08)
+                if bandname == 'B08':
+                    return glob.glob(os.path.join(self.inpath, 'R10m','*'+bandname+'_10m.jp2'))[0]
+                else:
+                    return glob.glob(os.path.join(self.inpath, 'R20m','*'+bandname+'_20m.jp2'))[0]
         elif self.cfg['platform'] == 'ls8':
             return glob.glob(os.path.join(self.inpath, '*'+ bandname+ '*' + '.tif'))[0]
         elif self.cfg['platform'] is None:
@@ -56,7 +58,6 @@ class RasterData(object):
             #for float 32
             return np.array(f.read(1)).astype(dtype)
 
-    #from Petteri
     def get_resampled_array(self, band, resolution, targetres):
         upscale_factor = resolution/targetres
         band = self.get_bandfile(band)
@@ -71,6 +72,8 @@ class RasterData(object):
             data = data.reshape(data.shape[1], data.shape[2])
         #return data.astype('f4')
         return data
+
+
 
        
 
