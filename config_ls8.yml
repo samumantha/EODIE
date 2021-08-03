@@ -43,3 +43,29 @@ band_designation: 'band\d?\d'
 # Quantification value used to multiple the reflectance to get DN
 # This could be read from metadata but for now at least is here
 quantification_value: 1
+
+# available resolutions per band
+band1: [30]
+band2: [30]
+band3: [30]
+band4: [30]
+band5: [30]
+band6: [30]
+band7: [30]
+# to be continued
+
+#upsampling (converting to higher resolution/smaller cells)
+#available: 'biliner','nearest','cubic','average', ...
+# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+
+upsampling_method: 'bilinear'
+
+#downsampling (converting to lower resolution/larger cellsize)
+#available: 'bilinear','nearest','cubic','average', ...
+# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+
+downsampling_method: 'bilinear'
+
+# path building set *after inpath* to get the bandfile
+
+pathbuildinglist: ['*', 'bandname', '*' , '.tif']

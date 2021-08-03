@@ -81,10 +81,11 @@ for path in userinput.input:
                 if index in vegindex.supportedindices:
                     array = vegindex.calculate_index(index)
                 elif re.match(cfg['band_designation'], index):
-                    array = vegindex.get_band(index)
+                    array = vegindex.get_array(index)
                 else:
                     logging.warning('Chosen index {} not available, continuing with next index.'.format(index))
 
+                
                 masked_array= vegindex.mask_array(array,cloudmask)
                     
                 affine = vegindex.affine

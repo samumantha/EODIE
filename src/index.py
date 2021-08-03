@@ -19,7 +19,7 @@ class Index(RasterData):
 
     def __init__(self, inpath, configfile):
         super().__init__(inpath,configfile)
-        self.quantification_value = self.cfg['quantification_value']
+        #self.quantification_value = self.cfg['quantification_value']
         self.resolution = self.cfg['pixelsize']
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
     
@@ -58,9 +58,10 @@ class Index(RasterData):
     def calculate_ndvi(self):
         """ Calculates NDVI (Kriegler FJ, Malila WA, Nalepka RF, Richardson W (1969) Preprocessing transformations and their effect on multispectral recognition. Remote Sens Environ VI:97–132)
         from red and nir bands"""
+        print('calculating ndvi')
 
-        red = self.get_band('red')
-        nir = self.get_band('nir')
+        red = self.get_array('red')
+        nir = self.get_array('nir')
 
         ndviarray = self.norm_diff(nir, red)
         
