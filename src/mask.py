@@ -19,7 +19,7 @@ class Mask(RasterData):
             self.cfg = yaml.safe_load(ymlfile)
 
     def load_binary_mask(self,external):
-        """ Loads an external mask that needs to be a rasterfile with 10 m pixelsize and overlap exactly with the file to be masked """
+        """ Loads an external mask that needs to be a rasterfile with pixelsize and overlap exactly with the file to be masked """
         with rasterio.open(external) as f:
             return np.array(f.read(1)).astype(int)
 
@@ -36,19 +36,9 @@ class Mask(RasterData):
 
     def create_cloudmask(self):
         """ creates a mask from a file with mask information (eg about cloudy pixels), binarizes it, and resamples it to 10m pixel size """
-        #pixelsize = self.cfg['pixelsize']
 
-        #binarize missing
-        print(self.cfg['cloudfilename'])
         cloudarray= self.get_array('cloudfilename', 'nearest')
         cloudmask = self.binarize_cloudmask(cloudarray)
 
-        """
-        if pixelsize == 10 :
-            cloudmask = self._resample(self.binarize_cloudmask(self.get_array(self.cfg['cloudfilename'])), int)
-        elif pixelsize == 20 or pixelsize is None:
-            cloudmask = self.binarize_cloudmask(self.get_array(self.cfg['cloudfilename'], int))
-        return cloudmask
-        """
         return cloudmask
 
