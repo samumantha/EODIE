@@ -108,7 +108,7 @@ class RasterData(object):
                            int(dataset.width * scaling_factor)
                            ),
                 resampling=self.resamplingdict[resampling_method]
-            )
+
             # above results in 3D data, reshape needed to get 2D data
             data = data.reshape(data.shape[1], data.shape[2])
             
