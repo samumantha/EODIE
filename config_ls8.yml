@@ -54,17 +54,12 @@ band6: [30]
 band7: [30]
 # to be continued
 
-#upsampling (converting to higher resolution/smaller cells)
-#available: 'biliner','nearest','cubic','average', ...
+#upsampling (converting to higher resolution/smaller cells) / downsampling (converting to lower resolution/larger cellsize)
+#available: ‘nearest’, ‘bilinear’, ‘cubic’, ‘cubic_spline’, ‘lanczos’, ‘average’, ‘mode’, and ‘gauss’,
 # from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 
-upsampling_method: 'bilinear'
+resampling_method: 'bilinear'
 
-#downsampling (converting to lower resolution/larger cellsize)
-#available: 'bilinear','nearest','cubic','average', ...
-# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
-
-downsampling_method: 'bilinear'
 
 # path building set *after inpath* to get the bandfile
 
