@@ -95,7 +95,6 @@ for path in userinput.input:
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics)
                     extractedarray = extractorobject.extract_arrays_stat()
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics)
-                    extractorobject.extract_arrays_stat()
                     writerobject.write_csv()
                     
 
@@ -104,7 +103,6 @@ for path in userinput.input:
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'])
                     extractedarray = extractorobject.extract_arrays()
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
-                    extractorobject.extract_arrays()
                     writerobject.write_pickle_arr()
 
                     lookup_file = cfg['lookup']
