@@ -24,15 +24,19 @@ class Mask(RasterData):
             return np.array(f.read(1)).astype(int)
 
     def binarize_cloudmask(self,sclarray):
-        """ takes in an array with different cloud classes and binarizes it according to config file to 1 being the to be masked pixels (eg clouds) and 0 for pixels that are ok to use """
-        # one is cloud, 0 no cloud
-
+        """ takes in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use """
+        
         tobemaskedlist = self.cfg['tobemaskedlist']
         mask = np.isin(sclarray, tobemaskedlist)
+        """
+        # one is cloud, 0 no cloud
         newmask = np.logical_not(mask)
         cloudarray = np.full(sclarray.shape,1)
         cloudarray[newmask] = 0
         return cloudarray
+        """
+        return mask
+        
 
     def create_cloudmask(self):
         """ creates a mask from a file with mask information (eg about cloudy pixels), binarizes it, and resamples it to 10m pixel size """
