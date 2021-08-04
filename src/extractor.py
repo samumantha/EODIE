@@ -32,7 +32,13 @@ class Extractor(object):
             myid = x['properties'][self.idname]
             statlist = []
             for stat in self.statistics:
-                onestat = x['properties'][stat]
+                if stat == 'count':
+                    onestat = int(x['properties'][stat])
+                else:
+                    #setting precision of results to .3
+                    #WARNING: std should always be rounded up, but is not with this approach
+                    onestat = format(x['properties'][stat], '.3f')
+                
                 statlist.append(str(onestat))
             extractedarrays[myid] = statlist
         return extractedarrays
