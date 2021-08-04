@@ -15,7 +15,7 @@ from rasterio.enums import Resampling
 
 class RasterData(object):
 
-    def __init__(self, inpath, configfile):
+    def __init__(self, inpath, configfile, test=False):
         with open(configfile, "r") as ymlfile:
             self.cfg = yaml.safe_load(ymlfile)
         self.inpath = inpath
@@ -29,6 +29,7 @@ class RasterData(object):
                                 'mode': Resampling.mode, 
                                 'gauss': Resampling.gauss
         } 
+        self.test = test
 
     def get_bandfile(self, bandname):
         """ get bandfile given a band name """
@@ -66,13 +67,15 @@ class RasterData(object):
             self.epsg = str(src.crs).split(':')[-1]
             self.affine = src.transform
 
-    def read_array(self, bandfile):
+    def read_array(self, bandfile, dtype='f4'):
         """ get array in given datatype according to bandname"""
 
         with rasterio.open(bandfile) as f:
             array = np.array(f.read(1))
+        if self.test:
+            array = array.astype(dtype)
 
-            return array
+        return array
 
     def dn_to_reflectance(self, array):
         reflectance = np.divide(array, self.cfg['quantification_value'])
@@ -100,7 +103,7 @@ class RasterData(object):
         else:
             return self.dn_to_reflectance(array)
 
-    def resample(self, bandfile, scaling_factor, resampling_method):
+    def resample(self, bandfile, scaling_factor, resampling_method, dtype='f4'):
 
         with rasterio.open(bandfile) as dataset:
             data = dataset.read(
@@ -111,6 +114,7 @@ class RasterData(object):
             )
             # above results in 3D data, reshape needed to get 2D data
             data = data.reshape(data.shape[1], data.shape[2])
-            
+            if self.test:
+                data = data.astype(dtype)
         return data
 

@@ -20,9 +20,12 @@ import fiona
 
 userinput = UserInput()
 
+test = userinput.test
+
 #loading config file
 with open(userinput.configfile, "r") as ymlfile:
     cfg = yaml.safe_load(ymlfile)
+
 
 #create results dir 
 if not os.path.exists(userinput.outpath):

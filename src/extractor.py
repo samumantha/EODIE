@@ -15,31 +15,33 @@ from rasterstats import zonal_stats
 
 class Extractor(object):
 
-    def __init__(self, maskedarray, shapefile, idname, affine, statistics='count'):
+    def __init__(self, maskedarray, shapefile, idname, affine, statistics=[]):
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
         self.statistics = statistics
         self.maskedarray = maskedarray
         
+        
     def extract_arrays_stat(self):
         """extracting per polygon statistics from rasterfile"""
         filledraster = self.maskedarray.filled(-99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count']+self.statistics, band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
-
+        if self.statistics is None:
+            self.statistics = ['count']
         extractedarrays = {}
         for x in a:
             myid = x['properties'][self.idname]
             statlist = []
             for stat in self.statistics:
                 if stat == 'count':
-                    onestat = int(x['properties'][stat])
+                    onestat = str(int(x['properties'][stat]))
                 else:
                     #setting precision of results to .3
                     #WARNING: std should always be rounded up, but is not with this approach
                     onestat = format(x['properties'][stat], '.3f')
                 
-                statlist.append(str(onestat))
+                statlist.append(onestat)
             extractedarrays[myid] = statlist
         return extractedarrays
 
