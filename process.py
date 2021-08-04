@@ -106,8 +106,6 @@ for path in userinput.input:
                     extractorobject.extract_arrays()
                     writerobject.write_pickle_arr()
 
-                    lookup_file = cfg['lookup']
-                    writerobject.write_lookup(lookup_file, shp_str, userinput.idname)
             
         else:
             logging.warning('Cloudcovered or no data in Area of interest!')
