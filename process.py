@@ -53,11 +53,11 @@ for path in userinput.input:
 
     if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
     
-        mask = Mask(pathfinderobject.imgpath, userinput.configfile)
+        mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
         cloudmask = mask.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
-        vegindex = Index(pathfinderobject.imgpath,userinput.configfile)
+        vegindex = Index(pathfinderobject.imgpath,userinput.configfile, test)
         try:
             shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
             geoobject = VectorData(shp_str)

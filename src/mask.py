@@ -10,8 +10,8 @@ import yaml
 
 class Mask(RasterData):
 
-    def __init__(self,inpath, configfile, external=None):
-        super().__init__(inpath,configfile)
+    def __init__(self,inpath, configfile, test, external=None):
+        super().__init__(inpath,configfile, test)
         if external is not None:
             self.load_cloudmask(external)
         #loading config file

@@ -12,8 +12,8 @@ import yaml
 
 class Index(RasterData):
 
-    def __init__(self, inpath, configfile):
-        super().__init__(inpath,configfile)
+    def __init__(self, inpath, configfile, test):
+        super().__init__(inpath,configfile,test)
         #self.quantification_value = self.cfg['quantification_value']
         self.resolution = self.cfg['pixelsize']
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
