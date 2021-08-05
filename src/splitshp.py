@@ -10,10 +10,16 @@ import subprocess
 import glob
 import logging
 import re
+import yaml
 
 class SplitshpObject(object):
 
-    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory):
+    """
+    Class to take care of preparing a shapefile for use in EODIE
+    """
+
+    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname):
+        self.fieldname = fieldname
         self.output_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
         self.tiles = []
         if not os.path.exists(self.output_directory):
@@ -71,7 +77,7 @@ class SplitshpObject(object):
     def write_splitted_shapefiles(self, bounding_box_small_poly_shp,tile,outshpdir, small_poly_shp):
         one_tile_geometry = self.make_geometryobject(self.get_parameter_content(tile,'geometry')) #on puhti: TypeError: 'NoneType' object is not subscriptable
         if one_tile_geometry.intersects(bounding_box_small_poly_shp):
-            tilename = tile['properties']['Name']
+            tilename = tile['properties'][self.fieldname]
 
             originalname = os.path.splitext(os.path.split(small_poly_shp)[-1])[0]
             outshpname = os.path.join(outshpdir,originalname + '_' + str(tilename)+'.shp')
@@ -94,11 +100,14 @@ class SplitshpObject(object):
                                     'geometry': small_polygon['geometry']})
                                     
                 # if the shp is only 100 bytes it is empty and can be deleted
-                if os.path.getsize(outshpname) <= 100:
-                    filename = os.path.splitext(outshpname)[0]
-                    for ext in ['.shp','.shx','.dbf','.prj','.cpg']:
-                        if os.path.exists(filename + ext):
-                            os.remove(filename + ext)
+                self.remove_empty(outshpname)
+
+    def remove_empty(self,outshpname):
+        if os.path.getsize(outshpname) <= 100:
+            filename = os.path.splitext(outshpname)[0]
+            for ext in ['.shp','.shx','.dbf','.prj','.cpg']:
+                if os.path.exists(filename + ext):
+                    os.remove(filename + ext)
 
 
     def extract_needed_tiles(self, small_poly_shp, large_poly_shp, outshpname):
@@ -112,7 +121,7 @@ class SplitshpObject(object):
                 for tile in s2shp:
                     one_tile_geometry = self.make_geometryobject(self.get_parameter_content(tile,'geometry'))
                     if one_tile_geometry.intersects(bounding_box_small_poly_shp):
-                        self.tiles.append(tile['properties']['Name'])
+                        self.tiles.append(tile['properties'][self.fieldname])
                         outputshp.write({                                 
                             'properties': tile['properties'], 
                             'geometry': tile['geometry']})
@@ -121,6 +130,7 @@ class SplitshpObject(object):
     def splitshp(self):
         self.splitshp_world()
         root = os.path.split(os.path.splitext(self.small_polygon_shapefile)[0])[1]
+        largeroot = os.path.split(os.path.splitext(self.large_polygon_shapefile)[0])[1]
         exists = False
         for tile in self.tiles:
             exists = os.path.exists(os.path.join(self.output_directory, root + '_' + tile + '.shp' ))
@@ -131,7 +141,7 @@ class SplitshpObject(object):
             logging.info('splitted shapefiles now exist')
         else:
             logging.info('splitted shapefiles already exist')
-        removelist = glob.glob(os.path.join(self.output_directory, 'sentinel2_tiles_world_' + root + '.*'))
+        removelist = glob.glob(os.path.join(self.output_directory, largeroot + '_' + root + '.*'))
         for file in removelist:
             os.remove(file)
         logging.info('deleted splitted worldtiles')
@@ -172,6 +182,7 @@ class SplitshpObject(object):
 small_polygon_shapefile = '' #shapefile to be split
 shp_directory = '' # where to store results
 world_tiles = '' #shapefile to split with
-SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory).splitshp()
+fieldname = '' #name of the field where tilename is stored (S2: 'Name', LS: 'PR')
+SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname).splitshp()
 # created shapefiles will be located in  shp_directory/EODIE_temp_shp
 """

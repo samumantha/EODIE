@@ -39,7 +39,8 @@ logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strf
 small_polygon_shapefile = userinput.shpbase + '.shp'
 shp_directory, shp_name = os.path.split(userinput.shpbase)
 world_tiles = cfg['tileshp']+'.shp'
-shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory)
+fieldname = cfg['fieldname']
+shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
 shapesplitter.splitshp()
 
 #running through either one file, if file was given or multiple files if dir was given
