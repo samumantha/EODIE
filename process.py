@@ -108,8 +108,6 @@ for path in userinput.input:
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
                     writerobject.write_pickle_arr()
 
-                    lookup_file = cfg['lookup']
-                    writerobject.write_lookup(lookup_file, shp_str, userinput.idname)
             
         else:
             logging.warning('Cloudcovered or no data in Area of interest!')
