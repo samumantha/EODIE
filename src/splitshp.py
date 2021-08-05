@@ -164,3 +164,14 @@ class SplitshpObject(object):
             os.remove(file)
         os.rmdir(self.output_directory)
         logging.info('deleted splitted shapefiles')
+
+
+
+#running this class:
+"""
+small_polygon_shapefile = '' #shapefile to be split
+shp_directory = '' # where to store results
+world_tiles = '' #shapefile to split with
+SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory).splitshp()
+# created shapefiles will be located in  shp_directory/EODIE_temp_shp
+"""
