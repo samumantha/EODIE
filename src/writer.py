@@ -12,6 +12,7 @@ import csv
 import logging
 import pickle
 import fiona
+import rasterio
 
 class Writer(object):
 
@@ -38,5 +39,21 @@ class Writer(object):
         logging.info('arrays to pickle in: ' + self.outpath)
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
+
+    def write_geotiff(self, epsg_number):
+        """ Writing extracted arrays to geotiff file"""
+        self.outpath = self.outpath + '_array_geotiff'
+        logging.info('arrays to geotiff in: ' + self.outpath)
+        for key in self.extractedarrays.keys():
+            logging.info('arrays to geotiff in: ' + self.outpath)
+            data = self.extractedarrays[key]
+            nrows, ncols = data['array'].shape
+            CRS = rasterio.crs.CRS.from_dict(init=epsg_number)
+
+            with rasterio.open(self.outpath+'_id_'+key+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
+                dtype=data['array'].dtype, transform=data['affine']) as dst: 
+                dst.write(data['array'],1)
+
+
 
 
