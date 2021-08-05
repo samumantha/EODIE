@@ -28,6 +28,7 @@ class UserInput(object):
         parser.add_argument('--start', dest='startdate',default = '20160101', help='give startdate of timerange of interest')
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
         parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
+        parser.add_argument('--test', dest='test', action='store_true')
         args = parser.parse_args()
 
         self.platform = args.platform
@@ -54,3 +55,4 @@ class UserInput(object):
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.keep_shp = args.keep_shp
+        self.test = args.test

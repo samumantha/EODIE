@@ -27,7 +27,7 @@ class TestAll(object):
 
     def test_cloud(self):
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        cloudobject = Mask(inpath, 'config_s2.yml')
+        cloudobject = Mask(inpath, 'config_s2.yml', True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -39,17 +39,19 @@ class TestAll(object):
         rightarray = np.array([[1,1,1,0,0,0,0,1,1],[1,0,0,0,1,1,1,1,1]])
         assert (binarray == rightarray).all(), 'Binarizing fails'
 
+        """
         inarray = np.array([[0,1],[1,0]])
         rightarray = np.array([[0,0,1,1],[0,0,1,1],[1,1,0,0],[1,1,0,0]])
         resarray = cloudobject._resample(inarray,'int')
         assert (resarray == rightarray).all(), 'Resampling fails'
+        """
 
         del cloudobject
         del cloudmask
 
     def test_index(self):
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        indexobject = Index(inpath,'config_s2.yml')
+        indexobject = Index(inpath,'config_s2.yml', True)
         indexarray = indexobject.calculate_ndvi()
         indexarrayshape = indexarray.shape
         rightindexarrayshape = (10980, 10980)
@@ -68,9 +70,9 @@ class TestAll(object):
 
     def test_band(self):
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        rasterdata = RasterData(inpath, 'config_s2.yml')
+        rasterdata = RasterData(inpath, 'config_s2.yml', True)
 
-        bandfile = rasterdata.get_bandfile('B04') 
+        bandfile,_ = rasterdata.get_bandfile('B04')
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
         assert (bandfile == rightbandfile), 'Bandfile fails'
 
@@ -129,14 +131,14 @@ class TestAll(object):
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, 'config_s2.yml')
+        cloudobject = Mask(inpath, 'config_s2.yml', True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, 'config_s2.yml')
+        indexobject = Index(inpath, 'config_s2.yml', True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath, 'config_s2.yml')
+        rasterdata = RasterData(inpath, 'config_s2.yml', True)
         affine = rasterdata.affine 
-        extractorobject = Extractor(maskedarray, geometries, idname, affine, ['median'])
+        extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()
         statarrayslen = len(statarrays)
         rightstatarrayslen = 3
@@ -161,14 +163,14 @@ class TestAll(object):
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, 'config_s2.yml')
+        cloudobject = Mask(inpath, 'config_s2.yml', True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, 'config_s2.yml')
+        indexobject = Index(inpath, 'config_s2.yml', True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath,'config_s2.yml')
+        rasterdata = RasterData(inpath,'config_s2.yml', True)
         affine = rasterdata.affine 
-        extractorobject = Extractor(maskedarray, geometries, idname, affine, ['median'])
+        extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()
         date = '20200626'
         tile = '34VFN'

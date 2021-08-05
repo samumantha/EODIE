@@ -66,15 +66,19 @@ AOT: [10,20,60]
 TCI: [10,20,60]
 WVP: [10,20,60]
 
-#upsampling 
-#available: 'biliner'
+#upsampling (converting to higher resolution/smaller cells)
+#available: 'biliner','nearest','cubic','average', ...
+# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 
-upsampling_method: 'bilinear'
+resampling_method: 'bilinear'
 
-#downsampling
-#available: 'bilinear'
+#downsampling (converting to lower resolution/larger cellsize)
+#available: 'bilinear','nearest','cubic','average', ...
+# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 
 downsampling_method: 'bilinear'
 
+# path building set *after inpath* to get the bandfile
 
+pathbuildinglist: ['R', 'pixelsize' , 'm','*', 'bandname', '_' , 'pixelsize' ,'m.jp2']
 

@@ -20,9 +20,12 @@ import fiona
 
 userinput = UserInput()
 
+test = userinput.test
+
 #loading config file
 with open(userinput.configfile, "r") as ymlfile:
     cfg = yaml.safe_load(ymlfile)
+
 
 #create results dir 
 if not os.path.exists(userinput.outpath):
@@ -50,11 +53,11 @@ for path in userinput.input:
 
     if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
     
-        mask = Mask(pathfinderobject.imgpath, userinput.configfile)
+        mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
         cloudmask = mask.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
-        vegindex = Index(pathfinderobject.imgpath,userinput.configfile)
+        vegindex = Index(pathfinderobject.imgpath,userinput.configfile, test)
         try:
             shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
             geoobject = VectorData(shp_str)
@@ -81,10 +84,11 @@ for path in userinput.input:
                 if index in vegindex.supportedindices:
                     array = vegindex.calculate_index(index)
                 elif re.match(cfg['band_designation'], index):
-                    array = vegindex.get_band(index)
+                    array = vegindex.get_array(index)
                 else:
                     logging.warning('Chosen index {} not available, continuing with next index.'.format(index))
 
+                
                 masked_array= vegindex.mask_array(array,cloudmask)
                     
                 affine = vegindex.affine
@@ -94,7 +98,6 @@ for path in userinput.input:
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics)
                     extractedarray = extractorobject.extract_arrays_stat()
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics)
-                    extractorobject.extract_arrays_stat()
                     writerobject.write_csv()
                     
 
@@ -103,7 +106,6 @@ for path in userinput.input:
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'])
                     extractedarray = extractorobject.extract_arrays()
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
-                    extractorobject.extract_arrays()
                     writerobject.write_pickle_arr()
 
             
