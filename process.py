@@ -18,6 +18,7 @@ from datetime import datetime
 import yaml
 import fiona
 
+
 userinput = UserInput()
 
 test = userinput.test
@@ -105,9 +106,17 @@ for path in userinput.input:
                 elif int(userinput.stat) == 0:
                     
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'])
-                    extractedarray = extractorobject.extract_arrays()
+                    if userinput.geotiff:
+                        extractedarray = extractorobject.extract_array_geotiff()
+                    else:
+                        extractedarray = extractorobject.extract_arrays()
+
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
-                    writerobject.write_pickle_arr()
+
+                    if userinput.geotiff:
+                        writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
+                    else:
+                        writerobject.write_pickle_arr()
 
             
         else:

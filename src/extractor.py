@@ -57,5 +57,18 @@ class Extractor(object):
             extractedarrays[myid] = myarray.filled(-99999)
         return extractedarrays
 
+    def extract_array_geotiff(self):
+        filledraster = self.maskedarray.filled(-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=True, raster_out=True, affine=self.affine, nodata=-99999)
+
+        extractedarrays = {}
+        for x in a:
+            myarray = x['properties']['mini_raster_array']
+            myid = x['properties'][self.idname]
+            extractedarrays[myid] = {}
+            extractedarrays[myid]['array'] = myarray.filled(-99999)
+            extractedarrays[myid]['affine'] = x['properties']['mini_raster_affine']
+        return extractedarrays
+        
 
     
