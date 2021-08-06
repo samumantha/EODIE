@@ -30,6 +30,7 @@ class UserInput(object):
         parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
         parser.add_argument('--geotiff', dest='geotiff', default=0, type=int, help="Option to save output array to geotiff. 1 for geotiff, 0 for pickle array")
         parser.add_argument('--test', dest='test', action='store_true')
+        parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
 
         args = parser.parse_args()
 
@@ -60,4 +61,5 @@ class UserInput(object):
 
         self.geotiff = args.geotiff
         self.test = args.test
+        self.exclude_border = args.exclude_border
 

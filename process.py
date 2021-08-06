@@ -97,7 +97,7 @@ for path in userinput.input:
 
                 if int(userinput.stat) == 1: 
                     logging.info('Statistics: {}'.format(pathfinderobject.tile))
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics)
+                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics, userinput.exclude_border)
                     extractedarray = extractorobject.extract_arrays_stat()
                     writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics)
                     writerobject.write_csv()
@@ -105,7 +105,7 @@ for path in userinput.input:
 
                 elif int(userinput.stat) == 0:
                     
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'])
+                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'], userinput.exclude_border)
                     if userinput.geotiff:
                         extractedarray = extractorobject.extract_array_geotiff()
                     else:
