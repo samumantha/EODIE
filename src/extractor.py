@@ -48,7 +48,7 @@ class Extractor(object):
 
     def extract_arrays(self):
         """extracting per polygon arrays"""
-        filledraster = self.maskedarray.filled(-99999)
+        filledraster = self.maskedarray.filled(+99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
@@ -59,7 +59,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_array_geotiff(self):
-        filledraster = self.maskedarray.filled(-99999)
+        filledraster = self.maskedarray.filled(+99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
