@@ -23,10 +23,15 @@ class Extractor(object):
         self.statistics = statistics
         self.maskedarray = maskedarray
         
-        
     def extract_arrays_stat(self):
         """extracting per polygon statistics from rasterfile"""
-        filledraster = self.maskedarray.filled(-99999)
+        # following is necessary for external tif which is not a masked array
+        try:
+            self.maskedarray.dtype
+            filledraster = self.maskedarray.filled(-99999)
+        except AttributeError:
+            filledraster = self.maskedarray
+        
         a=zonal_stats(self.shapefile, filledraster, stats=['count']+self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
         if self.statistics is None:
             self.statistics = ['count']
@@ -48,7 +53,12 @@ class Extractor(object):
 
     def extract_arrays(self):
         """extracting per polygon arrays"""
-        filledraster = self.maskedarray.filled(+99999)
+        try:
+            self.maskedarray.dtype
+            filledraster = self.maskedarray.filled(+99999)
+        except AttributeError:
+            filledraster = self.maskedarray
+        
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
@@ -59,7 +69,11 @@ class Extractor(object):
         return extractedarrays
 
     def extract_array_geotiff(self):
-        filledraster = self.maskedarray.filled(+99999)
+        try:
+            self.maskedarray.dtype
+            filledraster = self.maskedarray.filled(+99999)
+        except AttributeError:
+            filledraster = self.maskedarray
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}

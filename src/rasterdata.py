@@ -34,6 +34,7 @@ class RasterData(object):
     def get_bandfile(self, bandname):
         """ get bandfile given a band name """
 
+
         pathbuildinglist = self.cfg['pathbuildinglist']
 
         pathbuildinglist = [bandname if item == 'bandname' else item for item in pathbuildinglist]
@@ -60,8 +61,10 @@ class RasterData(object):
 
     def get_metadata(self):
         """ get affine from red band file as representation for all"""
-
-        bandfile, _ = self.get_bandfile(self.cfg['red'])
+        if self.cfg['platform'] == 'tif':
+            bandfile = self.inpath
+        else:
+            bandfile, _ = self.get_bandfile(self.cfg['red'])
         with rasterio.open(bandfile) as src:
             self.crs = src.crs
             self.epsg = str(src.crs).split(':')[-1]

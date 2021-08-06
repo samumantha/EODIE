@@ -11,8 +11,13 @@ class Pathfinder(object):
         with open(configfile, "r") as ymlfile:
             self.cfg = yaml.safe_load(ymlfile)
         self.rasterdir = rasterdir
-        self.get_imgpath()
-        self.get_tileinfo()
+        
+        if not self.cfg['platform'] == 'tif':
+            self.get_imgpath()
+            self.get_tileinfo()
+        else:
+            self.tile = ''
+            self.imgpath = self.rasterdir
         self.get_dateinfo()
         
 
