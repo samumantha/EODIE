@@ -1,9 +1,9 @@
-./results
+results/**
 *.pyc
-testfiles/*
+testfiles/**
 *.log
 *.csv
-docs/_build/*
+docs/_build/**
 .DS_Store
 __pycache__
 .pytest_cache
@@ -12,5 +12,4 @@ __pycache__
 .ipynb_checkpoints
 .vscode
 *.png
-docs/_build/*
 *.png
