@@ -13,3 +13,6 @@ __pycache__
 .vscode
 *.png
 *.png
+*.jp2
+*.tif
+
