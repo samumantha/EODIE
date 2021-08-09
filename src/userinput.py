@@ -16,9 +16,9 @@ class UserInput(object):
     def get_userinput(self):
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2,ls8')
-        parser.add_argument('--dir', dest='mydir', help='directory where S2 data is stored')
-        parser.add_argument('--file', dest='myfile', help='one S2 file')
+        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2')
+        parser.add_argument('--dir', dest='mydir', help='directory where data is stored')
+        parser.add_argument('--file', dest='myfile', help='one file')
         parser.add_argument('--shp', dest='shpbase', help='name of the shapefile (without extension)')
         parser.add_argument('--out', dest='outpath', default='./results', help='directory where results shall be saved')
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile')

@@ -48,6 +48,10 @@ class Writer(object):
             logging.info('arrays to geotiff in: ' + self.outpath)
             data = self.extractedarrays[key]
             nrows, ncols = data['array'].shape
+            #this may happen with external tif file, int64 is not supported
+            if data['array'].dtype == 'int64':
+                data['array'] = data['array'].astype('int32')
+
             CRS = rasterio.crs.CRS.from_dict(init=epsg_number)
 
             with rasterio.open(self.outpath+'_id_'+key+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
