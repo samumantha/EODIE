@@ -57,16 +57,16 @@ for path in userinput.input:
         extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine,userinput.statistics, userinput.exclude_border)
         if int(userinput.stat) == 1: 
             extractedarray = extractorobject.extract_arrays_stat()
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, '', userinput.statistics)
+            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics)
             writerobject.write_csv()
         elif int(userinput.stat) == 0:
             if userinput.geotiff:
                 extractedarray = extractorobject.extract_array_geotiff()
-                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, '', 'array')
+                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
                 writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
             else:
                 extractedarray = extractorobject.extract_arrays()
-                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, '', 'array')
+                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
                 writerobject.write_pickle_arr()
     else:
 
