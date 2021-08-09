@@ -78,8 +78,15 @@ for path in userinput.input:
 
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
         
-            mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
-            cloudmask = mask.create_cloudmask()
+            if userinput.extmask is None:
+                mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
+                cloudmask = mask.create_cloudmask()
+                
+            else:
+                cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
+                extmask = glob.glob(cname)[0]
+                cloudmask = Mask(pathfinderobject.imgpath, userinput.configfile, test, extmask).cloudmask
+                logging.info('Using external cloudmask {}'.format(extmask))
             logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
             vegindex = Index(pathfinderobject.imgpath,userinput.configfile, test)
