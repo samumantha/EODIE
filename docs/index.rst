@@ -23,6 +23,14 @@ Authors
 
 Samantha Wittke, Finnish Geospatial Research Institute in the National Land Survey of Finland
 
+
+Contributors
+-------------
+
+Juuso Varho
+Petteri Lehtinen
+
+
 Citation 
 ---------
 
