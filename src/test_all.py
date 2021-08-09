@@ -38,13 +38,7 @@ class TestAll(object):
         binarray = cloudobject.binarize_cloudmask(inarray)
         rightarray = np.array([[1,1,1,0,0,0,0,1,1],[1,0,0,0,1,1,1,1,1]])
         assert (binarray == rightarray).all(), 'Binarizing fails'
-
-        """
-        inarray = np.array([[0,1],[1,0]])
-        rightarray = np.array([[0,0,1,1],[0,0,1,1],[1,1,0,0],[1,1,0,0]])
-        resarray = cloudobject._resample(inarray,'int')
-        assert (resarray == rightarray).all(), 'Resampling fails'
-        """
+        
 
         del cloudobject
         del cloudmask
