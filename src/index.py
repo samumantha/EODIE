@@ -12,14 +12,41 @@ import yaml
 
 class Index(RasterData):
 
+    """ Calculating vegetation indices from remote sensing raster products"""
+
     def __init__(self, inpath, configfile, test):
+
+        """ Initializing the index object
+
+        Parameters
+        ----------
+        inpath: str
+            Path to the raster bands of the product
+        configfile: str
+            Path to the confoguration file with information about the data (platform)
+        test: boolean
+            If testing is performed
+
+        Returns
+        -------
+        nothing
+
+        """
+
         super().__init__(inpath,configfile,test)
         #self.quantification_value = self.cfg['quantification_value']
         self.resolution = self.cfg['pixelsize']
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
     
     def mask_array(self, array,maskarray):
-        """ creates a masked array from an array and a mask with fill value -99999 for masked out values ; e.g. masking out cloudpixels from indexarray"""
+        """ creates a masked array from an array and a mask with fill value -99999 for masked out values ; e.g. masking out cloudpixels from indexarray
+        
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         masked = np.ma.array(array, mask = maskarray, fill_value=-99999)
 

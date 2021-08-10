@@ -15,7 +15,32 @@ from rasterstats import zonal_stats
 
 class Extractor(object):
 
+    """Extracting object based information from an array with affine information and a shapefile"""
+
     def __init__(self, maskedarray, shapefile, idname, affine, statistics=[], exclude_border=False):
+        """Initializing the Extractor object
+
+        Parameters
+        ----------
+        maskedarray: array
+            the array to extract information from
+        shapefile: str
+            Path to the shapefile containing polygons to extract information for
+        idname: str
+            Fieldname of unique ID field of the shapefile (will be used as polygon identifier for storing statistics)
+        affine: Affine object
+            containing affine/transform information of the array
+        statsistics: list of str, optional, default: empty list
+            list of statistics to be extracted for each polygon
+        exclude_border: boolean, optional, default: False
+            indicator if border pixels should be in- (False) or excluded (True)
+
+        Returns
+        --------
+        nothing
+        
+        """
+        
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
@@ -25,7 +50,7 @@ class Extractor(object):
         
         
     def extract_arrays_stat(self):
-        """extracting per polygon statistics from rasterfile"""
+        """extracting per polygon statistics from rasterfile with affine information"""
         filledraster = self.maskedarray.filled(-99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count']+self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
         if self.statistics is None:
@@ -47,7 +72,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_arrays(self):
-        """extracting per polygon arrays"""
+        """extracting per polygon arrays from rasterfile with affine information"""
         filledraster = self.maskedarray.filled(+99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
@@ -59,6 +84,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_array_geotiff(self):
+        """extracting per polygon arrays from rasterfile with affine information for storage as geotiff"""
         filledraster = self.maskedarray.filled(+99999)
         a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
