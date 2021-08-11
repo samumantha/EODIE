@@ -1,4 +1,3 @@
-
 import os
 import argparse
 from matplotlib import lines
@@ -10,84 +9,117 @@ from datetime import datetime
 import matplotlib.pylab as plt
 from scipy.sparse import data
 from tsmoothie.smoother import LowessSmoother
-
-
-#from sklearn.ensemble import IsolationForest
 import numpy as np
 
-#parser = argparse.ArgumentParser(prog="myprogram",description="foo")
 parser = argparse.ArgumentParser()
 
 #parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
 parser.add_argument('--dir', dest= 'directory' , default="/home/jvarho/EODIE/testTimeseries/stats_with_count/combined_kndvi.csv",help = 'Write the directory path where the csv files are as absolute path')
 parser.add_argument('--out',dest= 'output_directory',default="/home/jvarho/EODIE/testTimeseries",help= 'Write the directory path where you want the files to be outputted')
-parser.add_argument('--id', dest='ID', default="1,63,52,72,3" ,help="Write a list of id's separated by a comma")
-parser.add_argument('--index', dest= 'index', default="ndvi,kndvi" ,help='write a list of indices you want to be plotted separated by a comma')
+parser.add_argument('--id', dest='ID', default=[],type=int,help="Write a list of id's separated by a space", nargs='*')
+parser.add_argument('--index', dest= 'index', default=['kndvi','ndvi'] ,help='write a list of indices you want to be plotted separated by a space', nargs='*')
 #parser.add_argument('--stat', dest='statistics', default='mean,std', help='Write the statistics you want to be plotted in the same plot')
 parser.add_argument('--start', dest='startDate',default="",help='Specify the starting date in format YYYYMMDD. If left empy, will plot all dates available')
 parser.add_argument('--end', dest='endDate',default="", help='Specify the ending date in format YYYYMMDD. If left empty, will plot all dates available')
 parser.add_argument('--format',dest='fileFormat',default='png', help="write the wanted format of timeseries, can be: 'png','eps','pdf','ps','svg'")
-parser.add_argument('--seePoints',dest="seeDatapoints",default=1,type=int, help="The time series can either show or not show the data points, 1 for show, 0 for hide")
-parser.add_argument('--outlierDetection',dest='detectOutliers',default=1, type=int, help="By creating a prediction interval, anomalies can be detected outside of it. 1 for show, 0 for hide")
-parser.add_argument("--seeInterval", dest="seeInterval", default=1,type=int ,help="Visualise the prediction interval which is used for the outlier detection. 1 for show, 0 for hide")
-parser.add_argument('--seeSmoothened', dest="seeSmoothened", default=1, type=int, help="See a smoothened curve made of the data points. Uses Lowess smoothening. 1 for show, 0 for hide")
-parser.add_argument("--seeError", dest="standardError",default=0,type=int, help="You can see the standard error of each individual point. 1 for show, 0 for hide ")
+parser.add_argument('--seePoints',dest="seeDatapoints",action='store_true', help="The time series can either show or not show the data points, if this argument give, will show points")
+parser.add_argument('--outlierDetection',dest='detectOutliers',action='store_true', help="By creating a prediction interval, anomalies can be detected outside of it. ")
+parser.add_argument("--seeInterval", dest="seeInterval", action='store_true' ,help="Visualise the prediction interval which is used for the outlier detection.")
+parser.add_argument('--seeSmoothened', dest="seeSmoothened", action='store_true', help="See a smoothened curve made of the data points. Uses Lowess smoothening.")
+parser.add_argument("--seeError", dest="standardError",action='store_true', help="You can see the standard error of each individual point. (Requires 'count' as statistic)")
+parser.add_argument("--pixelLimit", dest="pixellimit", default=0, type=int, help="Type in percentages if you want datapoints with small sample size marked (compared to original), (requires 'count' as statistic)")
 input=parser.parse_args()
 
 
 
-directory=input.directory
-output=input.output_directory
-ID_list= list(map(int,input.ID.split(',')))
-indices_list=input.index.split(',')
+directory = input.directory
+output = input.output_directory
+ID_list = input.ID
+indices_list = input.index
 #statistic_list=input.statistics
-startDate=input.startDate
-endDate=input.endDate
-fileformat=input.fileFormat
-seeDatapoints=input.seeDatapoints
-detectOutliers=input.detectOutliers
-seeSmoothing=input.seeSmoothened
-seeInterval=input.seeInterval
-standardError=input.standardError
+startDate = input.startDate
+endDate = input.endDate
+fileformat = input.fileFormat
+seeDatapoints = input.seeDatapoints
+detectOutliers = input.detectOutliers
+seeSmoothing = input.seeSmoothened
+seeInterval = input.seeInterval
+standardError = input.standardError
+pixelLimit = input.pixellimit
+
+
+# Data collection functions: 
+
+def data_collection1(path): # directory full of small csv files
+    df = pd.DataFrame()
+    for entry in os.scandir(path): # Checks every file in the directry
+        if (entry.name.endswith('.csv')) and entry.is_file and indices_list.__contains__(entry.name.split('_')[0]):
+            nameparser = entry.name.split('_') # Parses the info written in the name
+            VI = nameparser[0]
+            date = datetime.strptime(nameparser[1],"%Y%m%d") 
+            temp_df = pd.read_csv(entry) 
+            temp_df['Dates'] = date
+            temp_df['Index'] = VI
+            
+            if len(df)==0: #can't concat with empty dataframe so variable is given to temporary dataframe
+                df = temp_df
+            else: #So this adds the data to the main dataframe
+                df = pd.concat([df,temp_df],axis=0)
+    return df
+
+def data_collection2(path): # One big combined csv file /home/jvarho/EODIE/path/to/combined_INDEX.csv
+    df = pd.read_csv(path)
+    df['Index'] = path.split('_')[-1].split('.')[0]
+    df['Dates'] = pd.to_datetime(df['Dates'], format="%Y%m%d")
+    return df
+
+def data_collection3(path): # Directory full of big combined csv files
+    df = pd.DataFrame()
+    for entry in os.scandir(path):
+        if entry.name.endswith('.csv') and entry.is_file:
+            temp_df = pd.read_csv(entry)
+            temp_df['Index'] = entry.name.split("_")[1].split('.')[0] # Assumes naming is for example 'combined_kndvi.csv' to work
+            temp_df['Dates'] = pd.to_datetime(temp_df['Dates'], format="%Y%m%d")
+
+            if len(df) == 0:
+                df = temp_df
+            else:
+                df = pd.concat([df,temp_df],axis=0)      
+       
+    return df
+
 
 # Data collection: 
-mainDataFrame=pd.DataFrame()
 
-if '.csv' in directory and os.path.isfile(directory) and 'combined_' in directory.split('/')[-1]: #If input is one combined statistics file
-    mainDataFrame=pd.read_csv(directory).query("id in @ID_list")#) and "#+stat+"!= 'None'")
-    mainDataFrame['Index']=directory.split('/')[-1].split('_')[1].split('.')[0]
-    mainDataFrame['Dates']=pd.to_datetime(mainDataFrame['Dates'],format='%Y%m%d')
 
-elif os.path.isdir(directory) and 'combined' in directory.split('/')[-1]: # Else if 'directory' is a directory of combined csv files
-    for entry in os.scandir(directory): #For every file in the directory
-        if entry.name.endswith('.csv') and entry.is_file:# and indices_list.__contains__(entry.name.split("_")[-1]):
-            temp_df=pd.read_csv(entry).query("id in @ID_list")#) and "#+stat+"!= 'None'")
-            temp_df['Index']=entry.name.split("_")[1].split('.')[0]
-            temp_df['Dates']=pd.to_datetime(temp_df['Dates'],format="%Y%m%d")
-            if len(mainDataFrame)==0:
-                mainDataFrame=temp_df
-            else:
-                mainDataFrame=pd.concat([mainDataFrame,temp_df],axis=0)
+if os.path.isfile(directory):
+    try: 
+        mainDataFrame = data_collection2(directory)
+    except: 
+        print("Data collection not possible from " + directory)
+        quit()
 
+elif os.path.isdir(directory):
+    name = directory.split('/')[-2]
+    try: 
+        if name.__contains__("combined"):
+            mainDataFrame = data_collection3(directory) # Directory to big combined csv files
+        else:
+            mainDataFrame = data_collection1(directory) # small csv files
+    except: 
+        print("Data collection was not possible, try rechecking naming convention")
+        quit()
+
+
+if len(ID_list) != 0:
+    mainDataFrame = mainDataFrame.query("id in @ID_list")
 else: 
-    for entry in os.scandir(directory): #checks every file in the directory given as input
-        if(entry.name.endswith('.csv') and entry.is_file and indices_list.__contains__(entry.name.split('_')[0])):  #Makes sure the file to be read is .csv file, is the correct index and is a file to begin with
-            fileParser=entry.name.split('_') #Parses the name of the file in segments (index_date_tile_stat.csv)
-            VI=fileParser[0]
-            date=fileParser[1] #Resulting files from eodie follow this naming convention
-            filedate=datetime.strptime(date,"%Y%m%d") #Converts string 'yyyymmdd' to form datetime
-            temp_df=pd.read_csv(entry).query("id in @ID_list")# and mean!= 'None'"
-            temp_df['Dates']=filedate # Change to filedate if datetime object wanted, adds it to df column
-            temp_df['Index']=VI # Adds index to df column
+    ID_list = mainDataFrame['id'].unique()
 
-            if len(mainDataFrame)==0: #can't concat with empty dataframe so variable is given to temporary dataframe
-                mainDataFrame=temp_df
-            else: #So this adds the data to the main dataframe
-                mainDataFrame=pd.concat([mainDataFrame,temp_df],axis=0)
 
 if bool(startDate): #Boolean of a string returns true if string is not empty
     startdate=datetime.strptime(startDate,"%Y%m%d")
-    mainDataFrame.query("Dates>=@startdate",inplace=True) # Filters out dates that are before the starting perioud
+    mainDataFrame.query("Dates>=@startdate",inplace=True) # Filters out dates that are before the starting period
 
 if bool(endDate):
     enddate=datetime.strptime(endDate,"%Y%m%d")
@@ -96,14 +128,21 @@ if bool(endDate):
 stat='mean'
 wanted_data=['Dates',stat]
 
-#print(mainDataFrame.to_string())
+
+maxPixels = {}
 
 # Plotting:
 for id in ID_list:
+
+    try:
+        maxPixels[id] = mainDataFrame.query("id==@id")['count'].max() # The maximum pixel size is saved to dictionary
+    except:
+        pass # if 'count' doesn't exist --> error --> this ignores it
+
     for index in indices_list:
         plot_df=mainDataFrame.query("id==@id and Index==@index and mean!='None'").set_index('Dates').sort_index()
-
         if len(plot_df)<3:#with sample sizes less than this, tsmoothie breaks. (and time series is quite useless)
+            print(f"Unable to plot {index} of id {id} because data set is too small")
             continue      # df's of size 1 produce and error in the smoothing
 
         plot_df['mean']=plot_df['mean'].astype(float)
@@ -120,10 +159,10 @@ for id in ID_list:
         plot_df['upper']=up.reshape(-1,1) 
         
         invalid_points=plot_df.query("mean>=upper or mean<=lower")['mean'] #Saves the detected anomalies
-        #print(plot_df)
 
         plt.figure()
 
+        # Figure construction
 
         if seeInterval: #If userinput is 1, shows the interval
             plt.fill_between(plot_df.index,plot_df['lower'],plot_df['upper'], alpha=0.3, label='Prediction interval')
@@ -145,6 +184,13 @@ for id in ID_list:
         if seeDatapoints: 
             plt.plot(plot_df['mean'],'k.-', label='data points',linewidth=1)
 
+        if pixelLimit:
+            try:
+                plt.plot(plot_df.query("count/@maxPixels[@id]*100 <= @pixelLimit")['mean'], 'ro', markersize=6 )
+            # marks points with small samplesize as red 
+            except:
+                pass
+
         if standardError: #Integer value will be interpreted as boolean
             try:
                 plot_df['std']=plot_df['std'].astype(float)
@@ -152,11 +198,9 @@ for id in ID_list:
                 z=1.96 #for 95% interval
                 plt.errorbar(x=plot_df.index ,fmt='.k', ecolor='r', y= plot_df["mean"], yerr= z*plot_df["SE"],linewidth=2)
             except:
-                print("The files you inputted do not have 'count' statistic in them which is why errorbars can't be shown")
-            #print(plot_df.to_string())
+                print("An error occured in trying to calculate error. Make sure the files you inputted have 'count' statistic in them")
+
       
-            
-                         
         plt.legend()
         plt.xlim(plot_df.index[0],plot_df.index[-1]) #smallest date is first and biggest is last
         plt.title(str(index)+ " time series of id "+ str(id)  )
