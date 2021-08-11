@@ -5,9 +5,26 @@ import yaml
 
 
 class Pathfinder(object):
+    """ class dealing with paths 
+    Attributes
+    ----------
+    cfg
+    rasterdir
+    imgpath
+    tile 
+    date
+    """
 
-    def __init__(self,rasterdir, configfile):
-        #loading config file
+    def __init__(self,rasterdir:str, configfile:str):
+        """initializing Pathfinder object
+        Parameters
+        -----------
+        rasterdir: str
+            location and name of a raster product
+        configfile: str
+            location and name of the configuration file
+        """
+        
         with open(configfile, "r") as ymlfile:
             self.cfg = yaml.safe_load(ymlfile)
         self.rasterdir = rasterdir
@@ -17,8 +34,9 @@ class Pathfinder(object):
         
 
     def get_imgpath(self):
-        # getting the path until IMG_DATA
-        patternimg = os.path.join(self.rasterdir ,self.cfg['bandlocation'])
+        """creating the path to the raster data band files based on path given in bandlocation"""
+        bandlocation = os.path.join(*self.cfg['bandlocation'])
+        patternimg = os.path.join(self.rasterdir ,bandlocation)
         self.imgpath = glob.glob(patternimg)[0]
 
     def get_tileinfo(self):
