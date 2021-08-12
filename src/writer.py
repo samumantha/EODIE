@@ -2,9 +2,6 @@
 
 class for writing results into file
 
-TODO:
-* more options
-
 """
 
 import os
@@ -15,8 +12,37 @@ import fiona
 import rasterio
 
 class Writer(object):
+    """ 
+    Writing lists/arrays/georeferenced arrays to file
+    Attributes
+    -----------
+    outpath: str
+        location and basename of the file where results should be stored
+    extractedarrays: dict with numpy arrays
+        extracted array and its information
+    statistics: list of str
+        extracted statistics
+    tile: str
+        tilename of the raster product where data was extracted from
+    """
 
     def __init__(self,outdir, date, tile, extractedarrays, index, statistics):
+        """initialize writer object
+        Parameters
+        -----------
+        outdir: str
+            location where results should be stored
+        date: str
+            date of the data to be stored
+        tile: str
+            tilename of the data to be stored
+        extractedarrays: dict with numpy arrays
+            extracted array and its information
+        index: str
+            indexname of the data to be stored
+        statistics: list of str
+            extracted statistics
+        """
         self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
         self.extractedarrays = extractedarrays
         self.statistics = statistics
@@ -40,15 +66,20 @@ class Writer(object):
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
 
-    def write_geotiff(self, epsg_number):
-        """ Writing extracted arrays to geotiff file"""
+    def write_geotiff(self, epsgcode):
+        """ Writing extracted arrays to geotiff file
+        Parameters
+        -----------
+        epsgcode: str
+            EPSG code of the data to be stored
+        """
         self.outpath = self.outpath + '_array_geotiff'
         logging.info('arrays to geotiff in: ' + self.outpath)
         for key in self.extractedarrays.keys():
             logging.info('arrays to geotiff in: ' + self.outpath)
             data = self.extractedarrays[key]
             nrows, ncols = data['array'].shape
-            CRS = rasterio.crs.CRS.from_dict(init=epsg_number)
+            CRS = rasterio.crs.CRS.from_dict(init=epsgcode)
 
             with rasterio.open(self.outpath+'_id_'+key+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
                 dtype=data['array'].dtype, transform=data['affine']) as dst: 

@@ -27,10 +27,6 @@ class Index(RasterData):
         test: boolean
             If testing is performed
 
-        Returns
-        -------
-        nothing
-
         """
 
         super().__init__(inpath,configfile,test)

@@ -8,11 +8,16 @@ class Pathfinder(object):
     """ class dealing with paths 
     Attributes
     ----------
-    cfg
-    rasterdir
-    imgpath
-    tile 
-    date
+    cfg: dict of str
+        opened configuration file
+    rasterdir: str
+        location and name of a raster product
+    imgpath: str
+        location and name of the bands within the raster product
+    tile: str
+        tile information (if available) of the raster product
+    date: str
+        date information of the raster product
     """
 
     def __init__(self,rasterdir:str, configfile:str):

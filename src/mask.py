@@ -32,9 +32,6 @@ class Mask(RasterData):
         external: str , optional
             location and name of the external cloudmask to be used
 
-        Returns
-        --------
-        nothing
         """
 
         super().__init__(inpath,configfile, test)
@@ -80,10 +77,6 @@ class Mask(RasterData):
     def create_cloudmask(self):
         """ creates a mask from a file with mask information (eg about cloudy pixels), 
         binarizes it, and resamples it to 10m pixel size 
-        Parameters
-        -----------
-        none
-
         Returns
         --------
         cloudmask: boolean numpy array 
