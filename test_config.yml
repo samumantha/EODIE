@@ -23,8 +23,9 @@ tobemaskedlist:
   - 0 # no data
   - 1 # saturated and defective
 
-# path towards bands
-bandlocation: ./*/*/IMG_DATA/
+# parts to build path towards bands
+bandlocation: ['.','*','*','IMG_DATA']
+
 
 #indicator for cloudfile
 cloudfilename: 'SCL'

@@ -9,11 +9,17 @@ import glob
 from validator import Validator
 
 class UserInput(object):
+    """ Userinput object for EODIE
+    Attributes
+    -----------
+    see help text for description of each attribute
+    """
 
     def __init__(self):
         self.get_userinput()
 
     def get_userinput(self):
+        """ gets all userinput from commandline call to run the tool and stores them as userinput attributes """
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2')

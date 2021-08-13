@@ -2,9 +2,6 @@
 
 class to extract pixel values or statistics per polygon from rasterfile
  
-TODO: 
-* description of in/out
-
 """
 
 
@@ -15,7 +12,32 @@ from rasterstats import zonal_stats
 
 class Extractor(object):
 
+    """Extracting object based information from an array with affine information and a shapefile"""
+
     def __init__(self, maskedarray, shapefile, idname, affine, statistics=[], exclude_border=False):
+        """Initializing the Extractor object
+
+        Parameters
+        ----------
+        maskedarray: array
+            the array to extract information from
+        shapefile: str
+            Path to the shapefile containing polygons to extract information for
+        idname: str
+            Fieldname of unique ID field of the shapefile (will be used as polygon identifier for storing statistics)
+        affine: Affine object
+            containing affine/transform information of the array
+        statsistics: list of str, optional, default: empty list
+            list of statistics to be extracted for each polygon
+        exclude_border: boolean, optional, default: False
+            indicator if border pixels should be in- (False) or excluded (True)
+
+        Returns
+        --------
+        nothing
+        
+        """
+        
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
@@ -24,7 +46,7 @@ class Extractor(object):
         self.maskedarray = maskedarray
         
     def extract_arrays_stat(self):
-        """extracting per polygon statistics from rasterfile"""
+        """extracting per polygon statistics from rasterfile with affine information"""
         # following is necessary for external tif which is not a masked array
         try:
             self.maskedarray.dtype
@@ -52,7 +74,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_arrays(self):
-        """extracting per polygon arrays"""
+        """extracting per polygon arrays from rasterfile with affine information"""
         try:
             self.maskedarray.dtype
             filledraster = self.maskedarray.filled(+99999)
