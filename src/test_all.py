@@ -25,13 +25,11 @@ import yaml
 
 class TestAll(object):
 
-    def __init__(self):
-        with open('test_config.yml', "r") as ymlfile:
-            self.cfg = yaml.safe_load(ymlfile)
-
     def test_cloud(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        cloudobject = Mask(inpath, self.cfg, True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -54,8 +52,10 @@ class TestAll(object):
         del cloudmask
 
     def test_index(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        indexobject = Index(inpath,self.cfg, True)
+        indexobject = Index(inpath,cfg , True)
         indexarray = indexobject.calculate_ndvi()
         indexarrayshape = indexarray.shape
         rightindexarrayshape = (10980, 10980)
@@ -73,8 +73,10 @@ class TestAll(object):
 
 
     def test_band(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        rasterdata = RasterData(inpath, self.cfg, True)
+        rasterdata = RasterData(inpath, cfg , True)
 
         bandfile,_ = rasterdata.get_bandfile('B04')
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
@@ -132,15 +134,17 @@ class TestAll(object):
         del geometryobject
 
     def test_extractor(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, self.cfg, True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, self.cfg, True)
+        indexobject = Index(inpath, cfg , True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath, self.cfg, True)
+        rasterdata = RasterData(inpath, cfg , True)
         affine = rasterdata.affine 
         extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()
@@ -161,18 +165,20 @@ class TestAll(object):
 
 
     def test_writer(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, self.cfg, True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, self.cfg, True)
+        indexobject = Index(inpath, cfg , True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath,self.cfg, True)
+        rasterdata = RasterData(inpath,cfg , True)
         affine = rasterdata.affine 
         extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()
