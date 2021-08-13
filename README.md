@@ -22,12 +22,12 @@ Samantha Wittke, Finnish Geospatial Research Institute in the National Land Surv
 
 ## Contributors
 
-Eetu Puttonen
-Juuso Varho
-Petteri Lehtinen
-Paula Litkey
-Milos Pandzic
-Mika Karjalainen
+* Eetu Puttonen
+* Juuso Varho
+* Petteri Lehtinen
+* Paula Litkey
+* Milos Pandzic
+* Mika Karjalainen
 
 ## Citation 
 
