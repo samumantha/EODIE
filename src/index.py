@@ -14,7 +14,7 @@ class Index(RasterData):
 
     """ Calculating vegetation indices from remote sensing raster products"""
 
-    def __init__(self, inpath, configfile, test):
+    def __init__(self, inpath, cfg, test):
 
         """ Initializing the index object
 
@@ -22,15 +22,14 @@ class Index(RasterData):
         ----------
         inpath: str
             Location and name of the raster bands of the product
-        configfile: str
-            Location and name of the configuration file with information about the data (platform)
+        cfg: dict
+            dictionary with configuration elements
         test: boolean
             If testing is performed
 
         """
 
-        super().__init__(inpath,configfile,test)
-        #self.quantification_value = self.cfg['quantification_value']
+        super().__init__(inpath,cfg,test)
         self.resolution = self.cfg['pixelsize']
         self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
     

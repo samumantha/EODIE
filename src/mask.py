@@ -15,18 +15,18 @@ class Mask(RasterData):
     cloudmask: boolean/int numpy array
         external cloudmask array
     cfg: dict
-        configuration file as dict
+        dictionary with configuration elements
     """
 
-    def __init__(self,inpath: str, configfile, test, external=None):
+    def __init__(self,inpath: str, cfg:dict, test, external=None):
         """ Initializing the mask object
 
         Parameters
         -----------
         inpath: str
             Location and name of the raster bands of the product
-        configfile: str
-            Location and name of the configuration file with information about the data (platform)
+        cfg: dict
+            dictionary with configuration elements
         test: boolean
             If testing is performed
         external: str , optional
@@ -34,12 +34,10 @@ class Mask(RasterData):
 
         """
 
-        super().__init__(inpath,configfile, test)
+        super().__init__(inpath,cfg, test)
         if external is not None:
             self.cloudmask = self.load_binary_mask(external)
-        #loading config file
-        with open(configfile, "r") as ymlfile:
-            self.cfg = yaml.safe_load(ymlfile)
+        self.cfg = cfg
 
     def load_binary_mask(self,external):
         """ Loads an external mask that needs to be a rasterfile with one/True is cloud, 0/False no cloud, 

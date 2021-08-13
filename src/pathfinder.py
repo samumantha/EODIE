@@ -8,8 +8,8 @@ class Pathfinder(object):
     """ class dealing with paths 
     Attributes
     ----------
-    cfg: dict of str
-        opened configuration file
+    cfg: dict
+        dictionary with configuration elements
     rasterdir: str
         location and name of a raster product
     imgpath: str
@@ -20,18 +20,17 @@ class Pathfinder(object):
         date information of the raster product
     """
 
-    def __init__(self,rasterdir:str, configfile:str):
+    def __init__(self,rasterdir:str, cfg:dict):
         """initializing Pathfinder object
         Parameters
         -----------
         rasterdir: str
             location and name of a raster product
-        configfile: str
-            location and name of the configuration file
+        cfg: dict
+            dictionary with configuration elements
         """
         
-        with open(configfile, "r") as ymlfile:
-            self.cfg = yaml.safe_load(ymlfile)
+        self.cfg = cfg
         self.rasterdir = rasterdir
         self.get_imgpath()
         self.get_tileinfo()

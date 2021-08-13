@@ -47,7 +47,7 @@ shapesplitter.splitshp()
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
 
-    pathfinderobject = Pathfinder(path, userinput.configfile)
+    pathfinderobject = Pathfinder(path, cfg)
     
     logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
     logging.info('Tile is {}'.format(pathfinderobject.tile))
@@ -55,11 +55,11 @@ for path in userinput.input:
 
     if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
     
-        mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
+        mask = Mask(pathfinderobject.imgpath, cfg, test)
         cloudmask = mask.create_cloudmask()
         logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
-        vegindex = Index(pathfinderobject.imgpath,userinput.configfile, test)
+        vegindex = Index(pathfinderobject.imgpath,cfg, test)
         try:
             shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
             geoobject = VectorData(shp_str)

@@ -17,8 +17,8 @@ class RasterData(object):
     """ Raster data related information and transformations
     Attributes
     -----------
-    cfg: dict of str
-        opened configuration file
+    cfg: dict
+        dictionary with configuration elements
     imgpath: str
         location and name of the bands within the raster product
     resamplingdict: dict of str and object
@@ -33,7 +33,7 @@ class RasterData(object):
         affine transformation of the raster product
     """
 
-    def __init__(self, inpath, configfile, test=False):
+    def __init__(self, inpath, cfg, test=False):
 
         """ Initializing the raster object
 
@@ -41,15 +41,14 @@ class RasterData(object):
         -----------
         inpath: str
             Location and name of the raster bands of the product
-        configfile: str
-            Location and name of the configuration file with information about the data (platform)
+        cfg: dict
+            dictionary with configuration elements
         test: boolean
             If testing is performed
 
         """
-
-        with open(configfile, "r") as ymlfile:
-            self.cfg = yaml.safe_load(ymlfile)
+        
+        self.cfg = cfg
         self.inpath = inpath
         self.get_metadata()
         self.resamplingdict = { 'bilinear': Resampling.bilinear, 
