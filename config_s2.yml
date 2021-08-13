@@ -1,17 +1,12 @@
-#location of Sentinel2-tiles-world shapefile
-tileshp: ./shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world
+####
 
-#name of field where tilenames are stored in shapefile
-fieldname: 'Name'
+# Configuration file for the use of Sentinel-2 #
+
+# Know what you do before you change anything here #
+
+####
 
 platform: 's2'
-
-# Process only files with less than xx % cloudcover
-maxcloudcover: 99
-
-# Extract files with xx m pixel size 
-# options: 10,20,(60)
-pixelsize: 10
 
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
@@ -23,12 +18,6 @@ tobemaskedlist:
   - 0 # no data
   - 1 # saturated and defective
 
-# parts to build path towards bands
-bandlocation: ['.','*','*','IMG_DATA']
-
-#indicator for cloudfile
-cloudfilename: 'SCL'
-
 # Sentinel-2 bands
 red : 'B04'
 green: 'B03'
@@ -38,6 +27,14 @@ r_edge: 'B05'
 swir1: 'B11'
 swir2: 'B12'
 
+# parts to build path towards bands
+bandlocation: ['.','*','*','IMG_DATA']
+
+# path building set after imgpath to get the bandfile
+pathbuildinglist: ['R', 'pixelsize' , 'm','*', 'bandname', '_' , 'pixelsize' ,'m.jp2']
+
+#indicator for cloudfile
+cloudfilename: 'SCL'
 
 tilepattern: '(?<=T)[0-9]{2}[A-Z]{3}'
 
@@ -68,19 +65,5 @@ AOT: [10,20,60]
 TCI: [10,20,60]
 WVP: [10,20,60]
 
-#upsampling (converting to higher resolution/smaller cells)
-#available: 'biliner','nearest','cubic','average', ...
-# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 
-resampling_method: 'bilinear'
-
-#downsampling (converting to lower resolution/larger cellsize)
-#available: 'bilinear','nearest','cubic','average', ...
-# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
-
-downsampling_method: 'bilinear'
-
-# path building set *after inpath* to get the bandfile
-
-pathbuildinglist: ['R', 'pixelsize' , 'm','*', 'bandname', '_' , 'pixelsize' ,'m.jp2']
 
