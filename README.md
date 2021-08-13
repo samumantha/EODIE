@@ -16,9 +16,18 @@ to be extracted. The output is a per polygon timeseries of the selected features
 
 Documentation on readthedocs: https://eodie.readthedocs.io/en/latest/
 
-## Authors 
+## Maintainers 
 
 Samantha Wittke, Finnish Geospatial Research Institute in the National Land Survey of Finland
+
+## Contributors
+
+* Eetu Puttonen
+* Juuso Varho
+* Petteri Lehtinen
+* Paula Litkey
+* Milos Pandzic
+* Mika Karjalainen
 
 ## Citation 
 

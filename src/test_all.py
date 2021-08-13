@@ -1,8 +1,7 @@
 """
-
-class for testing functionality of all methods
-
-TODO: test content of files/arrays?, remove reprojected
+class for testing functionality of many methods used in EODIE
+automatically run by gitlab on push
+can also be run with ```pytest test_all.py```
 
 """
 
@@ -22,12 +21,15 @@ from vectordata import VectorData
 from index import Index
 from rasterdata import RasterData
 from writer import Writer
+import yaml
 
 class TestAll(object):
 
     def test_cloud(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        cloudobject = Mask(inpath, 'test_config.yml', True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -44,13 +46,16 @@ class TestAll(object):
         del cloudmask
 
     def test_index(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        indexobject = Index(inpath,'test_config.yml', True)
-        for index in indexobject.supportedindices:
-                indexarray = indexobject.calculate_index(index)
-        indexarrayshape = indexarray.shape
-        rightindexarrayshape = (10980, 10980)
-        assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+        indexobject = Index(inpath,cfg, True)
+        for index in ['ndvi','savi']:# following exceeds memory: indexobject.supportedindices:
+            indexarray = indexobject.calculate_index(index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
 
         inarray = np.array([[0.1,0.2,0.4],[0.4,0.1,0.2]])
         cloudarray  = np.array([[1,0,0],[0,1,0]])
@@ -59,13 +64,15 @@ class TestAll(object):
         assert (maskedarray == rightarray).all(), 'Masking fails'
 
         del indexobject
-        del indexarray
+        
         
 
 
     def test_band(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
-        rasterdata = RasterData(inpath, 'test_config.yml', True)
+        rasterdata = RasterData(inpath, cfg , True)
 
         bandfile,_ = rasterdata.get_bandfile('B04')
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
@@ -123,15 +130,17 @@ class TestAll(object):
         del geometryobject
 
     def test_extractor(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, 'test_config.yml', True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, 'test_config.yml', True)
+        indexobject = Index(inpath, cfg , True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath, 'test_config.yml', True)
+        rasterdata = RasterData(inpath, cfg , True)
         affine = rasterdata.affine 
         extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()
@@ -152,18 +161,20 @@ class TestAll(object):
 
 
     def test_writer(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
         geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
-        cloudobject = Mask(inpath, 'test_config.yml', True)
+        cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, 'test_config.yml', True)
+        indexobject = Index(inpath, cfg , True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
-        rasterdata = RasterData(inpath,'test_config.yml', True)
+        rasterdata = RasterData(inpath,cfg , True)
         affine = rasterdata.affine 
         extractorobject = Extractor(maskedarray, geometries, idname, affine)
         statarrays = extractorobject.extract_arrays_stat()

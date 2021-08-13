@@ -48,7 +48,7 @@ if not userinput.platform == 'tif':
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
 
-    pathfinderobject = Pathfinder(path, userinput.configfile)
+    pathfinderobject = Pathfinder(path, cfg)
 
     if userinput.platform == 'tif':
         raster = RasterData(path,userinput.configfile)
