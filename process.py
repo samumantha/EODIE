@@ -24,10 +24,15 @@ userinput = UserInput()
 
 test = userinput.test
 
-#loading config file
+#loading config files and merging into one dict
 with open(userinput.configfile, "r") as ymlfile:
-    cfg = yaml.safe_load(ymlfile)
+    platform_cfg = yaml.safe_load(ymlfile)
 
+with open('user_config.yml', "r") as ymlfile:
+    user_cfg = yaml.safe_load(ymlfile)
+
+#starting python 3.9: platform_cfg | user_cfg also works
+cfg = {**platform_cfg, **user_cfg}
 
 #create results dir 
 if not os.path.exists(userinput.outpath):
@@ -51,7 +56,7 @@ for path in userinput.input:
     pathfinderobject = Pathfinder(path, cfg)
 
     if userinput.platform == 'tif':
-        raster = RasterData(path,userinput.configfile)
+        raster = RasterData(path,cfg)
         geoobject = VectorData(userinput.shpbase + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
         extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine,userinput.statistics, userinput.exclude_border)
@@ -79,17 +84,17 @@ for path in userinput.input:
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
         
             if userinput.extmask is None:
-                mask = Mask(pathfinderobject.imgpath, userinput.configfile, test)
+                mask = Mask(pathfinderobject.imgpath, cfg, test)
                 cloudmask = mask.create_cloudmask()
                 
             else:
                 cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
                 extmask = glob.glob(cname)[0]
-                cloudmask = Mask(pathfinderobject.imgpath, userinput.configfile, test, extmask).cloudmask
+                cloudmask = Mask(pathfinderobject.imgpath, cfg, test, extmask).cloudmask
                 logging.info('Using external cloudmask {}'.format(extmask))
             logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
-            vegindex = Index(pathfinderobject.imgpath,userinput.configfile, test)
+            vegindex = Index(pathfinderobject.imgpath,cfg, test)
             try:
                 shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
                 geoobject = VectorData(shp_str)
