@@ -67,6 +67,17 @@ Outputs
 One csv per tile, band/vegetation index and date with polygon identifiers in the first column and statistics is the following columns
 
 
+Usage of external cloudmask
+----------------------------
+
+If a cloudmask for each file to be processed is available from an external source, make sure the cloudmask fulfills the following requirements:
+* date (YYYYMMDD, eg 20210603) and tilename (NNCCC , eg 34VFN) in end of filenames: xxx_date_tile.xx
+* supported raster file format (.tif, .jp2, and other formats supported by rasterio)
+* binary rastervalues (1,0; with 1 representing clouds/invalid pixels)
+* pixelsize == output pixelsize (given in config_x.yml)
+
+The latter two criteria can be achieved by using the auxiliary script create_binary_cloudmask.py (but be aware of issue https://gitlab.com/eetun-tiimi/EODIE/-/issues/62)
+
 Inner workflow
 ----------------
 

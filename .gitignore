@@ -13,5 +13,8 @@ __pycache__
 .vscode
 *.png
 *.png
-*.xml
+*.jp2
+*.tif
 *.aux
+*.xml
+

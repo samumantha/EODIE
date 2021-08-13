@@ -37,6 +37,8 @@ class UserInput(object):
         parser.add_argument('--geotiff', dest='geotiff', default=0, type=int, help="Option to save output array to geotiff. 1 for geotiff, 0 for pickle array")
         parser.add_argument('--test', dest='test', action='store_true')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
+        parser.add_argument('--external_cloudmask', dest= 'extmask', default = None, help= ' location and name of external cloudmask (without tile and date and extension) if available')
+
 
         args = parser.parse_args()
 
@@ -68,4 +70,4 @@ class UserInput(object):
         self.geotiff = args.geotiff
         self.test = args.test
         self.exclude_border = args.exclude_border
-
+        self.extmask = args.extmask
