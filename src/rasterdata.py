@@ -10,7 +10,6 @@ import re
 
 import numpy as np
 import rasterio
-import yaml
 from rasterio.enums import Resampling
 
 class RasterData(object):
@@ -47,7 +46,7 @@ class RasterData(object):
             If testing is performed
 
         """
-        
+
         self.cfg = cfg
         self.inpath = inpath
         self.get_metadata()

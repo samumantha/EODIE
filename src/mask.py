@@ -6,7 +6,6 @@ Class to create and adapt cloudmask array
 import numpy as np
 import rasterio
 from rasterdata import RasterData
-import yaml
 
 class Mask(RasterData):
     """ Retrieving and transforming a cloudmask from Remote Sensing product or external

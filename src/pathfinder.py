@@ -1,7 +1,6 @@
 import os
 import glob
 import re
-import yaml
 
 
 class Pathfinder(object):

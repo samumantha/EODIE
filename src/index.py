@@ -8,7 +8,6 @@ import numpy as np
 import re
 np.seterr(divide='ignore', invalid='ignore')
 from rasterdata import RasterData
-import yaml
 
 class Index(RasterData):
 
