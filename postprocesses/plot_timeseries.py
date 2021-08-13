@@ -1,3 +1,4 @@
+# %%
 import os
 import argparse
 from matplotlib import lines
@@ -13,7 +14,7 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 
-#parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
+parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
 parser.add_argument('--dir', dest= 'directory' , default="/home/jvarho/EODIE/testTimeseries/stats_with_count/combined_kndvi.csv",help = 'Write the directory path where the csv files are as absolute path')
 parser.add_argument('--out',dest= 'output_directory',default="/home/jvarho/EODIE/testTimeseries",help= 'Write the directory path where you want the files to be outputted')
 parser.add_argument('--id', dest='ID', default=[],type=int,help="Write a list of id's separated by a space", nargs='*')
@@ -23,7 +24,7 @@ parser.add_argument('--start', dest='startDate',default="",help='Specify the sta
 parser.add_argument('--end', dest='endDate',default="", help='Specify the ending date in format YYYYMMDD. If left empty, will plot all dates available')
 parser.add_argument('--format',dest='fileFormat',default='png', help="write the wanted format of timeseries, can be: 'png','eps','pdf','ps','svg'")
 parser.add_argument('--seePoints',dest="seeDatapoints",action='store_true', help="The time series can either show or not show the data points, if this argument give, will show points")
-parser.add_argument('--outlierDetection',dest='detectOutliers',action='store_true', help="By creating a prediction interval, anomalies can be detected outside of it. ")
+parser.add_argument('--detectOutliers',dest='detectOutliers',action='store_true', help="By creating a prediction interval, anomalies can be detected outside of it. ")
 parser.add_argument("--seeInterval", dest="seeInterval", action='store_true' ,help="Visualise the prediction interval which is used for the outlier detection.")
 parser.add_argument('--seeSmoothened', dest="seeSmoothened", action='store_true', help="See a smoothened curve made of the data points. Uses Lowess smoothening.")
 parser.add_argument("--seeError", dest="standardError",action='store_true', help="You can see the standard error of each individual point. (Requires 'count' as statistic)")
@@ -47,10 +48,21 @@ seeInterval = input.seeInterval
 standardError = input.standardError
 pixelLimit = input.pixellimit
 
-
 # Data collection functions: 
-
 def data_collection1(path): # directory full of small csv files
+    """ 
+    Collects the data from a directory full of small csv files to a big dataframe by reading csv and concatenating to main dataframe.
+
+    Parameters
+    ----------
+    path : string 
+            contains the path to the datafiles 
+
+    Returns
+    -------
+    dataframe 
+            The read csv files are collected to this big dataframe from which they can be plotted.
+    """
     df = pd.DataFrame()
     for entry in os.scandir(path): # Checks every file in the directry
         if (entry.name.endswith('.csv')) and entry.is_file and indices_list.__contains__(entry.name.split('_')[0]):
@@ -67,13 +79,42 @@ def data_collection1(path): # directory full of small csv files
                 df = pd.concat([df,temp_df],axis=0)
     return df
 
-def data_collection2(path): # One big combined csv file /home/jvarho/EODIE/path/to/combined_INDEX.csv
+
+def data_collection2(path): # One big combined csv file ./path/to/combined_INDEX.csv
+    """ 
+    Collects the data from big combined statistics csv file to a big dataframe.
+
+    Parameters
+    ----------
+    path : string 
+            contains the path to the datafiles 
+
+    Returns
+    -------
+    dataframe 
+            The read csv files are collected to this big dataframe from which they can be plotted.
+    """
     df = pd.read_csv(path)
     df['Index'] = path.split('_')[-1].split('.')[0]
     df['Dates'] = pd.to_datetime(df['Dates'], format="%Y%m%d")
     return df
 
+
+
 def data_collection3(path): # Directory full of big combined csv files
+    """ 
+    Collects the data from a directory full of combined statistics csv files to a big dataframe by reading csv's and concatenating to main dataframe.
+
+    Parameters
+    ----------
+    path : string 
+            contains the path to the datafiles 
+
+    Returns
+    -------
+    dataframe 
+            The read csv files are collected to this big dataframe from which they can be plotted.
+    """
     df = pd.DataFrame()
     for entry in os.scandir(path):
         if entry.name.endswith('.csv') and entry.is_file:
@@ -85,7 +126,6 @@ def data_collection3(path): # Directory full of big combined csv files
                 df = temp_df
             else:
                 df = pd.concat([df,temp_df],axis=0)      
-       
     return df
 
 
@@ -128,7 +168,6 @@ if bool(endDate):
 stat='mean'
 wanted_data=['Dates',stat]
 
-
 maxPixels = {}
 
 # Plotting:
@@ -149,7 +188,7 @@ for id in ID_list:
         
 
         #operate smoothing
-        smoother=LowessSmoother(smooth_fraction=0.2,iterations=1)
+        smoother=LowessSmoother(smooth_fraction=0.15,iterations=1)
         smoother.smooth(plot_df['mean']) #Inputs the original data to tsmoothie
          
         #generate intervals
