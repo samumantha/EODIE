@@ -8,6 +8,8 @@
 
 platform: 's2'
 
+# Mask conditions are stored as values, not as bitflags
+bitmask: 0
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
 tobemaskedlist: 
