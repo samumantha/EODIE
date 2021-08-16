@@ -1,5 +1,5 @@
 #location of Ls8-world shapefile
-tileshp: 
+tileshp: /home/petteri/Downloads/LS_tiles/WRS2_descending
 
 platform: 'ls8'
 
@@ -9,14 +9,25 @@ maxcloudcover: 10
 # for landsat only one resolution given
 pixelsize:
 
-# Values to be to be included in cloudmask
+# Mask conditions are not stored as values, but as individual 0/1 flags in bits
+bitmask: 1
+# Bits to be to be included in cloudmask
 # https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-1-level-1-quality-assessment-band?qt-science_support_page_related_con=0#qt-science_support_page_related_con
-# default [2,3,4,6]
+# default [2,3,4,6] WARNING: THESE ARE FOR 8-BIT QI
 tobemaskedlist: 
-  - 2 #radiometric saturation
-  - 3 #cloud
-  - 4 #cloud shadow
-  - 6 #cirrus
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 11
+  - 12
+  #- 2 #radiometric saturation
+  #- 3 #cloud
+  #- 4 #cloud shadow
+  #- 6 #cirrus
 
 #all bands are located in parent directory directly
 bandlocation: ./

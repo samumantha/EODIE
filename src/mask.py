@@ -25,9 +25,13 @@ class Mask(RasterData):
 
     def binarize_cloudmask(self,sclarray):
         """ takes in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use """
-        
+        bitmask = self.cfg['bitmask']
         tobemaskedlist = self.cfg['tobemaskedlist']
-        mask = np.isin(sclarray, tobemaskedlist)
+        if not bitmask:
+            mask = np.isin(sclarray, tobemaskedlist)
+        else:
+            mask = self.createbitmask(sclarray, tobemaskedlist)
+
         """
         # one is cloud, 0 no cloud
         newmask = np.logical_not(mask)
@@ -46,3 +50,12 @@ class Mask(RasterData):
 
         return cloudmask
 
+
+    def createbitmask(self, maskarr, tobemasked):
+        return np.array(list(map(lambda row: list(map(lambda pixel: self.checkbits(pixel, tobemasked), row)), maskarr)))
+        
+    def checkbits(data, tobemaskedlist):
+        for bit in tobemaskedlist:
+            if bool(1 << bit & data):
+                return True
+        return False
