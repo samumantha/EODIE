@@ -113,7 +113,12 @@ for path in userinput.input:
                     geoobject = VectorData(shp_str)
                     geoobject.reproject_to_epsg(vegindex.epsg)
                 except FileNotFoundError:
-                    continue
+                    try:
+                        shp_str = os.path.join(shp_directory, shp_name  + pathfinderobject.tile + '_reprojected_4326.shp')
+                        geoobject = VectorData(shp_str)
+                        geoobject.reproject_to_epsg(vegindex.epsg)
+                    except FileNotFoundError:
+                        continue
 
             shapefile = geoobject.geometries
 
