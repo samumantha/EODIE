@@ -38,22 +38,30 @@ cfg = {**platform_cfg, **user_cfg}
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
+tiles = None
+shp_directory, shp_name = os.path.split(userinput.shpbase)
+
 #setup logging 
 logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
 
-if not userinput.platform == 'tif':
-    #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
-    small_polygon_shapefile = userinput.shpbase + '.shp'
-    shp_directory, shp_name = os.path.split(userinput.shpbase)
-    world_tiles = cfg['tileshp']+'.shp'
-    fieldname = cfg['fieldname']
-    shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
-    shapesplitter.splitshp()
+if not userinput.exclude_splitshp == True:
+    if not userinput.platform == 'tif':
+        #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+        small_polygon_shapefile = userinput.shpbase + '.shp'
+        
+        world_tiles = cfg['tileshp']+'.shp'
+        fieldname = cfg['fieldname']
+        shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
+        shapesplitter.splitshp()
+        tiles = shapesplitter.tiles
+        shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
 
     pathfinderobject = Pathfinder(path, cfg)
+    if tiles is None:
+        tiles = pathfinderobject.tile
 
     if userinput.platform == 'tif':
         raster = RasterData(path,cfg)
@@ -81,7 +89,7 @@ for path in userinput.input:
         logging.info('Tile is {}'.format(pathfinderobject.tile))
         logging.info('Date is {}'.format(pathfinderobject.date))
 
-        if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in shapesplitter.tiles:
+        if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
         
             if userinput.extmask is None:
                 mask = Mask(pathfinderobject.imgpath, cfg, test)
@@ -96,12 +104,12 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg, test)
             try:
-                shp_str = os.path.join(shapesplitter.output_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
+                shp_str = os.path.join(shp_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
                 geoobject = VectorData(shp_str)
                 geoobject.reproject_to_epsg(vegindex.epsg)
             except FileNotFoundError:
                 try:
-                    shp_str = os.path.join(shapesplitter.output_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
+                    shp_str = os.path.join(shp_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
                     geoobject = VectorData(shp_str)
                     geoobject.reproject_to_epsg(vegindex.epsg)
                 except FileNotFoundError:
@@ -156,6 +164,8 @@ for path in userinput.input:
                 
             else:
                 logging.warning('Cloudcovered or no data in Area of interest!')
+
 if not userinput.platform == 'tif':
-    if not userinput.keep_shp: 
-        shapesplitter.delete_splitted_files()
+    if not userinput.exclude_splitshp:
+        if not userinput.keep_shp: 
+            shapesplitter.delete_splitted_files()
