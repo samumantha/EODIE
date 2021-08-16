@@ -7,7 +7,8 @@ To test if the script runs as intended in your machine and to get familiar with 
 (Commands provided for UNIX based OS)
 
 1. Download the testfiles and unzip ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip`` and then ``unzip testfiles.zip``, this may take a moment.
-2. Also download the Sentinel-2 tile shapefile , provided https://fromgistors.blogspot.com/2016/10/how-to-identify-sentinel-2-granule.html
+2. Also download the Sentinel-2 tile shapefile , provided https://fromgistors.blogspot.com/2016/10/how-to-identify-sentinel-2-granule.html, `wget -O sentinel2_tiles_world.zip https://docs.google.com/uc?id=0BysUrKXWIDwBZHF6dENlZ0g1Y0k` and then `unzip sentinel2_tiles_world.zip`
+
 3. Create conda environment from environment.yml ``conda env create -f environment.yml``
 4. Activate conda environment eodie ``conda activate eodie``
 5. run following command:
