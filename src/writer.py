@@ -85,7 +85,7 @@ class Writer(object):
 
             CRS = rasterio.crs.CRS.from_dict(init=epsgcode)
 
-            with rasterio.open(self.outpath+'_id_'+key+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
+            with rasterio.open(self.outpath+'_id_'+str(key)+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
                 dtype=data['array'].dtype, transform=data['affine']) as dst: 
                 dst.write(data['array'],1)
 
