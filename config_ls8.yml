@@ -1,6 +1,3 @@
-#location of Ls8-world shapefile
-tileshp: /home/petteri/Downloads/LS_tiles/WRS2_descending
-
 platform: 'ls8'
 
 # Process only files with less than xx % cloudcover
@@ -30,7 +27,7 @@ tobemaskedlist:
   #- 6 #cirrus
 
 #all bands are located in parent directory directly
-bandlocation: ./
+bandlocation: ['./']
 
 #indicator for cloudfile
 cloudfilename: 'pixel_qa'
@@ -63,6 +60,7 @@ band4: [30]
 band5: [30]
 band6: [30]
 band7: [30]
+pixel_qa: [30]
 # to be continued
 
 #upsampling (converting to higher resolution/smaller cells) / downsampling (converting to lower resolution/larger cellsize)
