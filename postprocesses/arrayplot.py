@@ -138,7 +138,7 @@ elif input.timeseries: # Timeseries where id and index stay the same
                         if str(id_key) == wantedID:
                             pickle_arr = new_dict[id_key] # find correct array based on wantedID
                     ax = plt.subplot(grid_height, grid_width, grid_index) # Plotting in the correct spot
-                    fig.tight_layout(pad=3.0)
+
 
                     # Just take values from the valid range of this index based on the config file:
                     indexLimits = indexTable[index]
@@ -149,6 +149,7 @@ elif input.timeseries: # Timeseries where id and index stay the same
                     ax.set_yticks([])
                     grid_index += 1 # Increment index to plot the next subplot in the correct spot
 
+                fig.tight_layout(pad=3.0)
                 # Adding colorbar:
                 fig.subplots_adjust(right=0.8)
                 cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
