@@ -104,21 +104,15 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg, test)
             try:
-                shp_str = os.path.join(shp_directory, shp_name  + '_' + pathfinderobject.tile + '.shp')
+                shp_str_list = [fn for fn in glob.glob(os.path.join(shp_directory, shp_name  + '*' + pathfinderobject.tile + '*.shp')) if not 'reprojected' in fn]
+                if len(shp_str_list) == 0:
+                    shp_str = [fn for fn in glob.glob(os.path.join(shp_directory, shp_name  + '*' + pathfinderobject.tile + '*.shp')) if 'reprojected_4326' in fn and not 'convexhull' in fn][0]
+                else:
+                    shp_str = shp_str_list[0]
                 geoobject = VectorData(shp_str)
                 geoobject.reproject_to_epsg(vegindex.epsg)
-            except FileNotFoundError:
-                try:
-                    shp_str = os.path.join(shp_directory, shp_name + '_reprojected_4326_' + pathfinderobject.tile + '.shp')
-                    geoobject = VectorData(shp_str)
-                    geoobject.reproject_to_epsg(vegindex.epsg)
-                except FileNotFoundError:
-                    try:
-                        shp_str = os.path.join(shp_directory, shp_name  + pathfinderobject.tile + '_reprojected_4326.shp')
-                        geoobject = VectorData(shp_str)
-                        geoobject.reproject_to_epsg(vegindex.epsg)
-                    except FileNotFoundError:
-                        continue
+            except [FileNotFoundError, IndexError]:
+                continue
 
             shapefile = geoobject.geometries
 
