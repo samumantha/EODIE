@@ -59,7 +59,10 @@ class Extractor(object):
             self.statistics = ['count']
         extractedarrays = {}
         for x in a:
-            myid = x['properties'][self.idname]
+            try:
+                myid = x['properties'][self.idname]
+            except KeyError:
+                myid = x[self.idname]
             statlist = []
             for stat in self.statistics:
                 if stat == 'count':
