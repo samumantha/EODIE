@@ -20,7 +20,6 @@ class Validator(object):
         """
         self.input_amount_check(args.mydir, args.myfile)
         self.input_exists_check(args.mydir, args.myfile)
-        #self.prj_check(args.inputshape)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
 
@@ -85,28 +84,7 @@ class Validator(object):
             exit('Please make sure your dates are in the past')
         return True
 
-    def prj_check(self, inputshape):
-        """ check that the given shapefile has a accompanying "prj" file that is needed for projection information
-        Parameters
-        -----------
-        inputshape: str
-            location and name of the shapefile to be checked
-        Returns
-        --------
-        check_ok: boolean
-            if projection file exists, exits if not
-        """
-        
-        if inputshape is not None:
-            ishapepath, ishapename = os.path.split(inputshape)
-            prjfile = os.path.splitext(ishapename)[0] + '.prj'
-            
-            if prjfile not in os.listdir(ishapepath):
-                exit('Please provide a .prj file for the inputshapefile!')
-            else:
-                return True
-        else:
-            exit('Please provide a shapefile with polygons')
+
 
             
 
