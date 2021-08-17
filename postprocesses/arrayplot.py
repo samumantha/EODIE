@@ -40,7 +40,7 @@ input = parser.parse_args()
 my_cmap = copy(cm.get_cmap(input.cmap)) # Getting (and copying) the wanted colormap
 my_cmap.set_under('k') # pixel values < min are black
 my_cmap.set_bad('k') # Invalid values (e.g. NaN) are black
-#my_cmap.set_over('w') # Uncomment for setting pixel values > max to white (masked values?)
+my_cmap.set_over('w') # Uncomment for setting pixel values > max to white (masked values)
 
 # Opening and reading lookuptable into a list of the lines:
 with open(input.lookup_table, 'r') as f:
