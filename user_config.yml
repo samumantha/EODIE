@@ -9,7 +9,7 @@ maxcloudcover: 99
 
 # Extract files with xx m pixel size 
 # options: 10,20 (for Sentinel-2)
-pixelsize: 10
+pixelsize: 30
 
 #resampling (converting to higher/lower resolution/smaller cells)
 #available: 'biliner','nearest','cubic','average', ...
@@ -18,7 +18,7 @@ pixelsize: 10
 resampling_method: 'bilinear'
 
 #location of the shapefile with tiles (Sentinel2-tiles-world in case of Sentinel-2)
-tileshp: ./shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world
+tileshp: /home/petteri/Downloads/LS_tiles/WRS2_descending
 
 #name of field where tilenames are stored in shapefile ('Name' in case of sentinel2_tiles_world)
-fieldname: 'Name'
+fieldname: 'PR'

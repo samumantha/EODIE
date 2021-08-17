@@ -27,25 +27,25 @@ tobemaskedlist:
   #- 6 #cirrus
 
 #all bands are located in parent directory directly
-bandlocation: ['./']
+bandlocation: ['.']
 
 #indicator for cloudfile
-cloudfilename: 'pixel_qa'
+cloudfilename: 'QA_PIXEL'
 
 # LS8 bands
 # https://www.usgs.gov/media/images/landsat-8-band-designations
-red : 'band4'
-green: 'band3'
-blue: 'band2'
-nir: 'band5'
-swir2: 'band7'
+red : 'B4'
+green: 'B3'
+blue: 'B2'
+nir: 'B5'
+swir2: 'B7'
 
 tilepattern: '[0-9]{6}'
 
 # the first that is found is used
 datepattern: '20[1-2][0-9][0-1][0-9][0-3][0-9]'
 
-band_designation: 'band\d?\d'
+band_designation: 'B\d?\d'
 
 #???????????
 # Quantification value used to multiple the reflectance to get DN
@@ -53,14 +53,14 @@ band_designation: 'band\d?\d'
 quantification_value: 1
 
 # available resolutions per band
-band1: [30]
-band2: [30]
-band3: [30]
-band4: [30]
-band5: [30]
-band6: [30]
-band7: [30]
-pixel_qa: [30]
+B1: [30]
+B2: [30]
+B3: [30]
+B4: [30]
+B5: [30]
+B6: [30]
+B7: [30]
+QA_PIXEL: [30]
 # to be continued
 
 #upsampling (converting to higher resolution/smaller cells) / downsampling (converting to lower resolution/larger cellsize)
@@ -72,4 +72,4 @@ resampling_method: 'bilinear'
 
 # path building set *after inpath* to get the bandfile
 
-pathbuildinglist: ['*', 'bandname', '*' , '.tif']
+pathbuildinglist: ['*', 'bandname', '*' , '.TIF']

@@ -95,13 +95,14 @@ class Mask(RasterData):
 
 
     def createbitmask(self, maskarr, tobemasked):
-        return np.array(list(map(lambda row: list(map(lambda pixel: self.checkbits(pixel, tobemasked), row)), maskarr)))
+        return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(maskarr)
+        #return np.array(list(map(lambda row: list(map(lambda pixel: self.checkbits(pixel, tobemasked), row)), maskarr)))
         
     def checkbits(self, data, tobemaskedlist):
         for bit in tobemaskedlist:
             if(bit == 2):
                 self.testcount += 1
-                print(self.testcount/1000000)
+                #print(self.testcount/1000000)
             if bool(1 << bit & data):
                 return 1
         return 0
