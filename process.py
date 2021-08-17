@@ -111,7 +111,8 @@ for path in userinput.input:
                     shp_str = shp_str_list[0]
                 geoobject = VectorData(shp_str)
                 geoobject.reproject_to_epsg(vegindex.epsg)
-            except [FileNotFoundError, IndexError]:
+            except:
+                print('WARNING: Something went wrong')
                 continue
 
             shapefile = geoobject.geometries
