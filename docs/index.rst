@@ -83,6 +83,7 @@ Contributions can be made following the `Contribution Guide <http://www.contribu
    Example
    Use
    Tutorial
+   Inner_workings
 
 
 
