@@ -122,8 +122,13 @@ for path in userinput.input:
                 rastervalidatorobject = RasterValidatorS2(path, maxcloudcover, geoobject)
                 logging.info('Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.cloudcovered))
                 logging.info('Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
+                cloudcovered = rastervalidatorobject.cloudcovered
+                datacovered = rastervalidatorobject.datacovered
+            else:
+                cloudcovered = True
+                datacovered = True
             
-            if rastervalidatorobject.cloudcovered and rastervalidatorobject.datacovered:
+            if cloudcovered and datacovered:
 
                 for index in userinput.indexlist:
                     if index in vegindex.supportedindices:
