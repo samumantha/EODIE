@@ -37,7 +37,6 @@ class Mask(RasterData):
         if external is not None:
             self.cloudmask = self.load_binary_mask(external)
         self.cfg = cfg
-        self.testcount = 0
 
     def load_binary_mask(self,external):
         """ Loads an external mask that needs to be a rasterfile with one/True is cloud, 0/False no cloud, 
@@ -57,14 +56,10 @@ class Mask(RasterData):
     def binarize_cloudmask(self,sclarray):
         """ takes in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use """
         bitmask = self.cfg['bitmask']
-        print("bitmask: " + str(bitmask))
         tobemaskedlist = self.cfg['tobemaskedlist']
-        print("tobemasked: " + str(tobemaskedlist))
         if not bitmask:
             mask = np.isin(sclarray, tobemaskedlist)
         else:
-            print("Creating bitmask")
-            print(sclarray.shape)
             mask = self.createbitmask(sclarray, tobemaskedlist)
 
         """
@@ -86,9 +81,7 @@ class Mask(RasterData):
             array with invalid pixels marked as True/1 and correct 'pixelsize'
 
         """
-        print("getting array")
         cloudarray= self.get_array('cloudfilename', 'nearest')
-        print("binarizing cloudmask")
         cloudmask = self.binarize_cloudmask(cloudarray)
 
         return cloudmask
@@ -100,9 +93,6 @@ class Mask(RasterData):
         
     def checkbits(self, data, tobemaskedlist):
         for bit in tobemaskedlist:
-            if(bit == 2):
-                self.testcount += 1
-                #print(self.testcount/1000000)
             if bool(1 << bit & data):
                 return 1
         return 0

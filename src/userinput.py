@@ -38,6 +38,7 @@ class UserInput(object):
         parser.add_argument('--test', dest='test', action='store_true')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
         parser.add_argument('--external_cloudmask', dest= 'extmask', default = None, help= ' location and name of external cloudmask (without tile and date and extension) if available')
+        parser.add_argument('--exclude_splitshp', dest='exclude_splitshp', action='store_true',help='if this flag is set, it is assumed that splitshp has been run manually beforehand')
 
 
         args = parser.parse_args()
@@ -71,3 +72,4 @@ class UserInput(object):
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
+        self.exclude_splitshp = args.exclude_splitshp
