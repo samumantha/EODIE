@@ -67,7 +67,10 @@ class Extractor(object):
                 else:
                     #setting precision of results to .3
                     #WARNING: std should always be rounded up, but is not with this approach
-                    onestat = format(x['properties'][stat], '.3f')
+                    if not x['properties'][stat] is None:
+                        onestat = format(x['properties'][stat], '.3f')
+                    else:
+                        onestat = None
                 
                 statlist.append(onestat)
             extractedarrays[myid] = statlist
