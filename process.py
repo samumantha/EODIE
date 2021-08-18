@@ -16,7 +16,6 @@ from splitshp import SplitshpObject
 from rasterdata import RasterData
 import logging
 from datetime import datetime 
-import yaml
 import fiona
 
 
@@ -24,15 +23,7 @@ userinput = UserInput()
 
 test = userinput.test
 
-#loading config files and merging into one dict
-with open(userinput.configfile, "r") as ymlfile:
-    platform_cfg = yaml.safe_load(ymlfile)
-
-with open('user_config.yml', "r") as ymlfile:
-    user_cfg = yaml.safe_load(ymlfile)
-
-#starting python 3.9: platform_cfg | user_cfg also works
-cfg = {**platform_cfg, **user_cfg}
+cfg = userinput.config
 
 #create results dir 
 if not os.path.exists(userinput.outpath):

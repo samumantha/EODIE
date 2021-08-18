@@ -27,6 +27,9 @@ r_edge: 'B05'
 swir1: 'B11'
 swir2: 'B12'
 
+# some part of the products file name that identifies them as product to be used
+productnameidentifier: 'S2*.SAFE'
+
 # parts to build path towards bands
 bandlocation: ['.','*','*','IMG_DATA']
 

@@ -7,6 +7,7 @@ import os
 from datetime import datetime 
 import glob
 from validator import Validator
+import yaml
 
 class UserInput(object):
     """ Userinput object for EODIE
@@ -44,7 +45,17 @@ class UserInput(object):
         args = parser.parse_args()
 
         self.platform = args.platform
-        self.configfile = './config_'+ self.platform + '.yml'
+        configfile = './config_'+ self.platform + '.yml'
+
+        #loading config files and merging into one dict
+        with open(configfile, "r") as ymlfile:
+            platform_cfg = yaml.safe_load(ymlfile)
+
+        with open('./user_config.yml', "r") as ymlfile:
+            user_cfg = yaml.safe_load(ymlfile)
+
+        #starting python 3.9: platform_cfg | user_cfg also works
+        self.config = {**platform_cfg, **user_cfg}
 
         Validator(args)
 
@@ -53,7 +64,7 @@ class UserInput(object):
         if args.myfile is not None:
             self.input = [args.myfile]
         else:
-            self.input = glob.glob(os.path.join(args.mydir,'*.SAFE'))
+            self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
