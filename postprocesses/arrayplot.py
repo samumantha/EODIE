@@ -126,11 +126,14 @@ elif input.timeseries: # Timeseries where id and index stay the same
                 x = np.sqrt(np.divide(grid_size, np.multiply(fig_w, fig_h)))
                 grid_height = max(1, int(np.floor(np.multiply(fig_h, x)))) # This will make height less than or equal to width
                 grid_width = int(np.ceil(np.divide(grid_size, grid_height)))
-                title = index + '_' + wantedID
+
+                files = sorted(files, key=lambda x: x.name.split('_')[1]) # Sort the list of files based on time
+                firstdatadate = files[0].name.split('_')[1]
+                lastdatadate = files[-1].name.split('_')[1]
+                title = index + '_' + wantedID + '_timeseries_' + firstdatadate + '-' + lastdatadate
                 plt.suptitle(title, size='xx-large')
 
                 grid_index = 1 # We start from subplot 1 (indexing starts from 1 here because of how plt.subplot works)
-                files = sorted(files, key=lambda x: x.name.split('_')[1]) # Sort the list of files based on time
                 for file in files:
                     with open(file, 'rb') as f:
                         new_dict = pickle.load(f)
@@ -158,5 +161,5 @@ elif input.timeseries: # Timeseries where id and index stay the same
                 fig.subplots_adjust(top=0.9)
                 if input.show:
                     plt.show()
-                fig.savefig(os.path.join(input.outdir, title + '_timeseries.png'))
+                fig.savefig(os.path.join(input.outdir, title + '.png'))
                 plt.close()
