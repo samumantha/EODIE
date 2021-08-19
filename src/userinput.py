@@ -6,7 +6,10 @@ import argparse
 import os
 from datetime import datetime 
 import glob
+from sys import platform
 from validator import Validator
+import re
+import yaml
 
 class UserInput(object):
     """ Userinput object for EODIE
@@ -46,6 +49,9 @@ class UserInput(object):
         self.platform = args.platform
         self.configfile = './config_'+ self.platform + '.yml'
 
+        with open(self.configfile, "r") as ymlfile:
+            platform_cfg = yaml.safe_load(ymlfile)
+
         Validator(args)
 
         self.mydir = args.mydir
@@ -53,7 +59,9 @@ class UserInput(object):
         if args.myfile is not None:
             self.input = [args.myfile]
         else:
-            self.input = glob.glob(os.path.join(args.mydir,'*.SAFE'))
+            pattern = platform_cfg['filepattern']
+            self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(pattern, file)]
+            #self.input = glob.glob(os.path.join(args.mydir,'*.SAFE'))
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
