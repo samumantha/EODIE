@@ -1,6 +1,8 @@
 More
 ====
 
+.. _platform_spec:
+
 Platform specific configuration files
 --------------------------------------
 
@@ -9,7 +11,7 @@ These files allow changes that are specific to the platform that is used.
 In general, the user will not need to touch these ever. 
 The only cases where changes in these files are necessary is:
 
-* If e.g. a red edge band (in case of Sentinel-2) should be used instead of the red band in index calcualtions with the red band.
+* If e.g. a red edge band (in case of Sentinel-2) should be used instead of the nir band in index calcualtions with the nir band.
 * If the classes of pixels masked in EODIE need to be changed eg to exclude the masking of cirrus clouds or include the masking of snow (where available)
 
 The following parameters need to be included in a config_x.yml file to be used in EODIE:
@@ -58,6 +60,18 @@ One 'no coding required' option to contribute is, to extend the platform capabil
 This can be done by adding another ``config_x.yml`` with x being the platform in question. 
 See above for the parameters that need to be included in the config_x.yml file to be used in EODIE.
 
+.. _auxfiles:
+
+Auxiliary files
+----------------
+
+A few auxiliary files are avialable in the aux directory.
+
+`create_binary_cloudmask.py`
+`examine_shapefile.py`
+`get_cloudcover.py`
+
+Please refer to the scripts top for more information and how to use them.
 
 
 

@@ -13,11 +13,13 @@ EODIE can be used to extract polygon based information from a
 Inputs 
 ^^^^^^^
 
-Comman line arguments
+The following sections describe EODIEs command line arguments and the configuration files. All of the following only matters when using EODIE as command line tool. For API, see :ref:`API`.
+
+Command line arguments
 ++++++++++++++++++++++
 
-When using EODIE from the commandline using the ``process.py`` script, the following parameters can be used in the commandline:
-Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_inpput` for inputs that need to be given 
+The following parameters can be used in the commandline:
+Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given 
 
 | ``--platform``
 | Which platform does the data come from? 
@@ -28,14 +30,17 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--dir``
 | The directory where the data to be processed is stored as absolute path.
 | type: String
+EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs.
 
 | ``--file``
 | If only one file shall be processed use ``--file`` instead of ``--dir``. Cannot be used together with ``--dir``.
 | type: String
+Either `--dir` or `--file` needs to be given by user.
 
 | ``--shp``
 | Absolute path to the shapefile to be used for processing, without extension and tilename.
 | type: String
+The given shapefile defines the area of interest. Internally, EODIE splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
 
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
@@ -45,6 +50,8 @@ Note that some parameters have options, some have defaults and some are optional
 | Name of the unique ID-field of the shapefile provided at ``--shp``.
 | type: String
 | example: ``--id id``
+| Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
+
 
 | ``--stat``
 | 1 if statistics (see below) shall be calculated per polygon, 0 if all pixels within the polygon shall be extracted as numpy array
@@ -127,6 +134,7 @@ Other settings that can be adjusted in the configuration file are:
 | Options: available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 | Example: `resampling_method: 'bilinear'` will use bilinear resampling for all necessary resampling of the rasterdata
 
+EODIE also includes other configuration files called config_x.yml with x being some platform name or tif. These configuration files do not need to be touched or changed in general. One exception to this is for example a 'red edge' band should be used in indices instead of the nir band, that could be changed in the platform specific configuration files. See more about this and about the possibility of extending EODIE to work with other platforms in ref:`platform_spec`.
 
 .. _nec_input:
 
