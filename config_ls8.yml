@@ -36,6 +36,7 @@ red : 'B4'
 green: 'B3'
 blue: 'B2'
 nir: 'B5'
+swir1: 'B6'
 swir2: 'B7'
 
 tilepattern: '[0-9]{6}'
