@@ -103,7 +103,29 @@ Note that some parameters have options, some have defaults and some are optional
 Configuration file
 +++++++++++++++++++
 
-For more user specific 
+Some adjustments only need to be set once by the user. These are available in `user_config.yml`.
+The most important setting in the userconfig is the path to the tile shapefile (`tileshp`) and the fieldname where the tilename is stored (`fieldname`).
+The tileshapefile is a shapefile containing the units, also called tiles, that data is provided for each platform. 
+
+[TODO: image of Sentinel-2 tiles over Finland]
+
+When processing data that is not tiled, or no tile shapefile is provided, this parameter can be left empty.
+
+Other settings that can be adjusted in the configuration file are:
+| `maxcloudcover`
+| Enter the maximum cloudcover of a file that is still processed in percentage
+| Type: Integer
+| Example: `maxcloudcover: 99` excludes all files in the directory that have > 99 % cloudcover over the whole tile according to metadata.
+
+| `pixelsize` 
+| Enter the pixelsize that you want your results to be in. Bands are then resampled to match the given pixelsize. This has most influence on geotiff or array outputs.
+| Type: Integer
+| Example: `pixelsize : 10` will use bands that are available in 10 m as is and resample bands that are only available in larger pixelsizes to 10m before extracting statistics/array/geotiff
+
+| `resampling method`
+| If bands are not available directly in the given pixelsize, they need to be resampled. Here the resampling method for up- and downsampling can be changed.
+| Options: available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+| Example: `resampling_method: 'bilinear'` will use bilinear resampling for all necessary resampling of the rasterdata
 
 
 .. _nec_input:
