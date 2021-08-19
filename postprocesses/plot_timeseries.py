@@ -1,4 +1,3 @@
-# %%
 import os
 import argparse
 from matplotlib import lines
@@ -14,12 +13,10 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-f' , dest="f",help="for jupiter notebook testing, error wanted this inserted")
-parser.add_argument('--dir', dest= 'directory' , default="/home/jvarho/EODIE/testTimeseries/stats_with_count/combined_kndvi.csv",help = 'Write the directory path where the csv files are as absolute path')
-parser.add_argument('--out',dest= 'output_directory',default="/home/jvarho/EODIE/testTimeseries",help= 'Write the directory path where you want the files to be outputted')
+parser.add_argument('--dir', dest= 'directory' ,help = 'Write the directory path where the csv files are as absolute path')
+parser.add_argument('--out',dest= 'output_directory',help= 'Write the directory path where you want the files to be outputted')
 parser.add_argument('--id', dest='ID', default=[],type=int,help="Write a list of id's separated by a space", nargs='*')
 parser.add_argument('--index', dest= 'index', default=['kndvi','ndvi'] ,help='write a list of indices you want to be plotted separated by a space', nargs='*')
-#parser.add_argument('--stat', dest='statistics', default='mean,std', help='Write the statistics you want to be plotted in the same plot')
 parser.add_argument('--start', dest='startDate',default="",help='Specify the starting date in format YYYYMMDD. If left empy, will plot all dates available')
 parser.add_argument('--end', dest='endDate',default="", help='Specify the ending date in format YYYYMMDD. If left empty, will plot all dates available')
 parser.add_argument('--format',dest='fileFormat',default='png', help="write the wanted format of timeseries, can be: 'png','eps','pdf','ps','svg'")
@@ -28,6 +25,7 @@ parser.add_argument('--detectOutliers',dest='detectOutliers',action='store_true'
 parser.add_argument("--seeInterval", dest="seeInterval", action='store_true' ,help="Visualise the prediction interval which is used for the outlier detection.")
 parser.add_argument('--seeSmoothened', dest="seeSmoothened", action='store_true', help="See a smoothened curve made of the data points. Uses Lowess smoothening.")
 parser.add_argument("--seeError", dest="standardError",action='store_true', help="You can see the standard error of each individual point. (Requires 'count' as statistic)")
+parser.add_argument("--seeGrid", dest="grid", action='store_true', help="The plot will contain a grid if  this argument is given" )
 parser.add_argument("--pixelLimit", dest="pixellimit", default=0, type=int, help="Type in percentages if you want datapoints with small sample size marked (compared to original), (requires 'count' as statistic)")
 input=parser.parse_args()
 
@@ -37,7 +35,6 @@ directory = input.directory
 output = input.output_directory
 ID_list = input.ID
 indices_list = input.index
-#statistic_list=input.statistics
 startDate = input.startDate
 endDate = input.endDate
 fileformat = input.fileFormat
@@ -47,6 +44,7 @@ seeSmoothing = input.seeSmoothened
 seeInterval = input.seeInterval
 standardError = input.standardError
 pixelLimit = input.pixellimit
+seeGrid = input.grid
 
 # Data collection functions: 
 def data_collection1(path): # directory full of small csv files
@@ -105,10 +103,11 @@ def data_collection3(path): # Directory full of big combined csv files
     """ 
     Collects the data from a directory full of combined statistics csv files to a big dataframe by reading csv's and concatenating to main dataframe.
 
+
     Parameters
     ----------
     path : string 
-            contains the path to the datafiles 
+            contains the path to the datafiles, required '/' at the end of path
 
     Returns
     -------
@@ -165,8 +164,8 @@ if bool(endDate):
     enddate=datetime.strptime(endDate,"%Y%m%d")
     mainDataFrame.query("Dates<=@enddate",inplace=True) 
 
-stat='mean'
-wanted_data=['Dates',stat]
+stat='mean' # Now only works for mean but code can be changed to work on other statistics as well
+
 
 maxPixels = {}
 
@@ -186,6 +185,7 @@ for id in ID_list:
 
         plot_df['mean']=plot_df['mean'].astype(float)
         
+        plot_df = plot_df.dropna()
 
         #operate smoothing
         smoother=LowessSmoother(smooth_fraction=0.15,iterations=1)
@@ -225,7 +225,7 @@ for id in ID_list:
 
         if pixelLimit:
             try:
-                plt.plot(plot_df.query("count/@maxPixels[@id]*100 <= @pixelLimit")['mean'], 'ro', markersize=6 )
+                plt.plot(plot_df.query("count/@maxPixels[@id]*100 <= @pixelLimit")['mean'], 'ro', markersize=6, label=f'small sample size (less than {pixelLimit}%)' )
             # marks points with small samplesize as red 
             except:
                 pass
@@ -244,15 +244,16 @@ for id in ID_list:
         plt.xlim(plot_df.index[0],plot_df.index[-1]) #smallest date is first and biggest is last
         plt.title(str(index)+ " time series of id "+ str(id)  )
         plt.ylim(top=1)
-        plt.grid(True)
+        if seeGrid:
+            plt.grid(True)
         plt.ylabel(str(index)+", " + str(stat))
-
-        plt.show() # Remove in the final version, add savefig instead
-        #plt.savefig(os.path.join(output,"Timeseries_of_id_"+str(id)+'_'+index+'.' +fileformat),format=fileformat) # Uncomment in final version
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        #plt.show() # Remove in the final version, add savefig instead
+        plt.savefig(os.path.join(output,"Timeseries_of_id_"+str(id)+'_'+index+'.' +fileformat),format=fileformat) # Uncomment in final version
     
 
-#Now works for mean values. Try to change it so it works for any statistic
-
+# Now works for mean values only. 
 # Error: SVD did not converge; invalid value encountered in true divide.   Comes up if sample size is only 1 
 
 # Possible problem: Collects the data with different methods based on the name of the --dir input, so if input follows
