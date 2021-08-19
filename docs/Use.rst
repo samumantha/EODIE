@@ -7,19 +7,23 @@ For more examples with explanations, please check out :ref:`tutorial`.
 Functionality
 ------------- 
 
-EODIE can be used to extract polygon based information from a directory of Sentinel-2 (.SAFE) files.
+EODIE can be used to extract polygon based information from a 
 
 
 Inputs 
 ^^^^^^^
 
-The tool requires the following inputs:
-(inputs with a default value and flags are optional)
+Comman line arguments
+++++++++++++++++++++++
+
+When using EODIE from the commandline using the ``process.py`` script, the following parameters can be used in the commandline:
+Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_inpput` for inputs that need to be given 
 
 | ``--platform``
 | Which platform does the data come from? 
 | type: String
 | options: s2
+| The platform information needs to be given in order for EODIE to be able to read the data the right way, eg find tile and date information in the filename. It is possible to extent EODIE to be able to process other datasources than given in options. Please refer to :ref:`extending_eodie` for further information.
 
 | ``--dir``
 | The directory where the data to be processed is stored as absolute path.
@@ -40,6 +44,7 @@ The tool requires the following inputs:
 | ``--id``
 | Name of the unique ID-field of the shapefile provided at ``--shp``.
 | type: String
+| example: ``--id id``
 
 | ``--stat``
 | 1 if statistics (see below) shall be calculated per polygon, 0 if all pixels within the polygon shall be extracted as numpy array
@@ -51,17 +56,18 @@ The tool requires the following inputs:
 | type: list of Strings
 | options: one or more of: sum, std, median, majority, minority, unique, range, percentile_x (with x from 0 to 100)
 | default: ``mean std median``
+| example: ``--statistics sum median percentile_10 percentile_90``
 
 | ``--index``
 | Which vegetation index or band shall be extracted per polygon separated by a space
 | type: list of Strings
 | options: one or more of ndvi, rvi,savi,nbr,kndvi, ndmi, mndwi, evi, evi2, dvi, cvi, mcari, ndi45, tctb, tctg, tctw, ndwi, plus bands as named in platform filenames (e.g. for Sentinel-2: B02, B03, B04, B05, B06, B07, B08, B8A, B11, B12)
-| default: -
+| example: ``--index ndvi evi2 B04 B8A``
 
 | ``--start``
 | Give the startdate of the timeframe of interest
 | type: integer YYYYMMDD
-| default: ``01-01-2016``
+| default: ``20160101``
 
 | ``--end``
 | Give the enddate of the timeframe of interest
@@ -87,16 +93,25 @@ The tool requires the following inputs:
 
 | ``--exclude_splitshp``
 | Flag to indicate that splitshp has been run manually beforehand
-type: flag
+| type: flag
 
 | ``--test``
 | For testing some datatypes are set to smaller, in general not needed by user 
 | type: flag
 
-Necessary inputs
-+++++++++++++++++
 
---platform --dir/--file --shp --out --id --stat --index 
+Configuration file
++++++++++++++++++++
+
+For more user specific 
+
+
+.. _nec_input:
+
+Necessary inputs
+^^^^^^^^^^^^^^^^^
+
+``--platform --dir/--file --shp --out --id --stat --index`` 
 
 Outputs
 ^^^^^^^^
@@ -119,5 +134,4 @@ Notes
 
 * Either ``--dir`` or ``--file`` must be given, never both
 * ``--geotiff`` can only be used if ``--stat 0``
-
 

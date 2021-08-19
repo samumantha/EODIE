@@ -1,6 +1,11 @@
 Inner workings
 ===============
 
+What are the userinputs used for?
+----------------------------------
+
+
+
 The following gives an overview over what is happening in the backgroudn when process.py is called:
 
 The first step after starting the workflow is to find the right data to be processed. 

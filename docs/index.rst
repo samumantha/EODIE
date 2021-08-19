@@ -8,7 +8,7 @@ EODIE Documentation
 Purpose 
 --------
 
-EODIE is a toolkit ot extract object based timeseries information from Sentinel-2 Earth Observation data.
+EODIE is a toolkit ot extract object based timeseries information from Earth Observation data.
 
 The goal of EODIE is to ease the extraction of time series information at object level. Today, vast amounts of 
 Earth Observation data are available to the users via for example earth explorer or scihub. Often, not the whole images 
@@ -23,7 +23,7 @@ Is EODIE suitable for me?
 
 To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
-* Access to remote sensing data (Sentinel-2/Landsat)
+* Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
 * A shapefile with polygons of your objects of interests
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
@@ -43,8 +43,6 @@ Getting started
 ---------------
 
 You can test the usage of EODIE as command line tool by following the :ref:`Example` .
-
-
 
 Maintainers
 ------------
@@ -84,6 +82,8 @@ Contributions can be made following the `Contribution Guide <http://www.contribu
    Use
    Tutorial
    Inner_workings
+   More
+   
 
 
 
