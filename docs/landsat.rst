@@ -1,3 +1,10 @@
+Landsat
+=========
+
+
+Cloudmasking
+---------------
+
 Scene classification and cloudmasking is included in landsat datafiles as .TIF-files
 that have QA_PIXEL in their name.
 Each pixel has a 16-bit integer value, and each bit of this value is a flag for a certain condition
@@ -5,7 +12,7 @@ or confidence level of a certain condition.
 Meaning of each bit in Landsat Collection 2 data can be viewed here:
 https://prd-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/atoms/files/LSDS-1328_Landsat8-9-OLI-TIRS-C2-L2-DFCB-v6.pdf#PAGE=14
 
-config_ls8.yml has value bitmask set to 1, which tells mask.py to interpret the tobemaskedlist
+In config_ls8.yml the value bitmask set to 1, which tells mask.py to interpret the tobemaskedlist
 as bit indices and not values. For example if bit 3 is set the pixel could have value 8, or other
 value depending on the other bits, so if we want to mask out a pixel when bit 3 is set, we cannot 
 check for any individual value (like 3 or even 8). This is why mask.py then uses a seperate function
