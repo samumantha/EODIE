@@ -3,8 +3,6 @@ platform: 'ls8'
 # Process only files with less than xx % cloudcover
 maxcloudcover: 10
 
-# for landsat only one resolution given
-pixelsize:
 
 # Mask conditions are not stored as values, but as individual 0/1 flags in bits
 bitmask: 1
@@ -50,7 +48,7 @@ band_designation: 'B\d?\d'
 #???????????
 # Quantification value used to multiple the reflectance to get DN
 # This could be read from metadata but for now at least is here
-quantification_value: 1
+quantification_value: 65535
 
 # available resolutions per band
 B1: [30]
