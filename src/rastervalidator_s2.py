@@ -23,7 +23,7 @@ class RasterValidatorS2(object):
         maximum cloudcover allowed for processing
     geometryobject: object
         object containing the vector data to be processed
-    cloudcovered: boolean
+    not_cloudcovered: boolean
         if rasterproduct is below maximum cloudcover
     datacovered: boolean
         if area of interest (given with geometryobject) is datacovered (not all nan)
@@ -43,7 +43,7 @@ class RasterValidatorS2(object):
         self.SAFEpath = SAFEpath
         self.maxcloudcover = maxcloudcover
         self.geometryobject = geometryobject
-        self.cloudcovered = self.check_cloudcover()
+        self.not_cloudcovered = self.check_cloudcover()
         self.datacovered = self.check_datacover()
         
     def get_xml(self):
