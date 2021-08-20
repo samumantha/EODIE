@@ -32,8 +32,12 @@ if not os.path.exists(userinput.outpath):
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.shpbase)
 
-#setup logging 
-logging.basicConfig(filename=os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'), level=logging.INFO)
+#setup logging for prints in file and stdout
+if userinput.verbose:
+    handlers= [logging.FileHandler(os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')), logging.StreamHandler()]
+    logging.basicConfig(level=logging.INFO, handlers = handlers)
+else:
+    logging.basicConfig(filename= os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'),level=logging.INFO)
 
 if not userinput.exclude_splitshp == True:
     if not userinput.platform == 'tif':
@@ -59,19 +63,18 @@ for path in userinput.input:
         geoobject = VectorData(userinput.shpbase + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
         extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine,userinput.statistics, userinput.exclude_border)
-        if int(userinput.stat) == 1: 
+        if userinput.statistics_out: 
             extractedarray = extractorobject.extract_arrays_stat()
             writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics)
             writerobject.write_csv()
-        elif int(userinput.stat) == 0:
-            if userinput.geotiff:
-                extractedarray = extractorobject.extract_array_geotiff()
-                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
-                writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
-            else:
-                extractedarray = extractorobject.extract_arrays()
-                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
-                writerobject.write_pickle_arr()
+        if userinput.geotiff:
+            extractedarray = extractorobject.extract_array_geotiff()
+            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
+            writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
+        if userinput.array_out:
+            extractedarray = extractorobject.extract_arrays()
+            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], 'array')
+            writerobject.write_pickle_arr()
     else:
 
         
@@ -134,27 +137,27 @@ for path in userinput.input:
                         
                     affine = vegindex.affine
 
-                    if int(userinput.stat) == 1: 
-                        logging.info('Statistics: {}'.format(pathfinderobject.tile))
+                    if userinput.statistics_out: 
+                        
                         extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics, userinput.exclude_border)
                         extractedarray = extractorobject.extract_arrays_stat()
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics)
                         writerobject.write_csv()
                         
 
-                    elif int(userinput.stat) == 0:
+                    elif userinput.array_out or userinput.geotiff_out:
                         
                         extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine,['count'], userinput.exclude_border)
-                        if userinput.geotiff:
+                        if userinput.geotiff_out:
                             extractedarray = extractorobject.extract_array_geotiff()
-                        else:
+                        if userinput.array_out:
                             extractedarray = extractorobject.extract_arrays()
 
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, ['array'])
 
-                        if userinput.geotiff:
+                        if userinput.geotiff_out:
                             writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
-                        else:
+                        if userinput.array_out:
                             writerobject.write_pickle_arr()
 
                 
