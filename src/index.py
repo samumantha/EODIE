@@ -13,7 +13,7 @@ class Index(RasterData):
 
     """ Calculating vegetation indices from remote sensing raster products"""
 
-    def __init__(self, inpath, cfg, test):
+    def __init__(self, inpath='.', cfg= 'test_config.yml', test=False):
 
         """ Initializing the index object
 

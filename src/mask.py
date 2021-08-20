@@ -17,7 +17,7 @@ class Mask(RasterData):
         dictionary with configuration elements
     """
 
-    def __init__(self,inpath: str, cfg:dict, test, external=None):
+    def __init__(self,inpath: str, cfg:dict = 'test_config.yml', test=False, external=None):
         """ Initializing the mask object
 
         Parameters

@@ -32,7 +32,7 @@ class RasterData(object):
         affine transformation of the raster product
     """
 
-    def __init__(self, inpath, cfg, test=False):
+    def __init__(self, inpath, cfg='test_config.yml', test=False):
 
         """ Initializing the raster object
 
