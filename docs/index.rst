@@ -55,7 +55,7 @@ Contributors
 
 Eetu Puttonen
 Juuso Varho
-Petteri Lehtinen
+Petteri Lehti
 Paula Litkey
 Milos Pandzic
 Mika Karjalainen
