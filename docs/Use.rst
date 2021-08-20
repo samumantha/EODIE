@@ -45,6 +45,7 @@ The given shapefile defines the area of interest. Internally, EODIE splits the s
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
 | type: String
+| default: ``.results``
 
 | ``--id``
 | Name of the unique ID-field of the shapefile provided at ``--shp``.
