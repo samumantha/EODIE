@@ -61,7 +61,6 @@ class UserInput(object):
         else:
             pattern = platform_cfg['filepattern']
             self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(pattern, file)]
-            #self.input = glob.glob(os.path.join(args.mydir,'*.SAFE'))
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]

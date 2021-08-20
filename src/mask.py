@@ -89,7 +89,6 @@ class Mask(RasterData):
 
     def createbitmask(self, maskarr, tobemasked):
         return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(maskarr)
-        #return np.array(list(map(lambda row: list(map(lambda pixel: self.checkbits(pixel, tobemasked), row)), maskarr)))
         
     def checkbits(self, data, tobemaskedlist):
         for bit in tobemaskedlist:

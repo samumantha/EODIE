@@ -18,7 +18,7 @@ pixelsize: 30
 resampling_method: 'bilinear'
 
 #location of the shapefile with tiles (Sentinel2-tiles-world in case of Sentinel-2)
-tileshp: /home/petteri/Downloads/LS_tiles/WRS2_descending
+tileshp: ./shp_preparation/LS_tiles/WRS2_descending
 
 #name of field where tilenames are stored in shapefile ('Name' in case of sentinel2_tiles_world)
 fieldname: 'PR'
