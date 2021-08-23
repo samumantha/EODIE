@@ -14,12 +14,14 @@ from writer import Writer
 from userinput import UserInput
 from splitshp import SplitshpObject
 from rasterdata import RasterData
+from validator import Validator
 import logging
 from datetime import datetime 
 import fiona
 
 
 userinput = UserInput()
+Validator(userinput)
 
 test = userinput.test
 
@@ -111,9 +113,9 @@ for path in userinput.input:
             maxcloudcover = cfg['maxcloudcover']
             if userinput.platform == 's2':
                 rastervalidatorobject = RasterValidatorS2(path, maxcloudcover, geoobject)
-                logging.info('Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.cloudcovered))
+                logging.info('Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.not_cloudcovered))
                 logging.info('Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
-                not_cloudcovered = rastervalidatorobject.cloudcovered
+                not_cloudcovered = rastervalidatorobject.not_cloudcovered
                 datacovered = rastervalidatorobject.datacovered
             else:
                 not_cloudcovered = True
@@ -133,38 +135,13 @@ for path in userinput.input:
                         
                     affine = vegindex.affine
 
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.exclude_border)
+                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
                     
-                    # this is new and needs adjustment in writer etc
                     for format in userinput.format:
                         extractedarray = extractorobject.extract_format(format)
-                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index)
+                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
-
-                    #following is old and should be removed when above done.
-                    if userinput.statistics_out: 
-                        
-                        extractedarray = extractorobject.extract_arrays_stat(userinput.statistics)
-                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index)
-                        writerobject.write_csv(userinput.statistics)
-                        
-
-                    elif userinput.array_out or userinput.geotiff_out:
-                        
-                        
-                        if userinput.geotiff_out:
-                            extractedarray = extractorobject.extract_array_geotiff()
-                        if userinput.array_out:
-                            extractedarray = extractorobject.extract_arrays()
-
-                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index)
-
-                        if userinput.geotiff_out:
-                            writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
-                        if userinput.array_out:
-                            writerobject.write_pickle_arr()
-
-                
+                   
             else:
                 logging.warning('Cloudcovered or no data in Area of interest!')
 

@@ -6,7 +6,7 @@ import argparse
 import os
 from datetime import datetime 
 import glob
-from validator import Validator
+
 import yaml
 
 class UserInput(object):
@@ -31,7 +31,7 @@ class UserInput(object):
         parser.add_argument('--out', dest='outpath', default='./results', help='directory where results shall be saved')
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
 
-        parser.add_argument('--statistics', dest='statistics',default=['mean', 'std', 'median'],help='statistics to be extracted', nargs='*')
+        parser.add_argument('--statistics', dest='statistics',default=['count'],help='statistics to be extracted', nargs='*')
         parser.add_argument('--index', dest='indexlist', help=' give names of indices to be processed', nargs='*')
         parser.add_argument('--start', dest='startdate',default = '20160101', help='give startdate of timerange of interest')
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
@@ -62,8 +62,6 @@ class UserInput(object):
         #starting python 3.9: platform_cfg | user_cfg also works
         self.config = {**platform_cfg, **user_cfg}
 
-        Validator(args)
-
         self.mydir = args.mydir
         self.myfile = args.myfile
         if args.myfile is not None:
@@ -77,10 +75,16 @@ class UserInput(object):
             self.shpbase = args.shpbase
         self.outpath = args.outpath
         self.idname = args.idname
+
+
         self.statistics_out = args.statistics_out
+        
         self.array_out = args.array_out
         self.indexlist = args.indexlist
-        self.statistics = args.statistics
+        if not 'count' in args.statistics:
+            self.statistics= ['count'] + args.statistics
+        else:
+            self.statistics = args.statistics
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.keep_shp = args.keep_shp
