@@ -21,7 +21,9 @@ from vectordata import VectorData
 from index import Index
 from rasterdata import RasterData
 from writer import Writer
+from splitshp import SplitshpObject
 import yaml
+import fiona
 
 class TestAll(object):
 
@@ -96,16 +98,16 @@ class TestAll(object):
 
 
     def test_geometry(self):
-        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        geometries = 'testfiles/shp/test_parcels_32635.shp'
         geometryobject = VectorData(geometries)
 
         head,tail,root,ext = geometryobject._split_path() 
         splitpathlist = [head,tail,root,ext]
-        rightsplitpathlist = ['testfiles/shp', 'test_parcels_32635_34VFN.shp','test_parcels_32635_34VFN', '.shp']
+        rightsplitpathlist = ['testfiles/shp', 'test_parcels_32635.shp','test_parcels_32635', '.shp']
         assert (splitpathlist == rightsplitpathlist), 'Splitpath fails'
 
         projectionfile = geometryobject.get_projectionfile()
-        rightprojectionfile = 'testfiles/shp/test_parcels_32635_34VFN.prj'
+        rightprojectionfile = 'testfiles/shp/test_parcels_32635.prj'
 
         assert (projectionfile == rightprojectionfile), 'Projectionfile fails'
 
@@ -132,7 +134,7 @@ class TestAll(object):
     def test_extractor(self):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
-        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        geometries = 'testfiles/shp/test_parcels_32635.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
         cloudobject = Mask(inpath, cfg , True)
@@ -166,7 +168,7 @@ class TestAll(object):
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
-        geometries = 'testfiles/shp/test_parcels_32635_34VFN.shp'
+        geometries = 'testfiles/shp/test_parcels_32635.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         idname = 'ID'
         cloudobject = Mask(inpath, cfg , True)
@@ -194,7 +196,28 @@ class TestAll(object):
         del maskedarray
 
         del writerobject
+    
+    def test_splitshp(self):
+        with open('test_config.yml', "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
+        tmpdir = 'testfiles/temp'
+        if not os.path.exists(tmpdir):
+            os.mkdir(tmpdir)
+        shapesplitter = SplitshpObject('testfiles/shp/test_parcels_32635.shp', cfg['tileshp'], tmpdir, 'Name')
+        tmpshpdir = shapesplitter.output_directory
+        assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
+        shapesplitter.splitshp()
+        assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_world_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted worldtiles'
+        assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
+        for tile in ['34VFN', '35VLH']:
+            with fiona.open(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_' + tile + '.shp' ), 'r' ) as shp:
+                assert len(shp) == 3, 'Wrong amount of polygons in splitted shapefile'
+        shapesplitter.delete_splitted_files()
+        assert not os.path.exists(tmpshpdir)
 
+        del tmpdir
+        del tmpshpdir
+        del shapesplitter
 
 
 TestAll()
