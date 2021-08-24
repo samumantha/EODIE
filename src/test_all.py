@@ -3,6 +3,10 @@ class for testing functionality of many methods used in EODIE
 automatically run by gitlab on push
 can also be run with ```pytest test_all.py```
 
+Author: Samantha Wittke
+
+latest update: 24.08.2021
+
 """
 
 
@@ -22,6 +26,7 @@ from index import Index
 from rasterdata import RasterData
 from writer import Writer
 import yaml
+
 
 class TestAll(object):
 
@@ -50,12 +55,16 @@ class TestAll(object):
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         indexobject = Index(inpath,cfg, True)
-        for index in indexobject.supportedindices: #['ndvi','savi']:# following exceeds memory: 
+        supportedindices = Index.supportedindices
+        #testing capacity is limited on gitlab, so all tasseled cap indices are excluded from testing (too much memory used)
+        testingindices = [index for index in supportedindices if not index.startswith('tct')]
+        for index in testingindices:
             indexarray = indexobject.calculate_index(index)
             indexarrayshape = indexarray.shape
             rightindexarrayshape = (10980, 10980)
             assert (indexarrayshape == rightindexarrayshape), 'Index fails'
             del indexarray
+            del indexarrayshape
 
         inarray = np.array([[0.1,0.2,0.4],[0.4,0.1,0.2]])
         cloudarray  = np.array([[1,0,0],[0,1,0]])
@@ -65,8 +74,6 @@ class TestAll(object):
 
         del indexobject
         
-        
-
 
     def test_band(self):
         with open('test_config.yml', "r") as ymlfile:
