@@ -10,6 +10,9 @@ np.seterr(divide='ignore', invalid='ignore')
 from rasterdata import RasterData
 
 class Index(RasterData):
+    supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
+
+    
 
     """ Calculating vegetation indices from remote sensing raster products"""
 
@@ -30,7 +33,7 @@ class Index(RasterData):
 
         super().__init__(inpath,cfg,test)
         self.resolution = self.cfg['pixelsize']
-        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
+        
     
     def mask_array(self, array,maskarray):
         """ creates a masked array from an array and a mask with fill value -99999 for masked out values ; e.g. masking out cloudpixels from indexarray
