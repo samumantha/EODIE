@@ -1,0 +1,74 @@
+platform: 'ls8'
+
+# Process only files with less than xx % cloudcover
+maxcloudcover: 10
+
+
+# Mask conditions are not stored as values, but as individual 0/1 flags in bits
+bitmask: 1
+# Bits to be to be included in cloudmask
+# https://prd-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/atoms/files/LSDS-1328_Landsat8-9-OLI-TIRS-C2-L2-DFCB-v6.pdf
+tobemaskedlist: 
+  - 0 # Fill data
+  - 1 # Dilated cloud
+  - 2 # Cirrus
+  - 3 # Cloud
+  - 4 # Cloud shadow
+  - 5 # Snow 
+  - 9 # Cloud medium to high confidence
+  - 11 # Cloud shadow high confidence
+  - 13 # Snow/Ice high confidence
+  - 15 # Cirrus high confidence
+
+
+#pattern to find all data files
+filepattern: 'LC08_L\d.._\d{6}_\d{8}_\d{8}_02_[TR][12T]$'  
+
+#all bands are located in parent directory directly
+bandlocation: ['.']
+
+#indicator for cloudfile
+cloudfilename: 'QA_PIXEL'
+
+# LS8 bands
+# https://www.usgs.gov/media/images/landsat-8-band-designations
+red : 'B4'
+green: 'B3'
+blue: 'B2'
+nir: 'B5'
+swir1: 'B6'
+swir2: 'B7'
+
+tilepattern: '[0-9]{6}'
+
+# the first that is found is used
+datepattern: '20[1-2][0-9][0-1][0-9][0-3][0-9]'
+
+band_designation: 'B\d?\d'
+
+#???????????
+# Quantification value used to multiple the reflectance to get DN
+# This could be read from metadata but for now at least is here
+quantification_value: 65535
+
+# available resolutions per band
+B1: [30]
+B2: [30]
+B3: [30]
+B4: [30]
+B5: [30]
+B6: [30]
+B7: [30]
+QA_PIXEL: [30]
+# to be continued
+
+#upsampling (converting to higher resolution/smaller cells) / downsampling (converting to lower resolution/larger cellsize)
+#available: ‘nearest’, ‘bilinear’, ‘cubic’, ‘cubic_spline’, ‘lanczos’, ‘average’, ‘mode’, and ‘gauss’,
+# from https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+
+resampling_method: 'bilinear'
+
+
+# path building set *after inpath* to get the bandfile
+
+pathbuildinglist: ['*', 'bandname', '*' , '.TIF']

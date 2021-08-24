@@ -8,6 +8,8 @@
 
 platform: 's2'
 
+# Mask conditions are stored as values, not as bitflags
+bitmask: 0
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
 tobemaskedlist: 
@@ -17,6 +19,9 @@ tobemaskedlist:
   - 10 # cirrus
   - 0 # no data
   - 1 # saturated and defective
+
+#pattern to find all data files
+filepattern: 'S2[A-C]_MSIL2A_\d{8}T\d{6}_N\d{4}_R\d{3}_T\d{2}[A-Z]{3}_\d{8}T\d{6}.SAFE$'
 
 # Sentinel-2 bands
 red : 'B04'

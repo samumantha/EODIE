@@ -1,7 +1,7 @@
 """
 Class with all userinput for running eodie as command line tool
 
-authors: Samantha Wittke
+authors: Samantha Wittke, Juuso Varho, Petteri Lehti
 
 """
 
@@ -9,7 +9,7 @@ import argparse
 import os
 from datetime import datetime 
 import glob
-
+import re
 import yaml
 
 class UserInput(object):
@@ -71,7 +71,9 @@ class UserInput(object):
         if args.myfile is not None:
             self.input = [args.myfile]
         else:
-            self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
+            #self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
+            # this searches for exact right files fitting a given pattern
+            self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(self.config['filepattern'], file)]
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
