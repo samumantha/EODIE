@@ -18,7 +18,7 @@ pixelsize: 10
 resampling_method: 'bilinear'
 
 #location of the shapefile with tiles (Sentinel2-tiles-world in case of Sentinel-2)
-tileshp: ./shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world
+tileshp: ./sentinel2_tiles_world/sentinel2_tiles_world
 
 #name of field where tilenames are stored in shapefile ('Name' in case of sentinel2_tiles_world)
 fieldname: 'Name'

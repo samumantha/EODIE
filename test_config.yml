@@ -1,5 +1,5 @@
 #location of Sentinel2-tiles-world shapefile
-tileshp: ./shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world
+tileshp: ./sentinel2_tiles_world/sentinel2_tiles_world
 
 #name of field where tilenames are stored in shapefile
 fieldname: 'Name'
