@@ -53,7 +53,9 @@ class TestAll(object):
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         indexobject = Index(inpath,cfg, True)
         for index in indexobject.supportedindices: #['ndvi','savi']:# following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
             indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
             indexarrayshape = indexarray.shape
             rightindexarrayshape = (10980, 10980)
             assert (indexarrayshape == rightindexarrayshape), 'Index fails'
