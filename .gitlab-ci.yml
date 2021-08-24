@@ -17,4 +17,4 @@ stages:
 pytest:
   stage: Test
   script:
-  - python -m -s pytest
+  - python -m pytest -s
