@@ -1,3 +1,11 @@
+"""
+
+class to split a shapefile with small polygons based on a shapefile with larger polygons to one shapefile per large polygon
+
+authors: Petteri Lehti, Samantha Wittke
+
+"""
+
 import os
 import sys
 import fiona
@@ -46,6 +54,7 @@ class SplitshpObject(object):
         self.fieldname = fieldname
         self.output_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
         self.tiles = []
+        self.basename = None
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
         #all input shapefiles to EPSG: 4326
@@ -229,6 +238,7 @@ class SplitshpObject(object):
         """ run splithshape operation """
         self.splitshp_world()
         root = os.path.split(os.path.splitext(self.small_polygon_shapefile)[0])[1]
+        self.basename = root
         largeroot = os.path.split(os.path.splitext(self.large_polygon_shapefile)[0])[1]
         exists = False
         for tile in self.tiles:

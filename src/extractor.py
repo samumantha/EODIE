@@ -1,6 +1,8 @@
 """
 
 class to extract pixel values or statistics per polygon from rasterfile
+
+authors: Samantha Wittke, Juuso Varho
  
 """
 
@@ -14,7 +16,7 @@ class Extractor(object):
 
     """Extracting object based information from an array with affine information and a shapefile"""
 
-    def __init__(self, maskedarray, shapefile, idname, affine, statistics=[], exclude_border=False):
+    def __init__(self, maskedarray, shapefile, idname, affine, statistics, exclude_border=False):
         """Initializing the Extractor object
 
         Parameters
@@ -31,10 +33,6 @@ class Extractor(object):
             list of statistics to be extracted for each polygon
         exclude_border: boolean, optional, default: False
             indicator if border pixels should be in- (False) or excluded (True)
-
-        Returns
-        --------
-        nothing
         
         """
         
@@ -42,10 +40,27 @@ class Extractor(object):
         self.shapefile = shapefile
         self.idname = idname
         self.all_touched = not exclude_border
-        self.statistics = statistics
         self.maskedarray = maskedarray
+        self.statistics = statistics
+
+    def extract_format(self, format):
+        """ runs own class method based on format given 
+
+        Parameters
+        -----------
+        format: str
+            format to be calculated
+
+        Returns
+        --------
+        nothing itself, but runs given format function which returns a dictionary for the given format 
+
+        """
+
+        default = "Unavailable format"
+        return getattr(self, 'extract_' + format, lambda: default)()
         
-    def extract_arrays_stat(self):
+    def extract_statistics(self):
         """extracting per polygon statistics from rasterfile with affine information"""
         # following is necessary for external tif which is not a masked array
         try:
@@ -54,9 +69,7 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         
-        a=zonal_stats(self.shapefile, filledraster, stats=['count']+self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
-        if self.statistics is None:
-            self.statistics = ['count']
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
         extractedarrays = {}
         for x in a:
             try:
@@ -79,7 +92,7 @@ class Extractor(object):
             extractedarrays[myid] = statlist
         return extractedarrays
 
-    def extract_arrays(self):
+    def extract_array(self):
         """extracting per polygon arrays from rasterfile with affine information"""
         try:
             self.maskedarray.dtype
@@ -87,7 +100,7 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         
-        a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:
@@ -96,13 +109,13 @@ class Extractor(object):
             extractedarrays[myid] = myarray.filled(-99999)
         return extractedarrays
 
-    def extract_array_geotiff(self):
+    def extract_geotiff(self):
         try:
             self.maskedarray.dtype
             filledraster = self.maskedarray.filled(+99999)
         except AttributeError:
             filledraster = self.maskedarray
-        a=zonal_stats(self.shapefile, filledraster, stats=['count'], band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:

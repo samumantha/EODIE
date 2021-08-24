@@ -2,6 +2,8 @@
 
 class to handle everything regarding the vectordata, atm only ESRI shapefile
     
+authors: Samantha Wittke
+
 """
 import os
 from osgeo import osr, ogr

@@ -2,6 +2,8 @@
 
 class for writing results into file
 
+
+authors: Samantha Wittke, Juuso Varho
 """
 
 import os
@@ -26,7 +28,7 @@ class Writer(object):
         tilename of the raster product where data was extracted from
     """
 
-    def __init__(self,outdir, date, tile, extractedarrays, index, statistics):
+    def __init__(self,outdir, date, tile, extractedarrays, index, statistics = ['count'],crs=None):
         """initialize writer object
         Parameters
         -----------
@@ -40,17 +42,39 @@ class Writer(object):
             extracted array and its information
         index: str
             indexname of the data to be stored
-        statistics: list of str
+        statistics: list of str, default=['count']
             extracted statistics
+        crs: str
+            coordinate reference system
+
         """
         self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
         self.extractedarrays = extractedarrays
-        self.statistics = statistics
         self.tile = tile
+        self.statistics = statistics
+        self.crs = crs
 
-    def write_csv(self):
-        """ writing statistics results from json into csv"""
-        self.outpath = self.outpath + '_stat.csv'
+    def write_format(self, format):
+        """ runs own class method based on format given 
+
+        Parameters
+        -----------
+        format: str
+            what to write
+
+        Returns
+        --------
+        nothing itself, but runs given format function which writes data to file
+
+        """
+
+        default = "Unavailable format"
+        return getattr(self, 'write_' + format, lambda: default)()
+
+    def write_statistics(self):
+        """ writing statistics results from json into csv
+        """
+        self.outpath = self.outpath + '_statistics.csv'
         logging.info('stat to csv in: ' + self.outpath)
         with open(self.outpath, mode='w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',')
@@ -59,21 +83,17 @@ class Writer(object):
                 onerow = [key] + self.extractedarrays[key]
                 csv_writer.writerow(onerow)
 
-    def write_pickle_arr(self):
+    def write_array(self):
         """ writing extracted arrays to pickle"""
-        self.outpath = self.outpath + '_array'
+        self.outpath = self.outpath + '_array.pickle'
         logging.info('arrays to pickle in: ' + self.outpath)
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
 
-    def write_geotiff(self, epsgcode):
+    def write_geotiff(self):
         """ Writing extracted arrays to geotiff file
-        Parameters
-        -----------
-        epsgcode: str
-            EPSG code of the data to be stored
         """
-        self.outpath = self.outpath + '_array_geotiff'
+        self.outpath = self.outpath + '_array'
         logging.info('arrays to geotiff in: ' + self.outpath)
         for key in self.extractedarrays.keys():
             logging.info('arrays to geotiff in: ' + self.outpath)
@@ -83,9 +103,7 @@ class Writer(object):
             if data['array'].dtype == 'int64':
                 data['array'] = data['array'].astype('int32')
 
-            CRS = rasterio.crs.CRS.from_dict(init=epsgcode)
-
-            with rasterio.open(self.outpath+'_id_'+str(key)+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=CRS,  
+            with rasterio.open(self.outpath+'_id_'+str(key)+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=self.crs,  
                 dtype=data['array'].dtype, transform=data['affine']) as dst: 
                 dst.write(data['array'],1)
 

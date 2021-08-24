@@ -1,3 +1,12 @@
+"""
+
+class to find paths dependent on config/platform
+
+authors: Samantha Wittke
+
+"""
+
+
 import os
 import glob
 import re
