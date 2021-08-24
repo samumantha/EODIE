@@ -50,7 +50,7 @@ class TestAll(object):
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         indexobject = Index(inpath,cfg, True)
-        for index in ['ndvi','savi']:# following exceeds memory: indexobject.supportedindices:
+        for index in indexobject.supportedindices: #['ndvi','savi']:# following exceeds memory: 
             indexarray = indexobject.calculate_index(index)
             indexarrayshape = indexarray.shape
             rightindexarrayshape = (10980, 10980)
@@ -142,13 +142,13 @@ class TestAll(object):
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
         rasterdata = RasterData(inpath, cfg , True)
         affine = rasterdata.affine 
-        extractorobject = Extractor(maskedarray, geometries, idname, affine)
-        statarrays = extractorobject.extract_arrays_stat()
+        extractorobject = Extractor(maskedarray, geometries, idname, affine, ['mean','median','std'])
+        statarrays = extractorobject.extract_statistics()
         statarrayslen = len(statarrays)
         rightstatarrayslen = 3
         assert (statarrayslen == rightstatarrayslen), 'Exract Statarrays fails'
 
-        arrayslen = len(extractorobject.extract_arrays())
+        arrayslen = len(extractorobject.extract_array())
         rightarrayslen = 3
         assert (arrayslen == rightarrayslen), 'Extract arrays fails'
 
@@ -176,14 +176,28 @@ class TestAll(object):
         maskedarray = indexobject.mask_array(indexarray,cloudmask)
         rasterdata = RasterData(inpath,cfg , True)
         affine = rasterdata.affine 
-        extractorobject = Extractor(maskedarray, geometries, idname, affine)
-        statarrays = extractorobject.extract_arrays_stat()
+        extractorobject = Extractor(maskedarray, geometries, idname, affine,['mean','median','std'])
+        statistics = extractorobject.extract_statistics()
         date = '20200626'
         tile = '34VFN'
-        writerobject = Writer(tmpdir, date, tile, statarrays, 'ndvi', ['mean','median','std'])
-        writerobject.write_csv()
+        writerobject = Writer(tmpdir, date, tile, statistics, 'ndvi', ['mean','median','std'])
+        writerobject.write_statistics()
         
-        assert os.path.exists(writerobject.outpath), 'Writer fails' 
+        assert os.path.exists(writerobject.outpath), 'Statistics writer fails' 
+
+        array = extractorobject.extract_array()
+        writerobject = Writer(tmpdir,date,tile,array,'ndvi',['count'])
+        writerobject.write_array()
+
+        assert os.path.exists(writerobject.outpath), 'Array writer fails'
+
+        geoarray = extractorobject.extract_geotiff()
+        writerobject = Writer(tmpdir,date,tile,geoarray,'ndvi',['count'])
+        writerobject.write_geotiff()
+
+        assert os.path.exists(writerobject.outpath + '_id_0.tif'), 'Geotiff writer fails'
+        assert os.path.exists(writerobject.outpath + '_id_1.tif'), 'Geotiff writer fails'
+        assert os.path.exists(writerobject.outpath + '_id_2.tif'), 'Geotiff writer fails'
 
 
         del extractorobject
