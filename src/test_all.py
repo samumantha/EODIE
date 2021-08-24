@@ -200,8 +200,6 @@ class TestAll(object):
         del writerobject
     
     def test_splitshp(self):
-        with open('test_config.yml', "r") as ymlfile:
-            cfg = yaml.safe_load(ymlfile)
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
