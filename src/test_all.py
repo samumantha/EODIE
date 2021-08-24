@@ -48,13 +48,14 @@ class TestAll(object):
         del cloudobject
         del cloudmask
 
+
+#['ndvi', 'rvi', 'savi', 'nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
     def test_index(self):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
         indexobject = Index(inpath,cfg, True)
-        for i in range(len(indexobject.supportedindices)): #['ndvi','savi']:# following exceeds memory: indexobject.supportedindices:
-            index = indexobject.supportedindices[i]
+        for index in ['ndvi','savi']: # following exceeds memory: indexobject.supportedindices:
             print('Calculating ' + index)
             indexarray = indexobject.calculate_index(index)
             print('Done with ' + index)
@@ -62,6 +63,79 @@ class TestAll(object):
             rightindexarrayshape = (10980, 10980)
             assert (indexarrayshape == rightindexarrayshape), 'Index fails'
             del indexarray
+
+        for index in ['rvi','nbr']: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in ['kndvi','ndmi']: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [6,7]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [8,9]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [10,11]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [12,13]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [14,15]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+
+        for index in [indexobject.supportedindices[i] for i in [16]]: # following exceeds memory: indexobject.supportedindices:
+            print('Calculating ' + index)
+            indexarray = indexobject.calculate_index(index)
+            print('Done with ' + index)
+            indexarrayshape = indexarray.shape
+            rightindexarrayshape = (10980, 10980)
+            assert (indexarrayshape == rightindexarrayshape), 'Index fails'
+            del indexarray
+        
 
         inarray = np.array([[0.1,0.2,0.4],[0.4,0.1,0.2]])
         cloudarray  = np.array([[1,0,0],[0,1,0]])
