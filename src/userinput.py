@@ -22,11 +22,12 @@ class UserInput(object):
     def __init__(self):
         self.get_userinput()
 
+
     def get_userinput(self):
         """ gets all userinput from commandline call to run the tool and stores them as userinput attributes """
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2', choices=['s2'], required=True)
+        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2', choices=['s2', 'tif'], required=True)
         inputrastergroupparser = parser.add_mutually_exclusive_group(required=True)
         inputrastergroupparser.add_argument('--dir', dest='mydir', help='directory where data is stored')
         inputrastergroupparser.add_argument('--file', dest='myfile', help='one file')
@@ -79,7 +80,6 @@ class UserInput(object):
         self.outpath = args.outpath
         self.idname = args.idname
 
-
         self.statistics_out = args.statistics_out
         
         self.array_out = args.array_out
@@ -100,8 +100,6 @@ class UserInput(object):
         if self.platform == 'tif':
             self.exclude_splitshp = True
         self.verbose = args.verbose
-
-
 
         self.format =  []
         if self.statistics_out:
