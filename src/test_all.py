@@ -42,6 +42,7 @@ class TestAll(object):
         binarray = cloudobject.binarize_cloudmask(inarray)
         rightarray = np.array([[1,1,1,0,0,0,0,1,1],[1,0,0,0,1,1,1,1,1]])
         assert (binarray == rightarray).all(), 'Binarizing fails'
+        print("Cloudtest done")
         
 
         del cloudobject
