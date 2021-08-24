@@ -51,6 +51,9 @@ if not userinput.exclude_splitshp:
     shapesplitter.splitshp()
     tiles = shapesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
+    baseshapename = shapesplitter.basename
+else:
+    baseshapename = userinput.shpbase
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
@@ -96,17 +99,9 @@ for path in userinput.input:
             logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
-            try:
-                shp_str_list = [fn for fn in glob.glob(os.path.join(shp_directory, shp_name  + '*' + pathfinderobject.tile + '*.shp')) if not 'reprojected' in fn]
-                if len(shp_str_list) == 0:
-                    shp_str = [fn for fn in glob.glob(os.path.join(shp_directory, shp_name  + '*' + pathfinderobject.tile + '*.shp')) if 'reprojected_4326' in fn and not 'convexhull' in fn][0]
-                else:
-                    shp_str = shp_str_list[0]
-                geoobject = VectorData(shp_str)
-                geoobject.reproject_to_epsg(vegindex.epsg)
-            except:
-                print('WARNING: Something went wrong')
-                continue
+
+            geoobject = VectorData(os.path.join(shp_directory,baseshapename + '_' + pathfinderobject.tile + '.shp'))
+            geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
 
