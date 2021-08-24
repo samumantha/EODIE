@@ -41,6 +41,8 @@ if userinput.verbose:
 else:
     logging.basicConfig(filename= os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'),level=logging.INFO)
 
+logging.info('All inputs for this process: '+ str(vars(userinput).items()))
+
 if not userinput.exclude_splitshp:
     #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
     small_polygon_shapefile = userinput.shpbase + '.shp'
@@ -67,19 +69,11 @@ for path in userinput.input:
         raster = RasterData(path,cfg)
         geoobject = VectorData(userinput.shpbase + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
-        extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.exclude_border)
-        if userinput.statistics_out: 
-            extractedarray = extractorobject.extract_arrays_stat(userinput.statistics)
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'])
-            writerobject.write_csv(userinput.statistics)
-        if userinput.geotiff:
-            extractedarray = extractorobject.extract_array_geotiff()
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'])
-            writerobject.write_geotiff(geoobject.get_properties()[2]['init'])
-        if userinput.array_out:
-            extractedarray = extractorobject.extract_arrays()
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'])
-            writerobject.write_pickle_arr()
+        extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics ,userinput.exclude_border)
+        for format in userinput.format:
+            extractedarray = extractorobject.extract_format(format)
+            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics, raster.crs)
+            writerobject.write_format(format)
     else:
         logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
         logging.info('Tile is {}'.format(pathfinderobject.tile))
