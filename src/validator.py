@@ -24,7 +24,7 @@ class Validator(object):
         self.input_exists_check(args.mydir, args.myfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
-        self.index_check(args.cfg,args.index,logging)
+        self.index_check(args.config,args.indexlist)
 
 
     def input_amount_check(self,dir, file):
@@ -103,7 +103,7 @@ class Validator(object):
         """
         unknownindices = []
         for index in indexlist:
-            if not index in index.Indec().supportedindices or not re.match(cfg['band_designation'], index):
+            if not index in Index.supportedindices and not re.match(cfg['band_designation'], index):
                 unknownindices.append(index)
         if len(unknownindices) > 0:
             exit('Chosen index/band {} not available, please make sure you typed the names correctly.'.format(','.join(unknownindices)))
