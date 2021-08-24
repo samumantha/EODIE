@@ -2,6 +2,8 @@
 
 class for everyhing around the rasterdata
 
+authors: Samantha Wittke
+
 """
 
 import glob

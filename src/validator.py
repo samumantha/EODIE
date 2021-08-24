@@ -2,6 +2,8 @@
 
 class to validate user inputs
 
+authors: Samantha Wittke
+
 """
 
 import os

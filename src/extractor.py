@@ -1,6 +1,8 @@
 """
 
 class to extract pixel values or statistics per polygon from rasterfile
+
+authors: Samantha Wittke, Juuso Varho
  
 """
 

@@ -2,6 +2,8 @@
 
 Class to create and adapt cloudmask array
     
+authors: Samantha Wittke
+
 """
 import numpy as np
 import rasterio

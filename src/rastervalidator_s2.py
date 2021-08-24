@@ -4,6 +4,8 @@ only Sentinel-2
 class to check that cloudcover is below the maximum given by user
 and to check that area of interest is not within nodata zone 
 
+authors: Samantha Wittke
+
 """
 
 import os

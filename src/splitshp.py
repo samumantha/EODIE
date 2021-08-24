@@ -1,3 +1,11 @@
+"""
+
+class to split a shapefile with small polygons based on a shapefile with larger polygons to one shapefile per large polygon
+
+authors: Petteri Lehti, Samantha Wittke
+
+"""
+
 import os
 import sys
 import fiona

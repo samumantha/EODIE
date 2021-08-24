@@ -1,5 +1,8 @@
 """
 Class with all userinput for running eodie as command line tool
+
+authors: Samantha Wittke
+
 """
 
 import argparse

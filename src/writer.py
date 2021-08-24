@@ -2,6 +2,8 @@
 
 class for writing results into file
 
+
+authors: Samantha Wittke, Juuso Varho
 """
 
 import os

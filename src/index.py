@@ -2,6 +2,8 @@
 
 class to calculate indices
 returns an indexarray based on index input
+
+authors: Petteri Lehti, Samantha Wittke
     
 """
 import numpy as np
