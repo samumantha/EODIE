@@ -18,13 +18,13 @@ import sys
 import numpy as np
 print(os.getcwd())
 sys.path.append("./src")
-from mask import Mask
-from extractor import Extractor
-from vectordata import VectorData
-from index import Index
-from rasterdata import RasterData
-from writer import Writer
-from splitshp import SplitshpObject
+from src.mask import Mask
+from src.extractor import Extractor
+from src.vectordata import VectorData
+from src.index import Index
+from src.rasterdata import RasterData
+from src.writer import Writer
+from src.splitshp import SplitshpObject
 import yaml
 import fiona
 

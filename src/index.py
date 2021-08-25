@@ -9,12 +9,11 @@ authors: Petteri Lehti, Samantha Wittke
 import numpy as np
 import re
 np.seterr(divide='ignore', invalid='ignore')
-from rasterdata import RasterData
+from src.rasterdata import RasterData
 
 class Index(RasterData):
-    supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
 
-    
+    supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
 
     """ Calculating vegetation indices from remote sensing raster products"""
 

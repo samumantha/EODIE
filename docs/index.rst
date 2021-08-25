@@ -75,6 +75,7 @@ Contributions can be made following the `Contribution Guide <http://www.contribu
    :maxdepth: 2
    :caption: Contents:
 
+   self
    Installation
    Gallery
    Example
@@ -82,6 +83,7 @@ Contributions can be made following the `Contribution Guide <http://www.contribu
    Tutorial
    Inner_workings
    More
+   modules
    
 
 

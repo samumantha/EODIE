@@ -153,6 +153,7 @@ class RasterData(object):
 
     def get_array(self, band, resampling_method=None):
         """ retreive an array based on band request
+        
         Parameters
         -----------
         band: str
