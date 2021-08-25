@@ -24,7 +24,7 @@ class VectorData(object):
     """
 
     def __init__(self, geometries):
-        """ initialize vectordata object 
+        """ initialize vectordata object
         Parameters
         -----------
         geometries: str
@@ -33,7 +33,7 @@ class VectorData(object):
         self.geometries = geometries 
     
     def _split_path(self):
-        """split shapefile path into parts
+        """ split shapefile path into parts
         Returns
         --------
         head: str
@@ -43,13 +43,14 @@ class VectorData(object):
         root: str
             name of the vectorfile
         ext: str
-            exension of the vectorfile"""
+            exension of the vectorfile
+        """
         head, tail = os.path.split(self.geometries)
         root, ext = os.path.splitext(tail)
         return head,tail,root,ext
 
     def get_projectionfile(self):
-        """get path to the projectionfile that is associated with the shapefile
+        """ get path to the projectionfile that is associated with the shapefile
         Returns
         --------
         projectionfile: str
@@ -61,7 +62,7 @@ class VectorData(object):
         return projectionfile
 
     def get_epsg(self):
-        """extract epsg code from prj file
+        """ extract epsg code from prj file
         Returns
         --------
         epsgcode: str

@@ -1,10 +1,14 @@
 """
 
+Can be used to get basic tilewise cloudcover information about Sentinel-2 data in a given directory. 
+
 input:
-path to a directory with Sentinel-2 SAFE files
+location and name of a directory with Sentinel-2 SAFE files
 
 output:
-prints on screen a dictionary of {date:cloudcover percentage}
+prints in terminal a dictionary of {date:cloudcover percentage}
+
+use: python get_cloudcover.py path/to/Sentinel-2datadir
 
 """
 
