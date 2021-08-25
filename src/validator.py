@@ -26,7 +26,8 @@ class Validator(object):
         self.input_exists_check(args.mydir, args.myfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
-        self.index_check(args.config,args.indexlist)
+        if not args.indexlist is None and not args.indexlist == []:
+            self.index_check(args.config,args.indexlist)
 
 
     def input_amount_check(self,dir, file):
