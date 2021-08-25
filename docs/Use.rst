@@ -28,7 +28,7 @@ Note that some parameters have options, some have defaults and some are optional
 | The platform information needs to be given in order for EODIE to be able to read the data the right way, eg find tile and date information in the filename. It is possible to extent EODIE to be able to process other datasources than given in options. Please refer to :ref:`extending_eodie` for further information.
 
 | ``--dir``
-| The directory where the data to be processed is stored as absolute path.
+| The directory where the data to be processed is stored as absolute path. 
 | type: String
 EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs.
 
@@ -40,6 +40,7 @@ Either `--dir` or `--file` needs to be given by user.
 | ``--shp``
 | Absolute path to the shapefile to be used for processing, without extension and tilename.
 | type: String
+| example: Shapefile name is test_polygons.shp in location /home/my/path, then it is given as --shp /home/my/path/test_polygons
 The given shapefile defines the area of interest. Internally, EODIE splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
 
 | ``--out``
@@ -53,14 +54,21 @@ The given shapefile defines the area of interest. Internally, EODIE splits the s
 | example: ``--id id``
 | Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
 
+| ``--statistics_out``
+| set flag if statistics (see below) shall be calculated per polygon and saved as csv
+| type: flag
 
-| ``--stat``
-| 1 if statistics (see below) shall be calculated per polygon, 0 if all pixels within the polygon shall be extracted as numpy array
-| type: Integer (``1`` or ``0``)
-| default: ``1``
+| ``--geotiff_out``
+| set flag if geotiff shall be extracted per polygon and saved as geotiff
+| type: flag
+
+| ``--array_out``
+| set flag if arrays of all polygons shall be extracted and saved as pickle
+| type: flag
+If none of the three above is given, only --statistics_out is set to true
 
 | ``--statistics``
-| If --stat 1 is given, specify here which statistics shall be calculated per polygon separated by a space
+| If --statistics_out is given, specify here which statistics shall be calculated per polygon separated by a space
 | type: list of Strings
 | options: one or more of: sum, std, median, majority, minority, unique, range, percentile_x (with x from 0 to 100)
 | default: ``mean std median``
@@ -85,11 +93,6 @@ The given shapefile defines the area of interest. Internally, EODIE splits the s
 | ``--keep_shp``
 | Flag to indicate all shapefiles created when running EODIE should be stored for further usage
 | type: flag 
-
-| ``--geotiff``
-| Option to save output array to geotiff. 1 for geotiff, 0 for pickle array, only available when ``--stat 0``
-| type: Integer (``1`` or ``0``)
-| default: ``0``
 
 | ``--exclude_border``
 | Flag to indicate that border pixels (within the polygon) should be excluded from statistics calculations / array extraction
