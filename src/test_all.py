@@ -3,7 +3,7 @@ class for testing functionality of many methods used in EODIE
 automatically run by gitlab on push
 can also be run with ```pytest test_all.py```
 
-authors: Samantha Wittke
+authors: Samantha Wittke, Petteri Lehti
 
 
 """

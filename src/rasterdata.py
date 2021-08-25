@@ -2,7 +2,7 @@
 
 class for everyhing around the rasterdata
 
-authors: Samantha Wittke
+authors: Samantha Wittke, Petteri Lehti
 
 """
 

@@ -2,7 +2,7 @@
 
 Class to create and adapt cloudmask array
     
-authors: Samantha Wittke
+authors: Samantha Wittke, Petteri Lehti
 
 """
 import numpy as np
@@ -90,31 +90,31 @@ class Mask(RasterData):
         return cloudmask
 
 
-    def createbitmask(self, maskarr, tobemasked):
+    def createbitmask(self, sclarray, tobemasked):
         """ creates a bitmask
         Parameters
         -----------
-        maskarr: numpy array
-            xxx
+        sclarray: numpy array
+            array of cloudmask from remote sensing product, where information stored as bits 
         tobemasked: list 
             list of bits to be masked
         Returns
         -------
         binary mask with clouds/invalid pixels true/1, others 0
         """
-        return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(maskarr)
+        return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(sclarray)
         
     def checkbits(self, data, tobemaskedlist):
-        """ checks bits if they should be masked
+        """ checks bits in a pixel to see if the pixel should be masked
         Parameters
         ----------
-        data: numpy array
-            xxx
+        data: integer
+            the value of a pixel
         tobemaskedlist: list
             bits that should be masked
         Returns
         --------
-        boolean (1 for xxx, 0 for xxx)
+        boolean (1 for masked pixel, 0 for not masked)
         """
         for bit in tobemaskedlist:
             if bool(1 << bit & data):
