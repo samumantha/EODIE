@@ -106,6 +106,10 @@ If none of the three above is given, only --statistics_out is set to true
 | Flag to indicate that splitshp has been run manually beforehand
 | type: flag
 
+| ``--verbose``
+| For getting information and warnings in the terminal as well as the log file
+| type: flag
+
 | ``--test``
 | For testing some datatypes are set to smaller, in general not needed by user 
 | type: flag
@@ -145,11 +149,23 @@ EODIE also includes other configuration files called config_x.yml with x being s
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-``--platform --dir/--file --shp --out --id --stat --index`` 
+``--platform --dir/--file --shp --out --id --stat``
+``--index`` also needs to be given, unless ``--platform tif``
+
 
 Outputs
 ^^^^^^^^
-One csv per tile, band/vegetation index and date with polygon identifiers in the first column and statistics is the following columns
+
+* A logfile: YYYYMMDD-hhmmss.log 
+
+``--statistics_out``
+* One csv per tile, band/vegetation index and date with polygon identifiers in the first column and statistics is the following columns.
+
+``--array_out``
+* One pickeled numpy array per tile, band/vegetation and date with all polygons
+
+``--geotiff_out``
+* One geotiff with georeferenced raster per tile, band/vegetation index and polygon
 
 
 Usage of external cloudmask
@@ -163,9 +179,4 @@ If a cloudmask for each file to be processed is available from an external sourc
 
 The latter two criteria can be achieved by using the auxiliary script create_binary_cloudmask.py (but be aware of issue https://gitlab.com/eetun-tiimi/EODIE/-/issues/62)
 
-Notes
-------
-
-* Either ``--dir`` or ``--file`` must be given, never both
-* ``--geotiff`` can only be used if ``--stat 0``
 

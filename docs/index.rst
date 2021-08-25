@@ -59,8 +59,6 @@ Contributors
 * Paula Litkey
 * Milos Pandzic
 * Mika Karjalainen
-  
-
 
 Citation 
 ---------

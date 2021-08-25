@@ -38,7 +38,7 @@ In the first case, if the python version is displayed, the verification was succ
 The other calls are successfull if no output is displayed.
 In case of a ``ModuleNotFoundError``, use ``conda install -c conda-forge modulename`` to install the missing module.
 
-You can further verify the installation and learn about the usage of EODIE as command line tool in ref:`Example` .
+You can further verify the installation and learn about the usage of EODIE as command line tool in :ref:`Example` .
 
 
 
