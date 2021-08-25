@@ -13,6 +13,8 @@ maxcloudcover: 10
 # options: 10,20,(60)
 pixelsize: 10
 
+bitmask: 0
+
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
 tobemaskedlist: 

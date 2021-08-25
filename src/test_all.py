@@ -223,11 +223,11 @@ class TestAll(object):
         tmpdir = 'testfiles/temp'
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
-        shapesplitter = SplitshpObject('testfiles/shp/test_parcels_32635.shp', 'testfiles/shp/sentinel2_tiles_world.shp', tmpdir, 'Name')
+        shapesplitter = SplitshpObject('testfiles/shp/test_parcels_32635.shp', 'testfiles/shp/sentinel2_tiles_test.shp', tmpdir, 'Name')
         tmpshpdir = shapesplitter.output_directory
         assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
         shapesplitter.splitshp()
-        assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_world_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted worldtiles'
+        assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_test_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted testtiles'
         assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
         for tile in ['34VFN', '35VLH']:
             with fiona.open(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_' + tile + '.shp' ), 'r' ) as shp:
