@@ -38,7 +38,7 @@ class SplitshpObject(object):
         location and name of shapefile with polygons that the raster product is split into (tiles)
     """
 
-    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname):
+    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname test= False):
         """ initialize Spitshp object
         Parameters
         ----------
@@ -50,6 +50,8 @@ class SplitshpObject(object):
             location where the splitted small polygon shapefile should be stored
         fieldname: str
             name of the field in large polygon shapefile where tile information is stored
+        test: boolean, default: False
+            when testing, number of cpus to use should be 1
         """
         self.fieldname = fieldname
         self.output_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
@@ -60,6 +62,7 @@ class SplitshpObject(object):
         #all input shapefiles to EPSG: 4326
         self.small_polygon_shapefile = self.reproject_to_epsg(small_polygon_shapefile,'4326')
         self.large_polygon_shapefile = self.reproject_to_epsg(large_polygon_shapefile,'4326')
+        self.test = test
 
 
 
@@ -268,7 +271,10 @@ class SplitshpObject(object):
 
         bounding_box_small_poly_shp = self.get_bounding_box(self.small_polygon_shapefile)
 
-        usable_number_of_cores = mp.cpu_count()-2
+        if self.test:
+            usable_number_of_cores = 1
+        else:
+            usable_number_of_cores = mp.cpu_count()-2
         logging.info('number of usable cores for shapesplitting is ' + str(usable_number_of_cores))
 
         pool = mp.Pool(usable_number_of_cores)
