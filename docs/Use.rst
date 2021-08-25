@@ -13,7 +13,7 @@ EODIE can be used to extract polygon based information from a
 Inputs 
 ^^^^^^^
 
-The following sections describe EODIEs command line arguments and the configuration files. All of the following only matters when using EODIE as command line tool. For API, see :ref:`API`.
+The following sections describe EODIEs command line arguments and the configuration files. All of the following only matters when using EODIE as command line tool. 
 
 Command line arguments
 ++++++++++++++++++++++
@@ -23,96 +23,96 @@ Note that some parameters have options, some have defaults and some are optional
 
 | ``--platform``
 | Which platform does the data come from? 
-| type: String
-| options: s2
+| **type:** String
+| **options:** s2, ls8, tif
 | The platform information needs to be given in order for EODIE to be able to read the data the right way, eg find tile and date information in the filename. It is possible to extent EODIE to be able to process other datasources than given in options. Please refer to :ref:`extending_eodie` for further information.
 
 | ``--dir``
 | The directory where the data to be processed is stored as absolute path. 
-| type: String
-EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs.
+| **type:** String
+| EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs.
 
 | ``--file``
 | If only one file shall be processed use ``--file`` instead of ``--dir``. Cannot be used together with ``--dir``.
-| type: String
-Either `--dir` or `--file` needs to be given by user.
+| **type:** String
+| Either `--dir` or `--file` needs to be given by user.
 
 | ``--shp``
 | Absolute path to the shapefile to be used for processing, without extension and tilename.
-| type: String
-| example: Shapefile name is test_polygons.shp in location /home/my/path, then it is given as --shp /home/my/path/test_polygons
-The given shapefile defines the area of interest. Internally, EODIE splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
+| **type:** String
+| **example:** Shapefile name is test_polygons.shp in location /home/my/path, then it is given as --shp /home/my/path/test_polygons
+| The given shapefile defines the area of interest. Internally, EODIE splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
 
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
-| type: String
-| default: ``.results``
+| **type:** String
+| **default:** ``.results``
 
 | ``--id``
 | Name of the unique ID-field of the shapefile provided at ``--shp``.
-| type: String
-| example: ``--id id``
+| **type:** String
+| **example:** ``--id id``
 | Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
 
 | ``--statistics_out``
 | set flag if statistics (see below) shall be calculated per polygon and saved as csv
-| type: flag
+| **type:** flag
 
 | ``--geotiff_out``
 | set flag if geotiff shall be extracted per polygon and saved as geotiff
-| type: flag
+| **type:** flag
 
 | ``--array_out``
 | set flag if arrays of all polygons shall be extracted and saved as pickle
-| type: flag
-If none of the three above is given, only --statistics_out is set to true
+| **type:** flag
+| If none of the three above is given, only --statistics_out is set to true
 
 | ``--statistics``
 | If --statistics_out is given, specify here which statistics shall be calculated per polygon separated by a space
-| type: list of Strings
-| options: one or more of: sum, std, median, majority, minority, unique, range, percentile_x (with x from 0 to 100)
-| default: ``mean std median``
-| example: ``--statistics sum median percentile_10 percentile_90``
+| **type:** list of Strings
+| **options:** one or more of: sum, std, median, majority, minority, unique, range, percentile_x (with x from 0 to 100)
+| **default:** ``mean std median``
+| **example:** ``--statistics sum median percentile_10 percentile_90``
 
 | ``--index``
 | Which vegetation index or band shall be extracted per polygon separated by a space
-| type: list of Strings
-| options: one or more of ndvi, rvi,savi,nbr,kndvi, ndmi, mndwi, evi, evi2, dvi, cvi, mcari, ndi45, tctb, tctg, tctw, ndwi, plus bands as named in platform filenames (e.g. for Sentinel-2: B02, B03, B04, B05, B06, B07, B08, B8A, B11, B12)
-| example: ``--index ndvi evi2 B04 B8A``
+| **type:** list of Strings
+| **options:** one or more of ndvi, rvi,savi,nbr,kndvi, ndmi, mndwi, evi, evi2, dvi, cvi, mcari, ndi45, tctb, tctg, tctw, ndwi, plus bands as named in platform filenames (e.g. for Sentinel-2: B02, B03, B04, B05, B06, B07, B08, B8A, B11, B12)
+| **example:** ``--index ndvi evi2 B04 B8A``
 
 | ``--start``
 | Give the startdate of the timeframe of interest
-| type: integer YYYYMMDD
-| default: ``20160101``
+| **type:** integer YYYYMMDD
+| **default:** ``20160101``
 
 | ``--end``
 | Give the enddate of the timeframe of interest
-| type: integer YYYYMMDD
-| default: todays date
+| **type:** integer YYYYMMDD
+| **default:** todays date
 
 | ``--keep_shp``
 | Flag to indicate all shapefiles created when running EODIE should be stored for further usage
-| type: flag 
+| **type:** flag 
 
 | ``--exclude_border``
 | Flag to indicate that border pixels (within the polygon) should be excluded from statistics calculations / array extraction
-| type: flag
+| **type:** flag
 
 | ``--external_cloudmask``
 | [optional] Absolute path and name of external cloudmask (without tile and date and extension) if available
-| type: String
+| **type:** String
 
 | ``--exclude_splitshp``
 | Flag to indicate that splitshp has been run manually beforehand
-| type: flag
+| **type:** flag
 
 | ``--verbose``
 | For getting information and warnings in the terminal as well as the log file
-| type: flag
+| **type:** flag
 
 | ``--test``
 | For testing some datatypes are set to smaller, in general not needed by user 
-| type: flag
+| **type:** flag
 
 
 Configuration file
@@ -127,20 +127,21 @@ The tileshapefile is a shapefile containing the units, also called tiles, that d
 When processing data that is not tiled, or no tile shapefile is provided, this parameter can be left empty.
 
 Other settings that can be adjusted in the configuration file are:
-| `maxcloudcover`
+
+| ``maxcloudcover``
 | Enter the maximum cloudcover of a file that is still processed in percentage
-| Type: Integer
-| Example: `maxcloudcover: 99` excludes all files in the directory that have > 99 % cloudcover over the whole tile according to metadata.
+| **Type:** Integer
+| **Example:** ``maxcloudcover: 99`` excludes all files in the directory that have > 99 % cloudcover over the whole tile according to metadata.
 
-| `pixelsize` 
+| ``pixelsize`` 
 | Enter the pixelsize that you want your results to be in. Bands are then resampled to match the given pixelsize. This has most influence on geotiff or array outputs.
-| Type: Integer
-| Example: `pixelsize : 10` will use bands that are available in 10 m as is and resample bands that are only available in larger pixelsizes to 10m before extracting statistics/array/geotiff
+| **Type:** Integer
+| **Example:** ``pixelsize : 10`` will use bands that are available in 10 m as is and resample bands that are only available in larger pixelsizes to 10m before extracting statistics/array/geotiff
 
-| `resampling method`
+| ``resampling method``
 | If bands are not available directly in the given pixelsize, they need to be resampled. Here the resampling method for up- and downsampling can be changed.
-| Options: available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
-| Example: `resampling_method: 'bilinear'` will use bilinear resampling for all necessary resampling of the rasterdata
+| **Options:** available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+| **Example:** ``resampling_method: 'bilinear'`` will use bilinear resampling for all necessary resampling of the rasterdata
 
 EODIE also includes other configuration files called config_x.yml with x being some platform name or tif. These configuration files do not need to be touched or changed in general. One exception to this is for example a 'red edge' band should be used in indices instead of the nir band, that could be changed in the platform specific configuration files. See more about this and about the possibility of extending EODIE to work with other platforms in ref:`platform_spec`.
 
@@ -149,8 +150,8 @@ EODIE also includes other configuration files called config_x.yml with x being s
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-``--platform --dir/--file --shp --out --id --stat``
-``--index`` also needs to be given, unless ``--platform tif``
+| ``--platform --dir/--file --shp --out --id --stat``
+| ``--index`` also needs to be given, unless ``--platform tif``
 
 
 Outputs
@@ -158,13 +159,16 @@ Outputs
 
 * A logfile: YYYYMMDD-hhmmss.log 
 
-``--statistics_out``
+| ``--statistics_out``
+
 * One csv per tile, band/vegetation index and date with polygon identifiers in the first column and statistics is the following columns.
 
-``--array_out``
+| ``--array_out``
+
 * One pickeled numpy array per tile, band/vegetation and date with all polygons
 
-``--geotiff_out``
+| ``--geotiff_out``
+
 * One geotiff with georeferenced raster per tile, band/vegetation index and polygon
 
 
@@ -172,6 +176,7 @@ Usage of external cloudmask
 ----------------------------
 
 If a cloudmask for each file to be processed is available from an external source, make sure the cloudmask fulfills the following requirements:
+
 * date (YYYYMMDD, eg 20210603) and tilename (NNCCC , eg 34VFN) in end of filenames: xxx_date_tile.xx
 * supported raster file format (.tif, .jp2, and other formats supported by rasterio)
 * binary rastervalues (1,0; with 1 representing clouds/invalid pixels)

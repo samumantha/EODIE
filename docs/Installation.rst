@@ -13,6 +13,7 @@ Dependencies
   - numpy=1.20
   - gdal=3.1.4
   - pyyaml=5.4.1
+  - matplotlib (for postprocesses)
 
 see also ``environment.yml``
 
