@@ -1,5 +1,5 @@
 #location of Sentinel2-tiles-world shapefile
-tileshp: ./shp_preparation/sentinel2_tiles_world/sentinel2_tiles_world
+tileshp: ./sentinel2_tiles_world/sentinel2_tiles_world
 
 #name of field where tilenames are stored in shapefile
 fieldname: 'Name'
@@ -12,6 +12,8 @@ maxcloudcover: 10
 # Extract files with xx m pixel size 
 # options: 10,20,(60)
 pixelsize: 10
+
+bitmask: 0
 
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]

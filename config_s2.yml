@@ -8,6 +8,8 @@
 
 platform: 's2'
 
+# Mask conditions are stored as values, not as bitflags
+bitmask: 0
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
 tobemaskedlist: 
@@ -18,6 +20,9 @@ tobemaskedlist:
   - 0 # no data
   - 1 # saturated and defective
 
+#pattern to find all data files
+filepattern: 'S2[A-C]_MSIL2A_\d{8}T\d{6}_N\d{4}_R\d{3}_T\d{2}[A-Z]{3}_\d{8}T\d{6}.SAFE$'
+
 # Sentinel-2 bands
 red : 'B04'
 green: 'B03'
@@ -26,6 +31,9 @@ nir: 'B08'
 r_edge: 'B05'
 swir1: 'B11'
 swir2: 'B12'
+
+# some part of the products file name that identifies them as product to be used
+productnameidentifier: 'S2*.SAFE'
 
 # parts to build path towards bands
 bandlocation: ['.','*','*','IMG_DATA']

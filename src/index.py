@@ -2,6 +2,8 @@
 
 class to calculate indices
 returns an indexarray based on index input
+
+authors: Petteri Lehti, Samantha Wittke
     
 """
 import numpy as np
@@ -10,10 +12,13 @@ np.seterr(divide='ignore', invalid='ignore')
 from rasterdata import RasterData
 
 class Index(RasterData):
+    supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
+
+    
 
     """ Calculating vegetation indices from remote sensing raster products"""
 
-    def __init__(self, inpath, cfg, test):
+    def __init__(self, inpath='.', cfg= 'test_config.yml', test=False):
 
         """ Initializing the index object
 
@@ -30,7 +35,7 @@ class Index(RasterData):
 
         super().__init__(inpath,cfg,test)
         self.resolution = self.cfg['pixelsize']
-        self.supportedindices = ['ndvi', 'rvi','savi','nbr','kndvi', 'ndmi', 'mndwi', 'evi', 'evi2', 'dvi', 'cvi', 'mcari', 'ndi45', 'tctb', 'tctg', 'tctw', 'ndwi']
+        
     
     def mask_array(self, array,maskarray):
         """ creates a masked array from an array and a mask with fill value -99999 for masked out values ; e.g. masking out cloudpixels from indexarray

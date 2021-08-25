@@ -2,10 +2,14 @@
 
 class to validate user inputs
 
+authors: Samantha Wittke
+
 """
 
 import os
 import datetime
+from index import Index
+import re
 
 
 class Validator(object):
@@ -22,6 +26,9 @@ class Validator(object):
         self.input_exists_check(args.mydir, args.myfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
+        if not args.indexlist is None and not args.indexlist == []:
+            self.index_check(args.config,args.indexlist)
+
 
     def input_amount_check(self,dir, file):
         """ check that either directory of filename is given as input
@@ -84,7 +91,27 @@ class Validator(object):
             exit('Please make sure your dates are in the past')
         return True
 
-
+    def index_check(self,cfg,indexlist):
+        """ check that all given indices and bands are valid strings, exits if any are not
+        Parameters
+        ----------
+        cfg:
+           the configuration dictionary used here to get the bad designation for the current platform
+        indexlist:
+           list of indices given by the user
+        Returns
+        -------
+        indices_ok: boolean
+            if all indices and bands given by the user are available
+        """
+        unknownindices = []
+        for index in indexlist:
+            if not index in Index.supportedindices and not re.match(cfg['band_designation'], index):
+                unknownindices.append(index)
+        if len(unknownindices) > 0:
+            exit('Chosen index/band {} not available, please make sure you typed the names correctly.'.format(','.join(unknownindices)))
+        else:
+            return True
 
             
 

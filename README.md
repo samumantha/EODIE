@@ -24,7 +24,7 @@ Samantha Wittke, Finnish Geospatial Research Institute in the National Land Surv
 
 * Eetu Puttonen
 * Juuso Varho
-* Petteri Lehtinen
+* Petteri Lehti
 * Paula Litkey
 * Milos Pandzic
 * Mika Karjalainen

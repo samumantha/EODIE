@@ -2,6 +2,8 @@
 
 Class to create and adapt cloudmask array
     
+authors: Samantha Wittke
+
 """
 import numpy as np
 import rasterio
@@ -17,7 +19,7 @@ class Mask(RasterData):
         dictionary with configuration elements
     """
 
-    def __init__(self,inpath: str, cfg:dict, test, external=None):
+    def __init__(self,inpath: str, cfg:dict = 'test_config.yml', test=False, external=None):
         """ Initializing the mask object
 
         Parameters
@@ -54,20 +56,22 @@ class Mask(RasterData):
             return np.array(f.read(1)).astype(int)
 
     def binarize_cloudmask(self,sclarray):
-        """ takes in an array with different cloud classes and binarizes it according to config file 
-        to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use 
+        """ takes in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use 
         Parameters
-        ----------
+        -----------
         sclarray: numpy array
             array of cloudmask from remote sensing product
         Returns
         -------
         mask: boolean numpy array
-            binarized cloudmask using to be masked values from config 
+            binarized cloudmask using to be masked values or bits from config
         """
-
+        bitmask = self.cfg['bitmask']
         tobemaskedlist = self.cfg['tobemaskedlist']
-        mask = np.isin(sclarray, tobemaskedlist)
+        if not bitmask:
+            mask = np.isin(sclarray, tobemaskedlist)
+        else:
+            mask = self.createbitmask(sclarray, tobemaskedlist)
         return mask
         
 
@@ -80,9 +84,39 @@ class Mask(RasterData):
             array with invalid pixels marked as True/1 and correct 'pixelsize'
 
         """
-
         cloudarray= self.get_array('cloudfilename', 'nearest')
         cloudmask = self.binarize_cloudmask(cloudarray)
 
         return cloudmask
 
+
+    def createbitmask(self, maskarr, tobemasked):
+        """ creates a bitmask
+        Parameters
+        -----------
+        maskarr: numpy array
+            xxx
+        tobemasked: list 
+            list of bits to be masked
+        Returns
+        -------
+        binary mask with clouds/invalid pixels true/1, others 0
+        """
+        return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(maskarr)
+        
+    def checkbits(self, data, tobemaskedlist):
+        """ checks bits if they should be masked
+        Parameters
+        ----------
+        data: numpy array
+            xxx
+        tobemaskedlist: list
+            bits that should be masked
+        Returns
+        --------
+        boolean (1 for xxx, 0 for xxx)
+        """
+        for bit in tobemaskedlist:
+            if bool(1 << bit & data):
+                return 1
+        return 0
