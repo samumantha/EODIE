@@ -14,7 +14,7 @@ class FileChecker(object):
             self.index = parts[0]
             self.date = parts[1]
             self.tile = parts[2]
-            self.end = parts[3]
+            self.end = parts[3].split('.')[0]
             self.wrong_format = False
         else:
             self.wrong_format = True
@@ -46,5 +46,9 @@ class FileChecker(object):
         bool_date = self.check_date(startdate, enddate)
         bool_tile = self.check_tile(tiles)
         bool_end = self.check_end()
+        print(bool_index)
+        print(bool_date)
+        print(bool_tile)
+        print(bool_end)
         isWanted = (bool_index and bool_date and bool_tile and bool_end)
         return isWanted
