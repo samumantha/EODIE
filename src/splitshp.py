@@ -38,7 +38,7 @@ class SplitshpObject(object):
         location and name of shapefile with polygons that the raster product is split into (tiles)
     """
 
-    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname test= False):
+    def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname, test= False):
         """ initialize Spitshp object
         Parameters
         ----------
