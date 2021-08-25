@@ -91,7 +91,7 @@ See above for the parameters that need to be included in the config_x.yml file t
 Auxiliary files
 ----------------
 
-A few auxiliary files are avialable in the aux directory.
+A few auxiliary files are available in the aux directory.
 
 | ``create_binary_cloudmask.py``
 | ``examine_shapefile.py``

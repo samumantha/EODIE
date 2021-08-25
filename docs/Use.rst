@@ -4,12 +4,6 @@ User Manual
 In this manual the general functionality of EODIE is described. In the end you can also find a usage example :ref:`example` (no external data needed).
 For more examples with explanations, please check out :ref:`tutorial`.
 
-Functionality
-------------- 
-
-EODIE can be used to extract polygon based information from a 
-
-
 Inputs 
 ^^^^^^^
 
@@ -70,7 +64,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--statistics``
 | If --statistics_out is given, specify here which statistics shall be calculated per polygon separated by a space
 | **type:** list of Strings
-| **options:** one or more of: sum, std, median, majority, minority, unique, range, percentile_x (with x from 0 to 100)
+| **options:** one or more of: sum, std, median, mean, majority, minority, unique, range, percentile_x (with x from 0 to 100)
 | **default:** ``mean std median``
 | **example:** ``--statistics sum median percentile_10 percentile_90``
 
