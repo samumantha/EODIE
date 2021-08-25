@@ -1,0 +1,62 @@
+fig_size:
+  w: 15
+  h: 15
+index_table:
+  ndvi:
+    min: -1
+    max: 1
+  kndvi:  # With sigma = 0.5(NIR+red) the range should be 0 to approx 0.762 (tanh(0) to tanh(1))
+    min: 0
+    max: 0.8
+  rvi:    # 0 to infinity
+    min: 0
+    max: 50
+  savi:   
+    min: -1
+    max: 1
+  nbr:
+    min: -1
+    max: 1
+  ndmi:
+    min: -1
+    max: 1
+  ndwi:
+    min: -1
+    max: 1
+  mndwi:
+    min: -1
+    max: 1
+  evi:    # -infinity to infinity
+    min: -10
+    max: 10
+  evi2:   # -25/34 to 1.25
+    min: -0.75
+    max: 1.25
+  dvi:
+    min: -1
+    max: 1
+  cvi:    # 0 to infinity
+    min: 0
+    max: 10
+  mcari:  # -0.3125 to infinity
+    min: -0.3125
+    max: 10
+  tctb:   # 0 to 2.2301
+    min: 0
+    max: 2.3
+  tctg:   # -1.4722 to 0.6720
+    min: -1.5
+    max: 0.7
+  tctw:   # -1.299 to 0.6837
+    min: -1.3
+    max: 0.7
+default_dir: ''
+default_lookup: ''
+default_out: ''
+default_index: ['ndvi']
+default_start: ''
+default_end: ''
+default_id: ['all']
+default_show: '0'
+default_cmap: 'viridis'
+default_series: '0'

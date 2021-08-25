@@ -94,7 +94,9 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
 
-            geoobject = VectorData(os.path.join(shp_directory,baseshapename + '_' + pathfinderobject.tile + '.shp'))
+            shpname = baseshapename + '_' + pathfinderobject.tile + '.shp'
+
+            geoobject = VectorData(os.path.join(shp_directory,shpname))
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
@@ -130,6 +132,9 @@ for path in userinput.input:
                         extractedarray = extractorobject.extract_format(format)
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
+                        if format == 'array':
+                            lookup_file = cfg['lookup']
+                            writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
                    
             else:
                 logging.warning('Cloudcovered or no data in Area of interest!')

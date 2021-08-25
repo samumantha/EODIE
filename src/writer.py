@@ -107,6 +107,35 @@ class Writer(object):
                 dtype=data['array'].dtype, transform=data['affine']) as dst: 
                 dst.write(data['array'],1)
 
+    def write_lookup(self, lookup, shapefile, idname):
+        """ Writing a lookup table when extracting arrays
+        Parameters
+        -----------
+        lookup: string
+           location and name of lookup table
+        shapefile: string
+            location and name of shapefile
+        idname: string
+            name of id in shapefile
+        """
+
+        with open(lookup) as f:
+            table = f.read().splitlines()
+
+        IDs = []
+        with fiona.open(shapefile) as shp:
+            for polygon in shp:
+                IDs.append(polygon['properties'][idname])
+
+        lookup_tiles = []
+        for line in table:
+            lookup_tiles.append(line.split(':')[0])
+        intable = self.tile in lookup_tiles
+
+        if not intable:
+            with open(lookup, 'a') as f:
+                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
+            logging.info('Appended tile ' + self.tile + ' to lookup table')
 
 
 
