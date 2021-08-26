@@ -3,7 +3,7 @@
 class for writing results into file
 
 
-authors: Samantha Wittke, Juuso Varho
+authors: Samantha Wittke, Juuso Varho, Petteri Lehti
 """
 
 import os
