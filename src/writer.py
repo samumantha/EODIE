@@ -118,21 +118,21 @@ class Writer(object):
         idname: string
             name of id in shapefile
         """
-
-        with open(lookup,'a+') as f:
-            table = f.read().splitlines()
-
-        IDs = []
-        with fiona.open(shapefile) as shp:
-            for polygon in shp:
-                IDs.append(polygon['properties'][idname])
-
-        lookup_tiles = []
-        for line in table:
-            lookup_tiles.append(line.split(':')[0])
-        intable = self.tile in lookup_tiles
+        if os.path.isfile(lookup):
+            with open(lookup) as f:
+                table = f.read().splitlines()
+            lookup_tiles = []
+            for line in table:
+                lookup_tiles.append(line.split(':')[0])
+            intable = self.tile in lookup_tiles
+        else:
+            intable = False
 
         if not intable:
+            IDs = []
+            with fiona.open(shapefile) as shp:
+                for polygon in shp:
+                    IDs.append(polygon['properties'][idname])
             with open(lookup, 'a') as f:
                 f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
             logging.info('Appended tile ' + self.tile + ' to lookup table')
