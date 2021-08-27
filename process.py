@@ -4,17 +4,17 @@ import re
 import sys
 import os
 sys.path.append("./src")
-from extractor import Extractor
-from mask import Mask
-from index import Index
-from vectordata import VectorData
-from pathfinder import Pathfinder
-from rastervalidator_s2 import RasterValidatorS2
-from writer import Writer
-from userinput import UserInput
-from splitshp import SplitshpObject
-from rasterdata import RasterData
-from validator import Validator
+from src.extractor import Extractor
+from src.mask import Mask
+from src.index import Index
+from src.vectordata import VectorData
+from src.pathfinder import Pathfinder
+from src.rastervalidator_s2 import RasterValidatorS2
+from src.writer import Writer
+from src.userinput import UserInput
+from src.splitshp import SplitshpObject
+from src.rasterdata import RasterData
+from src.validator import Validator
 import logging
 from datetime import datetime 
 import fiona
@@ -22,8 +22,6 @@ import fiona
 
 userinput = UserInput()
 Validator(userinput)
-
-test = userinput.test
 
 cfg = userinput.config
 
@@ -82,13 +80,13 @@ for path in userinput.input:
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
         
             if userinput.extmask is None:
-                mask = Mask(pathfinderobject.imgpath, cfg, test)
+                mask = Mask(pathfinderobject.imgpath, cfg, userinput.test)
                 cloudmask = mask.create_cloudmask()
                 
             else:
                 cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
                 extmask = glob.glob(cname)[0]
-                cloudmask = Mask(pathfinderobject.imgpath, cfg, test, extmask).cloudmask
+                cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
                 logging.info('Using external cloudmask {}'.format(extmask))
             logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
