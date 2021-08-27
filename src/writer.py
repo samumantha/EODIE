@@ -119,7 +119,7 @@ class Writer(object):
             name of id in shapefile
         """
 
-        with open(lookup,'a+') as f:
+        with open(lookup) as f:
             table = f.read().splitlines()
 
         IDs = []
