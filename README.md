@@ -28,7 +28,6 @@ Samantha Wittke, Finnish Geospatial Research Institute in the National Land Surv
 * Paula Litkey
 * Milos Pandzic
 * Mika Karjalainen
-
 ## Citation 
 
 EODIE- Earth Observation Data Information Extractor (2021) S. Wittke, online available: https://gitlab.com/eetun-tiimi/EODIE

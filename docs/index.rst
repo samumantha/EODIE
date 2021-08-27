@@ -49,7 +49,6 @@ Maintainers
 
 Samantha Wittke, Finnish Geospatial Research Institute in the National Land Survey of Finland
 
-
 Contributors
 -------------
 
@@ -63,7 +62,10 @@ Contributors
 Citation 
 ---------
 
-EODIE- Earth Observation Data Information Extractor (2021) S. Wittke [online] Available: xxx , DOI: 10.5281/zenodo.4762323
+EODIE- Earth Observation Data Information Extractor (2021) S. Wittke, online available: https://gitlab.com/eetun-tiimi/EODIE
+
+(Zenodo DOI in progress:
+EODIE- Earth Observation Data Information Extractor (2021) S. Wittke [online] reserved DOI: 10.5281/zenodo.4762323)
 
 Contribution guide 
 -------------------
