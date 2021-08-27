@@ -113,9 +113,7 @@ for path in userinput.input:
                 datacovered = True
             
             if not_cloudcovered and datacovered:
-                #if 'array' in userinput.format:
-                #    lookup_file = cfg['lookup']
-                #    writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
+
                 for index in userinput.indexlist:
 
                     if re.match(cfg['band_designation'], index):
@@ -133,9 +131,7 @@ for path in userinput.input:
                         extractedarray = extractorobject.extract_format(format)
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
-                        #if format == 'array':
-                        #    lookup_file = cfg['lookup']
-                        #    writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
+                        
                 if 'array' in userinput.format:
                     lookup_file = cfg['lookup']
                     writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
