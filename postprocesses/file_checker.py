@@ -46,9 +46,5 @@ class FileChecker(object):
         bool_date = self.check_date(startdate, enddate)
         bool_tile = self.check_tile(tiles)
         bool_end = self.check_end()
-        print(bool_index)
-        print(bool_date)
-        print(bool_tile)
-        print(bool_end)
         isWanted = (bool_index and bool_date and bool_tile and bool_end)
         return isWanted
