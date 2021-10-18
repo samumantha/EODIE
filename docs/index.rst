@@ -10,6 +10,8 @@ Purpose
 
 EODIE is a toolkit to extract object based timeseries information from Earth Observation data.
 
+The EODIE code can be found `here <https://gitlab.com/eetun-tiimi/EODIE>`_ .
+
 The goal of EODIE is to ease the extraction of time series information at object level. Today, vast amounts of 
 Earth Observation data are available to the users via for example earth explorer or scihub. Often, not the whole images 
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
