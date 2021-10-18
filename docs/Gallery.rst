@@ -15,5 +15,7 @@ EODIE used to...
 
 | ...take an initial look at NDVI evolution over the year of a crop plot in Southern Finland:
 
-(some crop array plots or gif)
+.. image:: agri_example.png
+  :width: 400
+  :alt: mean NDVI plot for an agricultural field parcel in 2019. 
 
