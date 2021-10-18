@@ -1,5 +1,5 @@
-Inner workings
-===============
+Internals
+==========
 
 
 The following gives an overview over what is happening in the backgroudn when the user calls:
