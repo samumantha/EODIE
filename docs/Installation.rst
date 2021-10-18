@@ -23,6 +23,8 @@ Installation instructions
 1. Install `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_ 
 2. Create conda environment from environment.yml ``conda env create -f environment.yml`` 
 3. Activate conda environment eodie ``conda activate eodie``
+4. Get the code from gitlab ``git clone https://gitlab.com/eetun-tiimi/EODIE.git``
+5. Move into EODIE directory ``cd EODIE``
 
 Good to go!
 
