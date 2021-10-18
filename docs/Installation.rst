@@ -15,7 +15,7 @@ Dependencies
   - pyyaml=5.4.1
   - matplotlib (for postprocesses)
 
-see also ``environment.yml``
+see also ``environment.yml`` which can be found in the EODIE parent directory.
 
 Installation instructions
 --------------------------
