@@ -23,6 +23,7 @@ Is EODIE suitable for me?
 
 To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
+
 * Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
 * A shapefile with polygons of your objects of interests
 
