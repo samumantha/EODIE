@@ -1,5 +1,5 @@
-More
-====
+Additional information
+=======================
 
 .. _platform_spec:
 
