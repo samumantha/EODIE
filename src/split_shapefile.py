@@ -3,7 +3,6 @@
 import argparse
 import yaml
 import sys
-sys.path.append("./eodie")
 from eodie.splitshp import SplitshpObject 
 
 with open('./user_config.yml', "r") as ymlfile:
