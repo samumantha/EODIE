@@ -16,13 +16,13 @@ from affine import Affine
 import glob
 import sys
 import numpy as np
-from mask import Mask
-from extractor import Extractor
-from vectordata import VectorData
-from index import Index
-from rasterdata import RasterData
-from writer import Writer
-from splitshp import SplitshpObject
+from eodie.mask import Mask
+from eodie.extractor import Extractor
+from eodie.vectordata import VectorData
+from eodie.index import Index
+from eodie.rasterdata import RasterData
+from eodie.writer import Writer
+from eodie.splitshp import SplitshpObject
 import yaml
 import fiona
 

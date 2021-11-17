@@ -7,7 +7,7 @@ authors: Samantha Wittke
 """
 import numpy as np
 import rasterio
-from rasterdata import RasterData
+from eodie.rasterdata import RasterData
 
 class Mask(RasterData):
     """ Retrieving and transforming a cloudmask from Remote Sensing product or external
