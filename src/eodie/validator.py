@@ -8,7 +8,7 @@ authors: Samantha Wittke
 
 import os
 import datetime
-from index import Index
+from eodie.index import Index
 import re
 
 
