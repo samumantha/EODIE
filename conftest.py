@@ -1,6 +1,5 @@
 import sys
-sys.path.append("./src/eodie")
-from test_all import TestAll
+from eodie.test_all import TestAll
 from pytest import fixture
 
 
