@@ -17,7 +17,6 @@ setuptools.setup(
 
     install_requires=[
 
-        "python", 
         "numpy",
         "shapely",
         "rasterio",
@@ -27,7 +26,6 @@ setuptools.setup(
         "pyyaml",
         "pytest",
         "matplotlib"
-
     ],
 
     classifiers=[
