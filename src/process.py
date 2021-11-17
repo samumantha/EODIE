@@ -3,18 +3,18 @@ import argparse
 import re
 import sys
 import os
-sys.path.append("./src")
-from src.extractor import Extractor
-from src.mask import Mask
-from src.index import Index
-from src.vectordata import VectorData
-from src.pathfinder import Pathfinder
-from src.rastervalidator_s2 import RasterValidatorS2
-from src.writer import Writer
-from src.userinput import UserInput
-from src.splitshp import SplitshpObject
-from src.rasterdata import RasterData
-from src.validator import Validator
+sys.path.append("./eodie")
+from eodie.extractor import Extractor
+from eodie.mask import Mask
+from eodie.index import Index
+from eodie.vectordata import VectorData
+from eodie.pathfinder import Pathfinder
+from eodie.rastervalidator_s2 import RasterValidatorS2
+from eodie.writer import Writer
+from eodie.userinput import UserInput
+from eodie.splitshp import SplitshpObject
+from eodie.rasterdata import RasterData
+from eodie.validator import Validator
 import logging
 from datetime import datetime 
 import fiona

@@ -1,5 +1,5 @@
 import sys
-sys.path.append("./src")
+sys.path.append("./src/eodie")
 from test_all import TestAll
 from pytest import fixture
 
