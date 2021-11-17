@@ -8,7 +8,7 @@ authors: Samantha Wittke
 
 import os
 import datetime
-from src.index import Index
+from index import Index
 import re
 
 

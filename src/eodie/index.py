@@ -9,7 +9,7 @@ authors: Petteri Lehti, Samantha Wittke
 import numpy as np
 import re
 np.seterr(divide='ignore', invalid='ignore')
-from src.rasterdata import RasterData
+from rasterdata import RasterData
 
 class Index(RasterData):
 
