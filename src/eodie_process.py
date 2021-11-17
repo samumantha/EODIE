@@ -5,7 +5,6 @@ import argparse
 import re
 import sys
 import os
-sys.path.append("./eodie")
 from eodie.extractor import Extractor
 from eodie.mask import Mask
 from eodie.index import Index
