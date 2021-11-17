@@ -5,6 +5,7 @@ before_script:
   - apt-get install zip unzip
   - conda env create -f environment.yml
   - source activate eodie
+  - python -m pip install src/ -vv
   - python --version
   - pwd
   - wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip 
