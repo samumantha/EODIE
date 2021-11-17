@@ -19,11 +19,11 @@ pixelsize: 10
 resampling_method: 'bilinear'
 
 #location of the shapefile with tiles (Sentinel2-tiles-world in case of Sentinel-2, WRS2_descending in case of Landsat 8)
-tileshp: ./sentinel2_tiles_world/sentinel2_tiles_world
+tileshp: './sentinel2_tiles_world/sentinel2_tiles_world'
 
 #name of field where tilenames are stored in shapefile ('Name' in case of sentinel2_tiles_world, 'PR' in case of WRS2_descending )
 fieldname: 'Name'
 
 # Lookup table for storing the tiles and the IDs they include for every tile processed by EODIE with --array_out
 # Table needed for array plotting
-lookup: "./postprocesses/lookuptable.txt"
+lookup: './postprocesses/lookuptable.txt'
