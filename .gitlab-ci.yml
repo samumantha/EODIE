@@ -10,7 +10,7 @@ before_script:
   - pwd
   - wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip 
   - unzip testfiles.zip
-  - cd src/eodie
+
 
 stages:
   - Test
@@ -18,4 +18,4 @@ stages:
 pytest:
   stage: Test
   script:
-  - python -m pytest
+  - python -m pytest -s src/eodie
