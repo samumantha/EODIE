@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("../README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -17,7 +17,6 @@ setuptools.setup(
 
     install_requires=[
 
-        "python", 
         "numpy",
         "shapely",
         "rasterio",
@@ -27,7 +26,6 @@ setuptools.setup(
         "pyyaml",
         "pytest",
         "matplotlib"
-
     ],
 
     classifiers=[

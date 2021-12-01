@@ -1,8 +1,9 @@
+#!/usr/bin/env python
+
 import argparse
 import yaml
 import sys
-sys.path.append("./src")
-from src.splitshp import SplitshpObject 
+from eodie.splitshp import SplitshpObject 
 
 with open('./user_config.yml', "r") as ymlfile:
     user_cfg = yaml.safe_load(ymlfile)

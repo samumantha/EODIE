@@ -16,15 +16,13 @@ from affine import Affine
 import glob
 import sys
 import numpy as np
-print(os.getcwd())
-sys.path.append("./src")
-from src.mask import Mask
-from src.extractor import Extractor
-from src.vectordata import VectorData
-from src.index import Index
-from src.rasterdata import RasterData
-from src.writer import Writer
-from src.splitshp import SplitshpObject
+from eodie.mask import Mask
+from eodie.extractor import Extractor
+from eodie.vectordata import VectorData
+from eodie.index import Index
+from eodie.rasterdata import RasterData
+from eodie.writer import Writer
+from eodie.splitshp import SplitshpObject
 import yaml
 import fiona
 
