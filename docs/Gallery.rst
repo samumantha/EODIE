@@ -3,6 +3,11 @@
 Gallery
 =======
 
+.. warning::
+
+  This site is under construction
+
+
 EODIE used to...
 
 | ...get the NDVI timeseries for a mixed forest plot in Southern Finland:
