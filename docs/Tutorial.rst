@@ -3,6 +3,7 @@
 Tutorial 
 =========
 
+
 Case 1: growing season mean NDVI timeseries of agricultural fieldparcels of area x (larger than one Sentinel-2 tile)
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ Case 1: growing season mean NDVI timeseries of agricultural fieldparcels of area
         fieldname: Name
         resampling_method: 'bilinear'
 
-2. Call EODIE ``python process.py --dir S2files/dir --shp name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi`` this results in a number of single csv files, one for each tile and date
+2. Call EODIE ``python eodie_process.py --dir S2files/dir --shp name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi`` this results in a number of single csv files, one for each tile and date
 
 3. (optional) Use any of the combine_X.py scripts in postprocesses to combine the csv files
 4. (optional) Plot timeseries with plot_timeseries.py in postprocesses.
@@ -58,7 +59,7 @@ Case 2: As Case 1 but field parcel array timeseries are the desired output
 | Workflow:
 
 1. Same as Case 1
-2. Call EODIE: ``python process.py --dir S2files/dir --shp name/of/shapefile --out ./results --id PlotID --array_out --index ndvi`` this results in a number of single pickle files, one for each tile and date with all ids 
+2. Call EODIE: ``python eodie_process.py --dir S2files/dir --shp name/of/shapefile --out ./results --id PlotID --array_out --index ndvi`` this results in a number of single pickle files, one for each tile and date with all ids 
 3. (optional) Use arrayplot.py in postprocesses to show/save timeseries plots from wished ids.
 
 Case 3: As Case 1 but processing done on HPC environment with SLURM
@@ -110,10 +111,10 @@ Case 3: As Case 1 but processing done on HPC environment with SLURM
 
     cp -r /path/to/the/original/shapefiles $path/$local_dir # Copies the shapefile to every temporary local directory
 
-    cd /path/to/the/program/EODIE # Needs to be in the EODIE directory to work properly
+    cd /path/to/the/program/EODIE/src/eodie # Needs to be in the EODIE directory to work properly
 
     # The actual processing:
-    python process.py --file $name --shp name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi
+    python eodie_process.py --file $name --shp name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi
     # More specific arguments and their purpose can be found in EODIE documentation:  https://eodie.readthedocs.io/en/latest/
     rm -r $path/$local_dir # Removes the temporary directory which is not needed anymore
 
@@ -208,10 +209,10 @@ Third script similar to the one in Case 3:
 .. code-block:: bash
 
     #!/bin/bash -l
-    #SBATCH --job-name=smart_hyytiala_array
-    #SBATCH --account=project_2001106
-    #SBATCH --output=/scratch/project_2001106/hyytiala/out/array_job_out_%A_%a.txt
-    #SBATCH --error=/scratch/project_2001106/hyytiala/out/array_job_err_%A_%a.txt
+    #SBATCH --job-name=smart_xxx
+    #SBATCH --account=project_xxx
+    #SBATCH --output=/scratch/project_xxx/out/array_job_out_%A_%a.txt
+    #SBATCH --error=/scratch/project_xxx/out/array_job_err_%A_%a.txt
     #SBATCH --time=00:25:00
     #SBATCH --ntasks=1
     #SBATCH --mem-per-cpu=8000
@@ -219,7 +220,7 @@ Third script similar to the one in Case 3:
 
     module load allas
 
-    path=/scratch/project_2001106/hyytiala/smart_process/arr_temp
+    path=/scratch/project_xxx/smart_process/arr_temp
     cd $path
 
 
@@ -227,15 +228,15 @@ Third script similar to the one in Case 3:
     local_dir="job_${SLURM_ARRAY_TASK_ID}"
     mkdir $path/$local_dir
     mkdir $path/$local_dir/SAFE
-    cp -r /scratch/project_2001106/hyytiala/shp $path/$local_dir 
+    cp -r /scratch/project_xxx/shp $path/$local_dir 
     s3cmd get -r $name $path/$local_dir/SAFE
 
     module unload allas
     module load geoconda
 
-    cd /scratch/project_2001106/hyytiala/EODIE
+    cd /scratch/project_xxx/EODIE/src/eodie
 
-    python process.py --dir $path/$local_dir/SAFE --shp $path/$local_dir/shp/name_of_shapefile --out ./results --id PlotID --statistics_out --index ndvi
+    python eodie_process.py --dir $path/$local_dir/SAFE --shp $path/$local_dir/shp/name_of_shapefile --out ./results --id PlotID --statistics_out --index ndvi
 
     rm -r $path/$local_dir
 
