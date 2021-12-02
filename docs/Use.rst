@@ -167,7 +167,7 @@ Outputs
 
 
 Usage of external cloudmask
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If a cloudmask for each file to be processed is available from an external source, make sure the cloudmask fulfills the following requirements:
 
