@@ -10,7 +10,7 @@ setuptools.setup(
     author="Samantha Wittke",
     author_email="samantha.wittke@nls.fi",
     description="Earth Observation Data Information Extractor",
-    long_description="# EODIE - Earth Observation Data Information Extractor 
+    long_description="""# EODIE - Earth Observation Data Information Extractor 
 
         ## Purpose 
 
@@ -43,7 +43,7 @@ setuptools.setup(
         ## Citation 
 
         EODIE- Earth Observation Data Information Extractor (2021) S. Wittke, online available: https://gitlab.com/eetun-tiimi/EODIE
-        ",
+        """,
     long_description_content_type="text/markdown",
     url="https://eodie.readthedocs.io/en/latest/",
     packages=setuptools.find_packages(),
