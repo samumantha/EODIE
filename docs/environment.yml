@@ -15,7 +15,6 @@ dependencies:
   - matplotlib
   - pip
   - pip:
-    - sphinx
     - sphinxcontrib.napoleon
     - sphinx_rtd_theme
 
