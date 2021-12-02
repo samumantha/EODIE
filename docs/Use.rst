@@ -144,7 +144,7 @@ EODIE also includes other configuration files called config_x.yml with x being s
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-| ``--platform --dir/--file --shp --out --id --stat``
+| ``--platform --dir/--file --shp --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
 | ``--index`` also needs to be given, unless ``--platform tif``
 
 
