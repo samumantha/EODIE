@@ -40,7 +40,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
 | **type:** String
-| **default:** ``.results``
+| **default:** ``./results``
 
 | ``--id``
 | Name of the unique ID-field of the shapefile provided at ``--shp``.
@@ -65,7 +65,7 @@ Note that some parameters have options, some have defaults and some are optional
 | If --statistics_out is given, specify here which statistics shall be calculated per polygon separated by a space
 | **type:** list of Strings
 | **options:** one or more of: sum, std, median, mean, majority, minority, unique, range, percentile_x (with x from 0 to 100)
-| **default:** ``mean std median``
+| **default:** ``count`` (always included)
 | **example:** ``--statistics sum median percentile_10 percentile_90``
 
 | ``--index``
