@@ -29,7 +29,7 @@ with:
 Larger example using Sentinel-2 data
 ======================================
 
-1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip`` and unzip``unzip testfiles.zip`` to a place of your choice, this may take a moment.
+1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip`` and unzip ``unzip testfiles.zip`` to a place of your choice, this may take a moment.
 2. Also download the Sentinel-2 tile shapefile , originally provided by https://fromgistors.blogspot.com/2016/10/how-to-identify-sentinel-2-granule.html, ``wget -O sentinel2_tiles_world.zip https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/sentinel2_tiles_world.zip`` and unzip them ``unzip sentinel2_tiles_world.zip``
 
 3. (Skip this step, if you already have an EODIE conda environment) Create conda environment from environment.yml ``conda env create -f environment.yml`` (You can find the ``environment.yml`` file in EODIE base directory)
