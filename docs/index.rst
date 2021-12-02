@@ -5,6 +5,11 @@
 EODIE Documentation
 ====================
 
+.. warning::
+
+Documentation currently not fully up to date (paths and some defaults are wrong), please revisit mid December '21 for full documentation.
+
+
 Purpose 
 --------
 
