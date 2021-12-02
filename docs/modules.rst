@@ -1,12 +1,7 @@
-EODIE API
-==========
-
-.. warning::
-
-   This site is under construction
-   
+eodie
+=====
 
 .. toctree::
    :maxdepth: 4
 
-   src
+   eodie
