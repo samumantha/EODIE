@@ -3,8 +3,10 @@
 Installation
 =============
 
-Dependencies
+Dependencies 
 -------------
+
+Versions mentioned here are recommendations (that worked together), newer versions might also work.
 
   - python=3.7
   - shapely=1.7
@@ -15,7 +17,7 @@ Dependencies
   - pyyaml=5.4.1
   - matplotlib (for postprocesses)
 
-see also ``environment.yml`` which can be found in the EODIE parent directory.
+see also ``environment.yml`` which can be found in the EODIE base directory.
 
 Recommended installation instructions
 --------------------------------------
