@@ -33,6 +33,8 @@ class TestAll(object):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        # for os independence in these mixed paths
+        inpath = inpath.replace('/', os.sep)
         cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
@@ -55,6 +57,8 @@ class TestAll(object):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        # for os independence in these mixed paths
+        inpath = inpath.replace('/', os.sep)
         indexobject = Index(inpath,cfg, True)
         supportedindices = Index.supportedindices
         #testing capacity is limited on gitlab, so all tasseled cap indices are excluded from testing (too much memory used)
@@ -80,10 +84,14 @@ class TestAll(object):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        # for os independence in these mixed paths
+        inpath = inpath.replace('/', os.sep)
         rasterdata = RasterData(inpath, cfg , True)
 
         bandfile,_ = rasterdata.get_bandfile('B04')
         rightbandfile = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2'
+        # for os independence in these mixed paths
+        rightbandfile = rightbandfile.replace('/', os.sep)
         assert (bandfile == rightbandfile), 'Bandfile fails'
 
         array = rasterdata.get_array('B04')
@@ -105,15 +113,17 @@ class TestAll(object):
 
     def test_geometry(self):
         geometries = 'testfiles/shp/test_parcels_32635.shp'
+        geometries = geometries.replace('/',os.sep)
         geometryobject = VectorData(geometries)
 
         head,tail,root,ext = geometryobject._split_path() 
         splitpathlist = [head,tail,root,ext]
-        rightsplitpathlist = ['testfiles/shp', 'test_parcels_32635.shp','test_parcels_32635', '.shp']
+        rightsplitpathlist = ['testfiles' + os.sep + 'shp', 'test_parcels_32635.shp','test_parcels_32635', '.shp']
         assert (splitpathlist == rightsplitpathlist), 'Splitpath fails'
 
         projectionfile = geometryobject.get_projectionfile()
         rightprojectionfile = 'testfiles/shp/test_parcels_32635.prj'
+        rightprojectionfile = rightprojectionfile.replace('/', os.sep)
 
         assert (projectionfile == rightprojectionfile), 'Projectionfile fails'
 
@@ -142,6 +152,8 @@ class TestAll(object):
             cfg = yaml.safe_load(ymlfile)
         geometries = 'testfiles/shp/test_parcels_32635.shp'
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        # for os independence in these mixed paths
+        inpath = inpath.replace('/', os.sep)
         idname = 'ID'
         cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
@@ -172,10 +184,14 @@ class TestAll(object):
         with open('test_config.yml', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         tmpdir = 'testfiles/temp'
+        # for os independence in these mixed paths
+        tmpdir = tmpdir.replace('/', os.sep)
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
         geometries = 'testfiles/shp/test_parcels_32635.shp'
+        geometries = geometries.replace('/', os.sep)
         inpath = 'testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA'
+        inpath = inpath.replace('/', os.sep)
         idname = 'ID'
         cloudobject = Mask(inpath, cfg , True)
         cloudmask = cloudobject.create_cloudmask()
@@ -219,9 +235,14 @@ class TestAll(object):
     
     def test_splitshp(self):
         tmpdir = 'testfiles/temp'
+        tmpdir = tmpdir.replace('/', os.sep)
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
-        shapesplitter = SplitshpObject('testfiles/shp/test_parcels_32635.shp', 'testfiles/shp/sentinel2_tiles_test.shp', tmpdir, 'Name', True)
+        smallparcels = 'testfiles/shp/test_parcels_32635.shp'
+        largetiles = 'testfiles/shp/sentinel2_tiles_test.shp'
+        smallparcels = smallparcels.replace('/', os.sep)
+        largetiles = largetiles.replace('/', os.sep)
+        shapesplitter = SplitshpObject(smallparcels, largetiles, tmpdir, 'Name', True)
         tmpshpdir = shapesplitter.output_directory
         assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
         shapesplitter.splitshp()
