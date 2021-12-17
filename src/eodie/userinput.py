@@ -27,7 +27,7 @@ class UserInput(object):
         """ gets all userinput from commandline call to run the tool and stores them as userinput attributes """
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2', choices=['s2', 'tif'], required=True)
+        parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2, tif, ls8', choices=['s2', 'tif', 'ls8'], required=True)
         inputrastergroupparser = parser.add_mutually_exclusive_group(required=True)
         inputrastergroupparser.add_argument('--dir', dest='mydir', help='directory where data is stored')
         inputrastergroupparser.add_argument('--file', dest='myfile', help='one file')
