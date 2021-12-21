@@ -274,7 +274,10 @@ class SplitshpObject(object):
         if self.test:
             usable_number_of_cores = 1
         else:
-            usable_number_of_cores = mp.cpu_count()-2
+            if mp.cpu_count() <= 2:
+                usable_number_of_cores = 1
+            else:
+                usable_number_of_cores = mp.cpu_count()-2
         logging.info('number of usable cores for shapesplitting is ' + str(usable_number_of_cores))
 
         pool = mp.Pool(usable_number_of_cores)
