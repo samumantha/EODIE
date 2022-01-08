@@ -65,10 +65,7 @@ Contributors
 Citation 
 ---------
 
-EODIE- Earth Observation Data Information Extractor (2021) S. Wittke, online available: https://gitlab.com/eetun-tiimi/EODIE
-
-(Zenodo DOI in progress:
-EODIE- Earth Observation Data Information Extractor (2021) S. Wittke [online] reserved DOI: 10.5281/zenodo.4762323)
+EODIE- Earth Observation Data Information Extractor (2021) S. Wittke [online] , DOI: 10.5281/zenodo.4762323
 
 Contribution guide 
 -------------------
