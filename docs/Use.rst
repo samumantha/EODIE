@@ -85,7 +85,7 @@ Note that some parameters have options, some have defaults and some are optional
 | **default:** todays date
 
 | ``--keep_shp``
-| Flag to indicate all shapefiles created when running EODIE should be stored for further usage
+| Flag to indicate all necessary shapefiles created when running EODIE should be stored for further usage
 | **type:** flag 
 
 | ``--exclude_border``
