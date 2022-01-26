@@ -6,26 +6,15 @@ Installation
 Dependencies 
 -------------
 
-Versions mentioned here are recommendations (that worked together), newer versions might also work.
-
-  - python=3.7
-  - shapely=1.7
-  - rasterio=1.2
-  - fiona=1.8
-  - numpy=1.20
-  - gdal=3.1.4
-  - pyyaml=5.4.1
-  - matplotlib (for postprocesses)
-
-see also ``environment.yml`` which can be found in the EODIE base directory.
+See  `environment.yml <https://gitlab.com/fgi_nls/kauko/chade/EODIE/-/blob/main/environment.yml>`_ .
 
 Recommended installation instructions
 --------------------------------------
 
 1. Install `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_ 
-2. Create conda environment from environment.yml ``conda env create -f environment.yml`` 
-3. Activate conda environment eodie ``conda activate eodie``
-4. Get the code from gitlab ``git clone https://gitlab.com/eetun-tiimi/EODIE.git``
+2. Get the code from gitlab ``git clone https://gitlab.com/eetun-tiimi/EODIE.git``
+3. Create conda environment from environment.yml ``conda env create -f environment.yml`` 
+4. Activate conda environment eodie ``conda activate eodie``
 5. Move into EODIE directory ``cd EODIE/src/eodie``
 
 Good to go!
