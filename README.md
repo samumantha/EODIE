@@ -9,7 +9,7 @@ Earth Observation data are available to the users via for example earth explorer
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
 agricultural field parcels, forest plots, or areas of a certain land cover type.
 
-EODIE takes the objects in as polygons in a shapefile as well as the timeframe of interest and the features (eg vegetation indices) 
+EODIE takes the objects in as polygons in a shapefile as well as the timeframe of interest and the features (e.g. vegetation indices) 
 to be extracted. The output is a per polygon timeseries of the selected features over the timeframe of interest.
 
 ## Installation Instructions and Documentation
