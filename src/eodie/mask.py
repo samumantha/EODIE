@@ -2,7 +2,7 @@
 
 Class to create and adapt cloudmask array
     
-authors: Samantha Wittke
+authors: Samantha Wittke, Petteri Lehti
 
 """
 import numpy as np
@@ -95,7 +95,7 @@ class Mask(RasterData):
         Parameters
         -----------
         maskarr: numpy array
-            xxx
+            array of cloudmask from remote sensing product
         tobemasked: list 
             list of bits to be masked
         Returns
@@ -108,13 +108,13 @@ class Mask(RasterData):
         """ checks bits if they should be masked
         Parameters
         ----------
-        data: numpy array
-            xxx
+        data: numpy array or int
+            data point
         tobemaskedlist: list
             bits that should be masked
         Returns
         --------
-        boolean (1 for xxx, 0 for xxx)
+        boolean (1 for masked, 0 for not masked)
         """
         for bit in tobemaskedlist:
             if bool(1 << bit & data):
