@@ -18,15 +18,15 @@ Documentation on readthedocs: https://eodie.readthedocs.io/en/latest/
 
 ## Maintainers 
 
-Samantha Wittke, Finnish Geospatial Research Institute in the National Land Survey of Finland
+Samantha Wittke, Finnish Geospatial Research Institute in the National Land Survey of Finland ([ORCiD](https://orcid.org/0000-0002-9625-7235))
 
 ## Contributors
 
-* Eetu Puttonen
+* Eetu Puttonen ([ORCiD](https://orcid.org/0000-0003-0985-4443))
 * Juuso Varho
 * Petteri Lehti
 * Paula Litkey
-* Milos Pandzic
+* Miloš Pandžić ([ORCiD]( https://orcid.org/0000-0003-4982-2630))
 * Mika Karjalainen
 
 ## Projects
