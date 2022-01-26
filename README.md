@@ -47,4 +47,8 @@ EODIE- Earth Observation Data Information Extractor (2022) S. Wittke [online], D
 
 Contributions can be made following the [Contribution Guide](http://www.contribution-guide.org/) 
 
+## Acknowledgements
+
+This project was initiated under the Academy of Finland research project 295047 in collaboration with Paula Litkey and Miloš Pandžić and has been supported also from the project 316096/320075. Part of the work has also been done under the umbrella of Academy of Finland flagship project UNITE (337656). Ms. Wittke acknowledges the PhD grant from Aalto School of Engineering. We are also grateful for the constructive comments on the code and documentation by the Nordic-RSE community (Richard Darst, Radovan Bast, Luca Ferranti, Enrico Glerean and Matthew West). The development of the `EODIE Galaxy Tool <https://usegalaxy.eu/root?tool_id=toolshed.g2.bx.psu.edu/repos/climate/eodie/eodie/1.0.2>`_ has been supported by EOSC-Nordic, a project funded by the European Union’s Horizon 2020 research and innovation programme under grant agreement No 857652 and implemented by Anne Fouilloux.
+
 
