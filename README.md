@@ -33,15 +33,15 @@ Samantha Wittke, Finnish Geospatial Research Institute in the National Land Surv
 
 Projects, enabled by EODIE or where EODIE or a derivative of EODIE has been used:
 
-* Project related to deforestation monitoring with Sentinel-1 funded by the European Space Agency (S14Science- Amazonas\footnote{http://project.gisat.cz/s14scienceAmazonas/} ),
-* Two projects related to crop and crop yield monitoring funded by Eurostat (CROPYIELD (https://www.luke.fi/projektit/cropyield/) and BIGDATA\&EO (https://www.luke.fi/projektit/bigdataeo/),
+* Project related to deforestation monitoring with Sentinel-1 funded by the European Space Agency (S14Science- Amazonas (http://project.gisat.cz/s14scienceAmazonas/ )),
+* Two projects related to crop and crop yield monitoring funded by Eurostat (CROPYIELD (https://www.luke.fi/projektit/cropyield/) and BIGDATA&EO (https://www.luke.fi/projektit/bigdataeo/),
 * A Business Finland co-creation project, working with Finnish companies in EO-business to find business opportunities (EODIE: 5332/31/2018),
-* Three projects  related to forest phenology and crop monitoring funded by the Academy of Finland (AICropPro \cite{Hiremath21}, decision numbers 315896 and 316172  (https://www.luke.fi/projektit/ai-croppro/) , BigData, grant-number: 295047, E. Puttonen fellowship, grant-number: 316096), as well as
+* Three projects  related to forest phenology and crop monitoring funded by the Academy of Finland (AICropPro (publication https://doi.org/10.1371/journal.pone.0251952), decision numbers 315896 and 316172  (https://www.luke.fi/projektit/ai-croppro/) , BigData, grant-number: 295047, E. Puttonen fellowship, grant-number: 316096),
 * Multiple larger national agriculture related projects (such as DIGITALIS (https://www.luke.fi/projektit/digitalis-01/), Peltopiste (https://www.luke.fi/projektit/peltopiste/), Ikivihreä (https://www.luke.fi/projektit/ikivihrea-2/).
 
 ## Citation 
 
-EODIE- Earth Observation Data Information Extractor (2021) S. Wittke [online], DOI: 10.5281/zenodo.4762323
+EODIE- Earth Observation Data Information Extractor (2022) S. Wittke [online], DOI: https://doi.org/10.5281/zenodo.4762323
 
 ## Contribution guide 
 
