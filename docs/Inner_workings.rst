@@ -19,7 +19,7 @@ are considered. Due to the overlap of the tiles, all data is processed (rare exc
 
 The process works along the list, choosing the right shapefile (``--shp`` + _tilename + .shp) for each raster based on tilename. On HPC systems, the process 
 can be done in parallel since the single processes do not overlap. Each process takes one raster, 
-chooses the shapefile accordingly and applies the following workflow:
+chooses the shapefile accordingly and copies it to a temporary directory (which is automatically removed after the process) and applies the following workflow:
 
 A binary cloudmask is extracted based on the scene classification of the Sentinel-2 tile. With the awareness 
 that it is not the best possibly cloudmask, also external binary cloudmasks can be uploaded and used 
