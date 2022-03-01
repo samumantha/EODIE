@@ -138,7 +138,7 @@ class VectorData(object):
         return Polygon.from_bounds(bounding_box_coordinates[0], bounding_box_coordinates[1], bounding_box_coordinates[2], bounding_box_coordinates[3] )
         
     def get_convex_hull(self):
-        """ extract convex hull of given shapefile, save to new shapefile
+        """ extract convex hull of given shapefile, save to new shapefile; adjusted from https://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html#save-the-convex-hull-of-all-geometry-from-an-input-layer-to-an-output-layer
         Returns
         --------
         convexhull: str
