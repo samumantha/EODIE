@@ -24,7 +24,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--dir``
 | The directory where the data to be processed is stored as absolute path. 
 | **type:** String
-| EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs.
+| EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs. Avoid having dates in the format of YYYYMMDD and tilenames in format 00XXX in the path!
 
 | ``--file``
 | If only one file shall be processed use ``--file`` instead of ``--dir``. Cannot be used together with ``--dir``.
