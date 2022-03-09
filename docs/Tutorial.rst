@@ -240,4 +240,4 @@ Third script similar to the one in Case 3:
 
     rm -r $path/$local_dir
 
-3. call ``bash run_smart_processing.sh``
+3. call ``bash run_smart_processing.sh startdate enddate tile1 tile2 tile3`` with dates in YYYYMMDD format and tilenames in XX000 format. In this case the tilenames need to be identified beforehand
