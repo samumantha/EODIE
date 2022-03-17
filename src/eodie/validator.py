@@ -128,7 +128,7 @@ class Validator(object):
 
         supported_formats = ['.shp', '.gpkg', '.geojson'] 
         if extension not in supported_formats:
-            exit('Input format is not supported, please use a supported format (.shp, .gpkg, .geojson')
+            exit('Input format is not supported, please use a supported format (.shp, .gpkg, .geojson)')
         else:
             return True           
 
