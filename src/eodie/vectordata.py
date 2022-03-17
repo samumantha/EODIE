@@ -178,3 +178,19 @@ class VectorData(object):
         inDataSource = None
         outDataSource = None
         return convexhullp
+
+    def convert_to_shp(self, base, vectorfile):
+        """ Convert other supported input types to shapefile
+        Parameters
+        ----------
+        base:
+            filepath without extension
+        vectorfile:
+            file extension
+        Returns
+        ----------
+        None, but converts the input file to shapefiles. """
+        input_file = base + vectorfile
+        output_file = base + '.shp'
+        command = ['ogr2ogr', '-f', 'ESRI Shapefile', output_file, input_file]
+        subprocess.check_call(command, shell=True)
