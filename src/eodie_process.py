@@ -33,7 +33,10 @@ if not os.path.exists(userinput.outpath):
 
 # If data is not in shapefile format, transform it to shapefile:
 if userinput.input_type != 'shp':    
-    VectorData.convert_to_shp(userinput.shpbase, userinput.input_type)
+        input_file = userinput.shpbase + userinput.input_type
+        output_file = userinput.shpbase + '.shp'
+        command = ['ogr2ogr', '-f', 'ESRI Shapefile', output_file, input_file]
+        subprocess.check_call(command, shell=True)
 
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.shpbase)
