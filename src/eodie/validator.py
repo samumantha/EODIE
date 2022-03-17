@@ -28,6 +28,7 @@ class Validator(object):
         self.date_check(args.enddate)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
+        self.object_check(args.input_type)
 
 
     def input_amount_check(self,dir, file):
@@ -113,7 +114,23 @@ class Validator(object):
         else:
             return True
 
-            
+    def object_check(self, extension):
+        """ Check that given object input is of a supported file format, exits if not true
+        Parameters
+        ----------
+        extension:
+            the file extension of the object, supported formats are .shp, .gpkg and .geojson
+        Returns
+        -------
+        extension_ok: boolean
+            if object given by the user is in a supported format 
+        """
+
+        supported_formats = ['.shp', '.gpkg', '.geojson'] 
+        if extension not in supported_formats:
+            exit('Input format is not supported, please use a supported format (.shp, .gpkg, .geojson')
+        else:
+            return True           
 
 
     
