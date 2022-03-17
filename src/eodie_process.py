@@ -5,6 +5,7 @@ import argparse
 import re
 import sys
 import os
+import subprocess
 from eodie.extractor import Extractor
 from eodie.mask import Mask
 from eodie.index import Index
@@ -29,6 +30,10 @@ cfg = userinput.config
 #create results dir 
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
+
+# If data is not in shapefile format, transform it to shapefile:
+if userinput.input_type != 'shp':    
+    VectorData.convert_to_shp(userinput.shpbase, userinput.input_type)
 
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.shpbase)
