@@ -36,7 +36,7 @@ class UserInput(object):
         parser.add_argument('--out', dest='outpath', default='./results', help='directory where results shall be saved')
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
 
-        parser.add_argument('--input', dest='input_type', default='shp', help='determine the input file type, supported formats: shp(default), gpkg, geojson')
+        parser.add_argument('--input', dest='input_type', default='.shp', help='determine the input file type, supported formats: .shp (default), .gpkg, .geojson')
 
         parser.add_argument('--statistics', dest='statistics',default=['count'],help='statistics to be extracted', nargs='*')
         parser.add_argument('--index', dest='indexlist', help=' give names of indices to be processed', nargs='*')
