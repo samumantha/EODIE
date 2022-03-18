@@ -49,7 +49,7 @@ Note that some parameters have options, some have defaults and some are optional
 | Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
 
 | ``--input``
-| The file extension of the input file provided in --shp. Supported extensions are .shp, .gpkg, .geojson, .csv and .fgb
+| The file extension of the input file provided in --shp. Supported extensions are .shp, .gpkg, .geojson, .csv and .fgb. If you are using GeoPackage, bear in mind there can be only one layer within.
 | **type:** String
 | **default:** .shp
 
