@@ -48,6 +48,11 @@ Note that some parameters have options, some have defaults and some are optional
 | **example:** ``--id id``
 | Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
 
+| ``--input``
+| The file extension of the input file provided in --shp. Supported extensions are .shp, .gpkg, .geojson, .csv and .fgb
+| **type:** String
+| **default:** .shp
+
 | ``--statistics_out``
 | set flag if statistics (see below) shall be calculated per polygon and saved as csv
 | **type:** flag
