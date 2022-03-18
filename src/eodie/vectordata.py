@@ -181,11 +181,20 @@ class VectorData(object):
 
 
     def convert_to_shp(self, output):
-        """ converts the input vector file into shapefile for processing. """
-                
-        # Create input file path
+        """ converts the input vector file into shapefile for processing. 
+        Parameters
+        ----------
+        output: str
+            the name of the output file (basename.shp)
+        
+        Returns
+        -------
+        None, but writes a shapefile out of input file.
+        """
+        
+        # Define input file path
         input_file = self
-        # Create output file path
+        # Define output file path
         output_file = output
         # Determine the ogr2ogr command
         command = ('ogr2ogr -f "ESRI Shapefile" ' + output_file + " " + input_file)
