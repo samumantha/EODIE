@@ -32,11 +32,17 @@ if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
 # If data is not in shapefile format, transform it to shapefile:
-if userinput.input_type != 'shp':    
+if userinput.input_type != '.shp': 
+        print('Converting input to shapefile...')   
+        # Create input file path
         input_file = userinput.shpbase + userinput.input_type
+        # Create output file path
         output_file = userinput.shpbase + '.shp'
-        command = ['ogr2ogr', '-f', 'ESRI Shapefile', output_file, input_file]
+        # Determine the ogr2ogr command
+        command = ('ogr2ogr -f "ESRI Shapefile" ' + output_file + " " + input_file)
+        # Run the command
         subprocess.check_call(command, shell=True)
+        print('Shapefile conversion complete!')
 
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.shpbase)
