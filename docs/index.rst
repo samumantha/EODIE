@@ -27,7 +27,7 @@ To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
 
 * Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
-* A shapefile with polygons of your objects of interests
+* A geospatial file with polygons of your objects of interests - supported formats are shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
 EODIE produces human and machine readable csv files containing all information needed to start working with the data.
