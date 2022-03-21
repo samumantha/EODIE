@@ -48,10 +48,15 @@ Note that some parameters have options, some have defaults and some are optional
 | **example:** ``--id id``
 | Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
 
-| ``--input``
-| The file extension of the input file provided in --shp. Supported extensions are .shp, .gpkg, .geojson, .csv and .fgb. If you are using GeoPackage, bear in mind there can be only one layer within.
+| ``--input_type``
+| The file extension of the input file provided in --shp. Supported extensions are .shp, .gpkg, .geojson, .csv and .fgb. If you are using GeoPackage, bear in mind there can be only one layer within. Csv files also need a column for well-known text (WKT) to determine the spatial extent of each feature. 
 | **type:** String
 | **default:** .shp
+
+| ``--epsg_for_csv``
+| If --input_type is .csv, a spatial reference system needs to be defined separately for a successful to a shapefile, as it is not a part of the file structure. 
+| **type:** String
+| **default:** None
 
 | ``--statistics_out``
 | set flag if statistics (see below) shall be calculated per polygon and saved as csv
