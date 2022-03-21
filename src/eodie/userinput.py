@@ -37,6 +37,7 @@ class UserInput(object):
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
 
         parser.add_argument('--input_type', dest='input_type', default='.shp', help='determine the input file type, supported formats: .shp (default), .gpkg, .geojson, .csv, .fgb')
+        parser.add_argument('--epsg_for_csv', dest='epsg_for_csv', default=None, help='determine the EPSG code if vector input is .csv')
 
         parser.add_argument('--statistics', dest='statistics',default=['count'],help='statistics to be extracted', nargs='*')
         parser.add_argument('--index', dest='indexlist', help=' give names of indices to be processed', nargs='*')
@@ -79,6 +80,7 @@ class UserInput(object):
             self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(self.config['filepattern'], file)]
         
         self.input_type = args.input_type
+        self.epsg_for_csv = args.epsg_for_csv
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
