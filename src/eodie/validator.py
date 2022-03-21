@@ -28,7 +28,7 @@ class Validator(object):
         self.date_check(args.enddate)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
-        self.object_check(args.input_type)
+        self.vector_check(args.input_type, args.epsg_for_csv)
 
 
     def input_amount_check(self,dir, file):
@@ -114,7 +114,7 @@ class Validator(object):
         else:
             return True
 
-    def object_check(self, extension):
+    def vector_check(self, extension, epsg):
         """ Check that given object input is of a supported file format, exits if not true
         Parameters
         ----------
@@ -129,8 +129,13 @@ class Validator(object):
         supported_formats = ['.shp', '.gpkg', '.geojson', '.csv', '.fgb'] 
         if extension not in supported_formats:
             exit('Input format is not supported, please use a supported format (.shp, .gpkg, .geojson, .csv or .fgb)')
+        if extension == ".csv":
+            if epsg == None:
+                exit('If using .csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
         else:
-            return True           
+            return True     
+
+        
 
 
     
