@@ -34,7 +34,7 @@ if not os.path.exists(userinput.outpath):
 # If data is not in shapefile format, transform it to shapefile:
 if userinput.input_type != '.shp': 
         object_to_shp = VectorData(userinput.shpbase + userinput.input_type)
-        object_to_shp.convert_to_shp(userinput.shpbase + ".shp")
+        object_to_shp.convert_to_shp(userinput.shpbase + ".shp", userinput.epsg_for_csv)
 
 
 tiles = None
