@@ -191,7 +191,7 @@ class VectorData(object):
         return convexhullp
 
 
-    def convert_to_shp(self, output):
+    def convert_to_shp(self, output, epsg):
         """ converts the input vector file into shapefile for processing. 
         Parameters
         ----------
@@ -200,13 +200,21 @@ class VectorData(object):
         """
         
         # Open input file with gdal
-        input_file = gdal.OpenEx(self)
+        input_file = gdal.OpenEx(self.geometries)
               
         # Define gdal.VectorTranslateOptions
-        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
+        
+        # With other vector inputs than csv, the spatial reference systems do not need definition beforehand.
+        if epsg == None:
+            gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
+        # If file is a .csv, it needs to have spatial reference system defined even without reprojection, otherwise a .prj file will not be written. 
+        else:            
+            srs = 'EPSG:' + epsg
+            gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", srcSRS=srs, dstSRS=srs)
 
         # Run gdal.VectorTranslate
         gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
 
-            
+        # Empty the file from memory
+        input_file = None
         
