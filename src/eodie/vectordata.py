@@ -6,7 +6,7 @@ authors: Samantha Wittke
 
 """
 import os
-from osgeo import osr, ogr
+from osgeo import osr, ogr, gdal
 import fiona
 import subprocess
 from copy import deepcopy
@@ -99,14 +99,25 @@ class VectorData(object):
         else:
             root = re.sub(r'_reprojected_\d*', '', root)
             reprojectedshape = os.path.join(head, root + '_reprojected_' + myepsg +  ext)
-            if not os.path.exists(reprojectedshape):
-                # use ogr commandline utility to reproject and save shapefile
-                reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + self.geometries
-                logging.info('Reprojectcommand: {}'.format(reprojectcommand))
-                subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+            if not os.path.exists(reprojectedshape):             
+
+                # Determine the spatial reference systems for input and output
+                input_epsg = 'EPSG:' + epsgcode
+                output_epsg = 'EPSG:' + myepsg
+
+                # Define options for gdal.VectorTranslate
+                gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
+
+                # Run gdal.VectorTranslate
+                gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
+
+                logging.info('Input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+
+                
             #update the objects shapefile
             self.geometries = reprojectedshape
+
+
 
     def get_properties(self):
         """ extract driver, schema and crs from vectorfile
@@ -186,21 +197,16 @@ class VectorData(object):
         ----------
         output: str
             the name of the output file (basename.shp)
-        
-        Returns
-        -------
-        None, but writes a shapefile out of input file.
         """
         
-        # Define input file path
-        input_file = self
-        # Define output file path
-        output_file = output
-        # Determine the ogr2ogr command
-        command = ('ogr2ogr -f "ESRI Shapefile" ' + output_file + " " + input_file)
-        # Run the command
-        subprocess.check_call(command, shell=True)
+        # Open input file with gdal
+        input_file = gdal.OpenEx(self)
+              
+        # Define gdal.VectorTranslateOptions
+        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
 
-        return None
-        
+        # Run gdal.VectorTranslate
+        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
+
+            
         
