@@ -199,6 +199,7 @@ class VectorData(object):
             the name of the output file (basename.shp)
         """
         
+        logging.info('Converting vector input to a shapefile...')
         # Open input file with gdal
         input_file = gdal.OpenEx(self.geometries)
               
@@ -214,6 +215,8 @@ class VectorData(object):
 
         # Run gdal.VectorTranslate
         gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
+        logging.info('Shapefile conversion completed!')
+        
 
         # Empty the file from memory
         input_file = None
