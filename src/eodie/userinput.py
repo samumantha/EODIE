@@ -37,6 +37,7 @@ class UserInput(object):
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
 
         parser.add_argument('--input_type', dest='input_type', default='.shp', help='determine the input file type, supported formats: .shp (default), .gpkg, .geojson, .csv, .fgb')
+        parser.add_argument('--gpkg_layer', dest='gpkg_layer', default=None, help="determine the layer in geopackage to be used")
         parser.add_argument('--epsg_for_csv', dest='epsg_for_csv', default=None, help='determine the EPSG code if vector input is .csv')
 
         parser.add_argument('--statistics', dest='statistics',default=['count'],help='statistics to be extracted', nargs='*')
@@ -81,6 +82,7 @@ class UserInput(object):
         
         self.input_type = args.input_type
         self.epsg_for_csv = args.epsg_for_csv
+        self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
