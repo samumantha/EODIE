@@ -33,8 +33,16 @@ if not os.path.exists(userinput.outpath):
 
 # If data is not in shapefile format, transform it to shapefile:
 if userinput.input_type != '.shp': 
-        object_to_shp = VectorData(userinput.shpbase + userinput.input_type)
-        object_to_shp.convert_to_shp(userinput.shpbase + ".shp", userinput.epsg_for_csv)
+    object_to_shp = VectorData(userinput.shpbase + userinput.input_type)
+    # If input format is csv, run csv_to_shp
+    if userinput.input_type == '.csv':
+        object_to_shp.csv_to_shp(userinput.shpbase + ".shp", userinput.epsg_for_csv)
+    # If input format is geopackage with a defined layername, run gpkg_to_shp
+    elif (userinput.input_type == '.gpkg') & (userinput.gpkg_layer != None):
+        object_to_shp.gpkg_to_shp(userinput.shpbase + ".shp", userinput.gpkg_layer)
+    # Otherwise run convert_to_shp
+    else:      
+        object_to_shp.convert_to_shp(userinput.shpbase + ".shp")
 
 
 tiles = None
