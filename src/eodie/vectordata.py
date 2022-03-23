@@ -191,8 +191,8 @@ class VectorData(object):
         return convexhullp
 
 
-    def convert_to_shp(self, output, epsg):
-        """ converts the input vector file into shapefile for processing. 
+    def convert_to_shp(self, output):
+        """ converts the input vector file into shapefile for processing. This function is used with geojson, single-layer geopackages and flatgeobufs.
         Parameters
         ----------
         output: str
@@ -201,18 +201,9 @@ class VectorData(object):
         
         logging.info('Converting vector input to a shapefile...')
         # Open input file with gdal
-        input_file = gdal.OpenEx(self.geometries)
-              
-        # Define gdal.VectorTranslateOptions
-        
-        # With other vector inputs than csv, the spatial reference systems do not need definition beforehand.
-        if epsg == None:
-            gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
-        # If file is a .csv, it needs to have spatial reference system defined even without reprojection, otherwise a .prj file will not be written. 
-        else:            
-            srs = 'EPSG:' + epsg
-            gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", srcSRS=srs, dstSRS=srs)
-
+        input_file = gdal.OpenEx(self.geometries)              
+        # Define gdal.VectorTranslateOptions        
+        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
         # Run gdal.VectorTranslate
         gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
         logging.info('Shapefile conversion completed!')
@@ -221,3 +212,42 @@ class VectorData(object):
         # Empty the file from memory
         input_file = None
         
+    def csv_to_shp(self, output, epsg):
+        """ converts the input csv file into shapefile for processing. 
+        Parameters:
+        -----------
+        output: str
+            the name of the output file (basename.shp)
+        epsg: str
+            the EPSG code for the csv file input       
+        """
+        logging.info('Converting csv input to a shapefile...')
+        # Open file with gdal
+        input_file = gdal.OpenEx(self.geometries)
+        # Define format EPSG:epsg 
+        srs = 'EPSG:' + epsg
+        # Define gdal.VectorTranslateOptions
+        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", srcSRS=srs, dstSRS=srs)
+        # Run gdal.VectorTranslate
+        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
+        # Empty input file from memory
+        input_file = None
+        logging.info('Shapefile conversion completed!')
+
+    def gpkg_to_shp(self, output, layer):
+        """ converts the layer from input gpkg file into shapefile for processing. This function is used with geopackages with more than one layer.
+        Parameters:
+        -----------
+        output: str
+            the name of the output file (basename.shp)
+        layer: str
+            the name of the layer in geopackage to convert
+        """
+        logging.info('Converting geopackage layer to a shapefile...')
+        # Open the layer with Fiona
+        with fiona.open(self.geometries, layer = layer) as input:          
+            # Create and open another file with shapefile driver, inheriting schema and crs from input geometries
+            with fiona.open(output, "w", driver = "ESRI Shapefile", schema = input.schema, crs = input.crs) as output_shp:
+                # Write input contents into a shapefile 
+                output_shp.writerecords(input)
+        logging.info('Shapefile conversion completed!')
