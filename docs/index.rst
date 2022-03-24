@@ -2,8 +2,8 @@
    sphinx-quickstart on Fri Mar 12 19:57:28 2021.
 
 
-EODIE Documentation
-====================
+EODIE 1.1.0 Documentation
+==========================
 
 Purpose 
 --------
