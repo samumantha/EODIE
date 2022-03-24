@@ -45,7 +45,7 @@ if userinput.input_type != '.shp':
 
 
 tiles = None
-shp_directory, shp_name = os.path.split(userinput.vectorbase)
+vector_directory, _ = os.path.split(userinput.vectorbase)
 
 #setup logging for prints in file and stdout
 if userinput.verbose:
@@ -62,13 +62,13 @@ if not userinput.exclude_splitbytile:
     
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
-    tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
+    tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, vector_directory, fieldname)
     tilesplitter.tilesplit()
     tiles = tilesplitter.tiles
-    shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = tilesplitter.basename
+    vector_directory = os.path.join(vector_directory, 'EODIE_temp')
+    basevectorname = tilesplitter.basename
 else:
-    baseshapename = userinput.vectorbase
+    basevectorname = userinput.vectorbase
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
@@ -107,9 +107,9 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
 
-            shpname = baseshapename + '_' + pathfinderobject.tile + '.shp'
+            vectorname = basevectorname + '_' + pathfinderobject.tile + '.shp'
 
-            geoobject = VectorData(os.path.join(shp_directory,shpname))
+            geoobject = VectorData(os.path.join(vector_directory,vectorname))
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
