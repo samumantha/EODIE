@@ -99,8 +99,8 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** integer YYYYMMDD
 | **default:** todays date
 
-| ``--keep_shp``
-| Flag to indicate all necessary shapefiles created when running EODIE should be stored for further usage
+| ``--keep_splitted``
+| Flag to indicate all necessary splitted files created when running EODIE should be stored for further usage
 | **type:** flag 
 
 | ``--exclude_border``
