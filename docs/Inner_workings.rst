@@ -2,22 +2,22 @@ Internals
 ==========
 
 
-The following gives an overview over what is happening in the backgroudn when the user calls:
+The following gives an overview over what is happening in the background when the user calls:
 
-``python process.py --dir ./testfiles/S2 --shp ./testfiles/shp/test_parcels_32635 --out ./results --id ID --index ndvi --platform s2  --statistics_out``
+``python eodie_process.py --rasterdir ./testfiles/S2 --vector ./testfiles/shp/test_parcels_32635 --out ./results --id ID --index ndvi --platform s2  --statistics_out``
 
-The first step after starting the workflow is to find the right data to be processed (from ``--dir``). 
-For that, the shapefile (``--shp``) projection is adjusted to match the one of the data, a convexhull 
+The first step after starting the workflow is to find the right data to be processed (from ``--rasterdir``). 
+For that, the vector file (``--vector``) is converted into a shapefile (if needed) and its projection is adjusted to match the one of the data, a convexhull 
 is created and overlayed with the Sentinel-2 grid (``tileshp`` in user_config.yml) to find the tilenames overlapping the 
 area of interest. 
 
 Based on this and the timeframe of interest (in this case default for ``--start`` and ``--end``), a list of filenames is created 
 with all files to be processed. Until this step both personal computer and HPC process
-are same. For efficient processing the input shapefile is split based on the tilegrid to have one 
+are same. For efficient processing the input vector is split based on the tilegrid to have one 
 shapefile per tile, which can then go into the process. Only polygons that are fully within a tile 
 are considered. Due to the overlap of the tiles, all data is processed (rare exceptions). Each file in the list is processed one after another. 
 
-The process works along the list, choosing the right shapefile (``--shp`` + _tilename + .shp) for each raster based on tilename. On HPC systems, the process 
+The process works along the list, choosing the right shapefile (``--vector`` + _tilename + .shp) for each raster based on tilename. On HPC systems, the process 
 can be done in parallel since the single processes do not overlap. Each process takes one raster, 
 chooses the shapefile accordingly and copies it to a temporary directory (which is automatically removed after the process) and applies the following workflow:
 
