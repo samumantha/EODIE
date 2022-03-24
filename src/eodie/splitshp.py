@@ -10,7 +10,6 @@ import os
 import sys
 import fiona
 import multiprocessing as mp
-import shapely
 from shapely.geometry import shape, Polygon
 from copy import deepcopy
 from osgeo import osr
