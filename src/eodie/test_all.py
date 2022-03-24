@@ -21,7 +21,7 @@ from eodie.vectordata import VectorData
 from eodie.index import Index
 from eodie.rasterdata import RasterData
 from eodie.writer import Writer
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 import yaml
 import fiona
 
@@ -226,7 +226,7 @@ class TestAll(object):
 
         del writerobject
     
-    def test_splitshp(self):
+    def test_tilesplitter(self):
         tmpdir = 'testfiles/temp'
         tmpdir = tmpdir.replace('/', os.sep)
         if not os.path.exists(tmpdir):
@@ -235,7 +235,7 @@ class TestAll(object):
         largetiles = 'testfiles/shp/sentinel2_tiles_test.shp'
         smallparcels = smallparcels.replace('/', os.sep)
         largetiles = largetiles.replace('/', os.sep)
-        shapesplitter = SplitshpObject(smallparcels, largetiles, tmpdir, 'Name', True)
+        shapesplitter = TileSplitter(smallparcels, largetiles, tmpdir, 'Name', True)
         tmpshpdir = shapesplitter.output_directory
         assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
         shapesplitter.splitshp()

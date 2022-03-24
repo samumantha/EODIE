@@ -61,6 +61,7 @@ Contributors
 * Paula Litkey
 * Miloš Pandžić ([ORCiD]( https://orcid.org/0000-0003-4982-2630))
 * Mika Karjalainen
+* Arttu Kivimäki
 
 
 Citation 

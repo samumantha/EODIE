@@ -14,7 +14,7 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.userinput import UserInput
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
@@ -57,16 +57,16 @@ else:
 logging.info('All inputs for this process: '+ str(vars(userinput).items()))
 
 if not userinput.exclude_splitbytile:
-    #Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+    #Read userinput.vectorbase and worldtiles, do tilesplit_world, then tilesplit_mp and give new vectorfiles to next step. 
     small_polygon_vectorfile = userinput.vectorbase + '.shp'
     
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
-    shapesplitter = SplitshpObject(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
-    shapesplitter.splitshp()
-    tiles = shapesplitter.tiles
+    tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
+    tilesplitter.splitshp()
+    tiles = tilesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = shapesplitter.basename
+    baseshapename = tilesplitter.basename
 else:
     baseshapename = userinput.vectorbase
 

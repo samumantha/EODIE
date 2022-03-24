@@ -10,7 +10,7 @@ To test if the script runs as intended in your machine and to get familiar with 
 1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/EODIE_Galaxy_testfiles.zip`` and unzip ``unzip EODIE_Galaxy_testfiles.zip`` to a place of your choice.
 2. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --id id --statistics_out --statistics mean std median --exclude_splitshp``
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --id id --statistics_out --statistics mean std median --exclude_splitbytile``
 
 with:
 
@@ -20,7 +20,7 @@ with:
 * ``--id`` the fieldname of a unique ID for each polygon in the shapefile
 * ``--statistics_out`` to get statistics as output
 * ``--statistics mean std median`` which statistics to process for each polygon in ``--shp``
-* ``--exclude_splitshp`` necessary flag when not working with supported tiled data
+* ``--exclude_splitbytile`` necessary flag when not working with supported tiled data
 
 6. This should create file ``testrgb_20100401__statistics.csv`` in ./results directory.
 7. If not, please check your installation and that the testfiles were downloaded correctly.
