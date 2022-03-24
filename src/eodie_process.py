@@ -18,7 +18,6 @@ from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
 from datetime import datetime 
-import fiona
 
 
 userinput = UserInput()

@@ -112,8 +112,7 @@ class Validator(object):
             exit('Chosen index/band {} not available, please make sure you typed the names correctly.'.format(','.join(unknownindices)))
         else:
             return True
-
-            
+       
 
 
     

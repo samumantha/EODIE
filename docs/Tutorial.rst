@@ -171,7 +171,7 @@ Script 2, called per_safe.sh:
 
     for year in $timeperiod; do
         for tile in $tiles; do
-            bucket="$basebucket-$year-$tile"
+            bucket="$basebucket-$year-T$tile"
             echo $bucket
             s3cmd ls $bucket >> ./arr_temp/bucketfiles_temporary.txt
         done

@@ -68,16 +68,12 @@ class VectorData(object):
         epsgcode: str
             EPSG code of the vectorfile
         """
-        #open and read prj file
-        projectionfile = self.get_projectionfile()
-        prj_file = open(projectionfile , 'r')
-        prj_text = prj_file.read()
-        #extract spatial reference system information
-        srs = osr.SpatialReference()
-        srs.ImportFromESRI([prj_text])
-        #translate to EPSG code
-        srs.AutoIdentifyEPSG()
-        epsgcode = srs.GetAuthorityCode(None)
+        # Open shapefile
+        with fiona.open(self.geometries,'r') as proj:
+            # Read spatial reference 
+            spatialRef = proj.crs
+            # Extract epsgcode from the reference
+            epsgcode = spatialRef['init'].split(":")[1]           
     
         return epsgcode
 
