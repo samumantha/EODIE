@@ -238,7 +238,7 @@ class TestAll(object):
         shapesplitter = TileSplitter(smallparcels, largetiles, tmpdir, 'Name', True)
         tmpshpdir = shapesplitter.output_directory
         assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
-        shapesplitter.splitshp()
+        shapesplitter.tilesplit()
         assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_test_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted testtiles'
         assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
         for tile in ['34VFN', '35VLH']:

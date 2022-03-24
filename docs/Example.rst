@@ -19,7 +19,7 @@ with:
 * ``--vector`` the location and name of the vector file with polygons to extract information of
 * ``--id`` the fieldname of a unique ID for each polygon in the shapefile
 * ``--statistics_out`` to get statistics as output
-* ``--statistics mean std median`` which statistics to process for each polygon in ``--shp``
+* ``--statistics mean std median`` which statistics to process for each polygon in ``--vector``
 * ``--exclude_splitbytile`` necessary flag when not working with supported tiled data
 
 6. This should create file ``testrgb_20100401__statistics.csv`` in ./results directory.
@@ -34,7 +34,7 @@ Larger example using Sentinel-2 data
 
 3. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --dir /path/to/testfiles/S2 --shp /path/to/testfiles/shp/test_parcels_32635 --out ./results --id ID --statistics_out --platform s2 --index ndvi --statistics mean median std``
+``python eodie_process.py --dir /path/to/testfiles/S2 --vector /path/to/testfiles/shp/test_parcels_32635 --out ./results --id ID --statistics_out --platform s2 --index ndvi --statistics mean median std``
 
 with:
 

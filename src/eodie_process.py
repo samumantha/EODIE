@@ -63,7 +63,7 @@ if not userinput.exclude_splitbytile:
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
     tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
-    tilesplitter.splitshp()
+    tilesplitter.tilesplit()
     tiles = tilesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
     baseshapename = tilesplitter.basename
