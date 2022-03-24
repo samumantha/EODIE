@@ -23,15 +23,15 @@ class Validator(object):
         args: object
             arguments of the userinput
         """
-        self.input_amount_check(args.mydir, args.myfile)
-        self.input_exists_check(args.mydir, args.myfile)
+        self.input_amount_check(args.rasterdir, args.rasterfile)
+        self.input_exists_check(args.rasterdir, args.rasterfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
         self.vector_check(args.input_type)
         self.csv_check(args.input_type, args.epsg_for_csv)
-        self.gpkg_check(args.input_type, args.shpbase, args.gpkg_layer)
+        self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
 
 
     def input_amount_check(self,dir, file):
