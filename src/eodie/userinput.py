@@ -29,12 +29,12 @@ class UserInput(object):
         parser = argparse.ArgumentParser()
         parser.add_argument('--platform', dest='platform',help='which platform does the data come from? options: s2, tif, ls8', choices=['s2', 'tif', 'ls8'], required=True)
         inputrastergroupparser = parser.add_mutually_exclusive_group(required=True)
-        inputrastergroupparser.add_argument('--dir', dest='mydir', help='directory where data is stored')
-        inputrastergroupparser.add_argument('--file', dest='myfile', help='one file')
+        inputrastergroupparser.add_argument('--rasterdir', dest='rasterdir', help='directory where data is stored')
+        inputrastergroupparser.add_argument('--rasterfile', dest='rasterfile', help='one file')
 
-        parser.add_argument('--shp', dest='shpbase', help='name of the shapefile (without extension)', required=True)
+        parser.add_argument('--vector', dest='vectorbase', help='name of the vectorfile with polygons (without extension)', required=True)
         parser.add_argument('--out', dest='outpath', default='./results', help='directory where results shall be saved')
-        parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
+        parser.add_argument('--id', dest='idname', help='name of ID field in vectorfile', required=True)
 
         parser.add_argument('--input_type', dest='input_type', default='.shp', help='determine the input file type, supported formats: .shp (default), .gpkg, .geojson, .csv, .fgb')
         parser.add_argument('--gpkg_layer', dest='gpkg_layer', default=None, help="determine the layer in geopackage to be used")
@@ -44,12 +44,12 @@ class UserInput(object):
         parser.add_argument('--index', dest='indexlist', help=' give names of indices to be processed', nargs='*')
         parser.add_argument('--start', dest='startdate',default = '20160101', help='give startdate of timerange of interest')
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
-        parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
+        parser.add_argument('--keep_splitted', dest='keep_splitted', action='store_true', help='flag to indicate that newly created splitted vectordata files should be stored')
         
         parser.add_argument('--test', dest='test', action='store_true', help='only needed for automatic testing')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
         parser.add_argument('--external_cloudmask', dest= 'extmask', default = None, help= ' location and name of external cloudmask (without tile and date and extension) if available')
-        parser.add_argument('--exclude_splitshp', dest='exclude_splitshp', action='store_true',help='if this flag is set, it is assumed that splitshp has been run manually beforehand')
+        parser.add_argument('--exclude_splitbytile', dest='exclude_splitbytile', action='store_true',help='if this flag is set, it is assumed that splitbytile has been run manually beforehand')
         parser.add_argument('--verbose', '-v',dest='verbose', action='store_true',help=' logging in logfile and prints in terminal')
 
         parser.add_argument('--geotiff_out', dest='geotiff_out', action='store_true', help='flag to indicate that geotiffs shall be extracted')
@@ -71,23 +71,23 @@ class UserInput(object):
         #starting python 3.9: platform_cfg | user_cfg also works
         self.config = {**platform_cfg, **user_cfg}
 
-        self.mydir = args.mydir
-        self.myfile = args.myfile
-        if args.myfile is not None:
-            self.input = [args.myfile]
+        self.rasterdir = args.rasterdir
+        self.rasterfile = args.rasterfile
+        if args.rasterfile is not None:
+            self.input = [args.rasterfile]
         else:
-            #self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
+            #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
-            self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(self.config['filepattern'], file)]
+            self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
         
         self.input_type = args.input_type
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
-        # remove extension if given by mistake
-        if args.shpbase.endswith('.shp'):
-            self.shpbase = os.path.splitext(args.shpbase)[0]
+        # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
+        if '.' in args.vectorbase:
+            self.vectorbase = os.path.splitext(args.vectorbase)[0]
         else:
-            self.shpbase = args.shpbase
+            self.vectorbase = args.vectorbase
         self.outpath = args.outpath
         self.idname = args.idname
 
@@ -102,15 +102,15 @@ class UserInput(object):
             self.statistics = args.statistics
         self.startdate = args.startdate
         self.enddate = args.enddate
-        self.keep_shp = args.keep_shp
+        self.keep_splitted = args.keep_splitted
 
         self.geotiff_out = args.geotiff_out
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
-        self.exclude_splitshp = args.exclude_splitshp
+        self.exclude_splitbytile = args.exclude_splitbytile
         if self.platform == 'tif':
-            self.exclude_splitshp = True
+            self.exclude_splitbytile = True
         self.verbose = args.verbose
 
         # Determine output formats
