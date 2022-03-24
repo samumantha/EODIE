@@ -31,6 +31,7 @@ class UserInput(object):
         inputrastergroupparser = parser.add_mutually_exclusive_group(required=True)
         inputrastergroupparser.add_argument('--dir', dest='mydir', help='directory where data is stored')
         inputrastergroupparser.add_argument('--file', dest='myfile', help='one file')
+
         parser.add_argument('--shp', dest='shpbase', help='name of the shapefile (without extension)', required=True)
         parser.add_argument('--out', dest='outpath', default='./results', help='directory where results shall be saved')
         parser.add_argument('--id', dest='idname', help='name of ID field in shapefile', required=True)
@@ -74,6 +75,7 @@ class UserInput(object):
             #self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
             self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(self.config['filepattern'], file)]
+        
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
             self.shpbase = os.path.splitext(args.shpbase)[0]
@@ -86,6 +88,7 @@ class UserInput(object):
         
         self.array_out = args.array_out
         self.indexlist = args.indexlist
+        # Add count to statistics in case it's missing
         if not 'count' in args.statistics:
             self.statistics= ['count'] + args.statistics
         else:
@@ -103,6 +106,7 @@ class UserInput(object):
             self.exclude_splitshp = True
         self.verbose = args.verbose
 
+        # Determine output formats
         self.format =  []
         if self.statistics_out:
             self.format.append('statistics')
@@ -111,6 +115,7 @@ class UserInput(object):
         if self.array_out:
             self.format.append('array')       
 
+        # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append('statistics')
 
