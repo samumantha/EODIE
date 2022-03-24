@@ -10,13 +10,13 @@ To test if the script runs as intended in your machine and to get familiar with 
 1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/EODIE_Galaxy_testfiles.zip`` and unzip ``unzip EODIE_Galaxy_testfiles.zip`` to a place of your choice.
 2. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --platform tif --file /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --shp /path/to/your/EODIE_Galaxy_testfiles/test_polygons --id id --statistics_out --statistics mean std median --exclude_splitshp``
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --id id --statistics_out --statistics mean std median --exclude_splitshp``
 
 with:
 
 * ``--platform`` which platform the data in ``--file`` comes from
-* ``--file`` the location of the tif file to be processed,
-* ``--shp`` the location and name of the shapefile with polygons to extract information of
+* ``--rasterfile`` the location of the tif file to be processed,
+* ``--vector`` the location and name of the vector file with polygons to extract information of
 * ``--id`` the fieldname of a unique ID for each polygon in the shapefile
 * ``--statistics_out`` to get statistics as output
 * ``--statistics mean std median`` which statistics to process for each polygon in ``--shp``
@@ -38,8 +38,8 @@ Larger example using Sentinel-2 data
 
 with:
 
-* ``--dir`` the location of the Sentinel-2 SAFE products to be processed,
-* ``--shp`` the location and name of the shapefile with polygons to extract information of
+* ``--rasterdir`` the location of the Sentinel-2 SAFE products to be processed,
+* ``--vector`` the location and name of the vector with polygons to extract information of
 * ``--id`` the fieldname of a unique ID for each polygon in the shapefile
 * ``--out`` the location where outputs of the process will be stored
 * ``--statistics_out`` to get statistics as output
