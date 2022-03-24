@@ -65,7 +65,7 @@ class VectorData(object):
         """ extract epsg code from prj file
         Returns
         --------
-        epsgcode: str
+        vectorepsg: str
             EPSG code of the vectorfile
         """
         #open and read prj file
@@ -77,33 +77,33 @@ class VectorData(object):
         srs.ImportFromESRI([prj_text])
         #translate to EPSG code
         srs.AutoIdentifyEPSG()
-        epsgcode = srs.GetAuthorityCode(None)
+        vectorepsg = srs.GetAuthorityCode(None)
     
-        return epsgcode
+        return vectorepsg
 
-    def reproject_to_epsg(self, myepsg):
+    def reproject_to_epsg(self, rasterepsg):
         """ reproject shapefile to given EPSG code, save as new shapefile file
         Parameters
         -----------
-        myepsg: str
+        rasterepsg: str
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
         logging.info('Checking the projection of the inputfile now')
-        epsgcode = self.get_epsg()
+        vectorepsg = self.get_epsg()
         head,_,root,ext = self._split_path()
 
         # check if the shapefile is already in right projection
-        if epsgcode == myepsg:
-            logging.info('Input shapefile has EPSG {} that works!'.format(epsgcode))
+        if vectorepsg == rasterepsg:
+            logging.info('Input shapefile has EPSG {} that works!'.format(vectorepsg))
         else:
             root = re.sub(r'_reprojected_\d*', '', root)
-            reprojectedshape = os.path.join(head, root + '_reprojected_' + myepsg +  ext)
+            reprojectedshape = os.path.join(head, root + '_reprojected_' + rasterepsg +  ext)
             if not os.path.exists(reprojectedshape):             
 
                 # Determine the spatial reference systems for input and output
-                input_epsg = 'EPSG:' + epsgcode
-                output_epsg = 'EPSG:' + myepsg
+                input_epsg = 'EPSG:' + vectorepsg
+                output_epsg = 'EPSG:' + rasterepsg
 
                 # Define options for gdal.VectorTranslate
                 gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
@@ -111,7 +111,7 @@ class VectorData(object):
                 # Run gdal.VectorTranslate
                 gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
 
-                logging.info('Input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+                logging.info('Input shapefile had other than EPSG {} but was reprojected and works now'.format(rasterepsg))
 
                 
             #update the objects shapefile
