@@ -120,12 +120,6 @@ class TestAll(object):
         rightsplitpathlist = ['testfiles' + os.sep + 'shp', 'test_parcels_32635.shp','test_parcels_32635', '.shp']
         assert (splitpathlist == rightsplitpathlist), 'Splitpath fails'
 
-        projectionfile = geometryobject.get_projectionfile()
-        rightprojectionfile = 'testfiles/shp/test_parcels_32635.prj'
-        rightprojectionfile = rightprojectionfile.replace('/', os.sep)
-
-        assert (projectionfile == rightprojectionfile), 'Projectionfile fails'
-
         epsg = geometryobject.get_epsg()
         rightepsg = '32635'
         assert (epsg == rightepsg), 'Geometry EPSG fails'

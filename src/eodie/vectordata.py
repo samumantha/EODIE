@@ -49,18 +49,6 @@ class VectorData(object):
         root, ext = os.path.splitext(tail)
         return head,tail,root,ext
 
-    def get_projectionfile(self):
-        """ get path to the projectionfile that is associated with the shapefile
-        Returns
-        --------
-        projectionfile: str
-            the projectionfile belonging to the vectorfile
-        """
-        head,_ ,root,_ = self._split_path()
-        rootprj = root + '.prj'
-        projectionfile = os.path.join(head, rootprj)
-        return projectionfile
-
     def get_epsg(self):
         """ extract epsg code from prj file
         Returns
