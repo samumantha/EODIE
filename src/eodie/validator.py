@@ -131,7 +131,7 @@ class Validator(object):
 
         supported_formats = ['.shp', '.gpkg', '.geojson', '.csv', '.fgb'] 
         if extension not in supported_formats:
-            exit('Input format is not supported, please use a supported format (.shp, .gpkg, .geojson, .csv or .fgb)')
+            exit('Input format is not supported, please use a supported format (shp, gpkg, geojson, csv or fgb)')
         else:
             return True     
 
@@ -152,7 +152,7 @@ class Validator(object):
 
         if extension == ".csv":
             if epsg == None:
-                exit('If using .csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
+                exit('If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
         else:
             return True
     
@@ -169,7 +169,8 @@ class Validator(object):
         Returns
         -------
         gpkg_ok: boolean
-            if extension is .gpkg with only one layer or if the layer to be used has been determined"""
+            if extension is gpkg with only one layer or if the layer to be used has been determined
+        """
 
         if extension == ".gpkg":
 
@@ -178,7 +179,7 @@ class Validator(object):
 
             if gpkg.GetLayerCount() > 1:
                 if layername == None:
-                    exit('If using .gpkg with more than one layer as a vector input, please provide the layer name with parameter --gpkg_layer')            
+                    exit('If using gpkg with more than one layer as a vector input, please provide the layer name with parameter --gpkg_layer')            
             else: 
                 gpkg = None
                 return True                
