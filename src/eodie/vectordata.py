@@ -68,17 +68,14 @@ class VectorData(object):
         vectorepsg: str
             EPSG code of the vectorfile
         """
-        #open and read prj file
-        projectionfile = self.get_projectionfile()
-        prj_file = open(projectionfile , 'r')
-        prj_text = prj_file.read()
-        #extract spatial reference system information
-        srs = osr.SpatialReference()
-        srs.ImportFromESRI([prj_text])
-        #translate to EPSG code
-        srs.AutoIdentifyEPSG()
-        vectorepsg = srs.GetAuthorityCode(None)
-    
+
+        # Open shapefile
+        with fiona.open(self.geometries,'r') as proj:
+            # Read spatial reference 
+            spatialRef = proj.crs
+            # Extract epsgcode from the reference
+            vectorepsg = spatialRef['init'].split(":")[1]           
+
         return vectorepsg
 
     def reproject_to_epsg(self, rasterepsg):
@@ -188,6 +185,7 @@ class VectorData(object):
         # Save and close DataSource
         inDataSource = None
         outDataSource = None
+
         return convexhullp
 
 
@@ -251,3 +249,4 @@ class VectorData(object):
                 # Write input contents into a shapefile 
                 output_shp.writerecords(input)
         logging.info('Shapefile conversion completed!')
+
