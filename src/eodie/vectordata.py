@@ -8,7 +8,6 @@ authors: Samantha Wittke
 import os
 from osgeo import osr, ogr, gdal
 import fiona
-import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
 import logging
