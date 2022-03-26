@@ -30,10 +30,10 @@ if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
 # If data is not in shapefile format, transform it to shapefile:
-if userinput.input_type != '.shp': 
+if userinput.input_type != 'shp': 
     object_to_shp = VectorData(userinput.vectorbase + userinput.input_type)
     # If input format is csv, run csv_to_shp
-    if userinput.input_type == '.csv':
+    if userinput.input_type == 'csv':
         object_to_shp.csv_to_shp(userinput.vectorbase + ".shp", userinput.epsg_for_csv)
     # If input format is geopackage with a defined layername, run gpkg_to_shp
     elif (userinput.input_type == '.gpkg') & (userinput.gpkg_layer != None):
@@ -44,7 +44,7 @@ if userinput.input_type != '.shp':
 
 
 tiles = None
-vector_directory, _ = os.path.split(userinput.vectorbase)
+shp_directory, shp_name = os.path.split(userinput.vectorbase)
 
 #setup logging for prints in file and stdout
 if userinput.verbose:
@@ -56,18 +56,18 @@ else:
 logging.info('All inputs for this process: '+ str(vars(userinput).items()))
 
 if not userinput.exclude_splitbytile:
-    #Read userinput.vectorbase and worldtiles, do tilesplit_world, then tilesplit_mp and give new vectorfiles to next step. 
+    #Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
     small_polygon_vectorfile = userinput.vectorbase + '.shp'
     
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
-    tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, vector_directory, fieldname)
-    tilesplitter.tilesplit()
-    tiles = tilesplitter.tiles
-    vector_directory = os.path.join(vector_directory, 'EODIE_temp')
-    basevectorname = tilesplitter.basename
+    tilesplit = TileSplitter(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
+    tilesplit.tilesplit()
+    tiles = tilesplit.tiles
+    shp_directory = os.path.join(shp_directory, 'EODIE_temp')
+    baseshapename = tilesplit.basename
 else:
-    basevectorname = userinput.vectorbase
+    baseshapename = userinput.vectorbase
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
@@ -106,9 +106,9 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
 
-            vectorname = basevectorname + '_' + pathfinderobject.tile + '.shp'
+            shpname = baseshapename + '_' + pathfinderobject.tile + '.shp'
 
-            geoobject = VectorData(os.path.join(vector_directory,vectorname))
+            geoobject = VectorData(os.path.join(shp_directory,shpname))
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
@@ -154,4 +154,4 @@ for path in userinput.input:
 
 if not userinput.exclude_splitbytile:
     if not userinput.keep_splitted: 
-        shapesplitter.delete_splitted_files()
+        tilesplit.delete_splitted_files()
