@@ -13,7 +13,6 @@ import multiprocessing as mp
 from shapely.geometry import shape, Polygon
 from copy import deepcopy
 from osgeo import osr, gdal
-import subprocess
 import glob
 import logging
 import re
