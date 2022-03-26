@@ -12,7 +12,7 @@ import fiona
 import multiprocessing as mp
 from shapely.geometry import shape, Polygon
 from copy import deepcopy
-from osgeo import osr
+from osgeo import osr, gdal
 import subprocess
 import glob
 import logging
@@ -38,7 +38,7 @@ class SplitshpObject(object):
     """
 
     def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname, test= False):
-        """ initialize Spitshp object
+        """ initialize Splitshp object
         Parameters
         ----------
         small_polygon_shapefile: str
@@ -79,31 +79,40 @@ class SplitshpObject(object):
         reprojectedshape: str
             location and name of the reprojected shapefile
         """
-        logging.info('checking the projection of the inputfile now')
-        head, tail = os.path.split(myshp)
-        root, ext = os.path.splitext(tail)
-        rootprj = root + '.prj'
-        projectionfile = os.path.join(head, rootprj)
-        prj_file = open(projectionfile , 'r')
-        prj_text = prj_file.read()
-        srs = osr.SpatialReference()
-        srs.ImportFromESRI([prj_text])
-        srs.AutoIdentifyEPSG()
-        epsgcode = srs.GetAuthorityCode(None)
-        if epsgcode == myepsg:
-            logging.info('input shapefile has EPSG '  +myepsg + ' that works!')
+        logging.info('Checking the projection of the inputfile now...')
+        with fiona.open(myshp,'r') as proj:
+            # Read spatial reference 
+            spatialRef = proj.crs
+            # Extract epsgcode from the reference
+            vectorepsg = spatialRef['init'].split(":")[1]   
+
+
+
+        if vectorepsg == myepsg:
+            logging.info('Input vector has EPSG '  +myepsg + ' that works!')
             return myshp
         else:
+            # Extract filename and extension from myshp
+            tail = os.path.split(myshp)[1]
+            # Separate basename and extension
+            root, ext = os.path.splitext(tail)
             root = re.sub(r'_reprojected_\d*', '', root)
             reprojectedshape = os.path.join(self.output_directory, root + '_reprojected_' + myepsg +  ext)
-            if not os.path.exists(reprojectedshape):
-                reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + myshp
-                #print(reprojectcommand)
-                subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG ' + myepsg + ' but was reprojected and works now')
+            if not os.path.exists(reprojectedshape):             
+
+                # Determine the spatial reference systems for input and output
+                input_epsg = 'EPSG:' + vectorepsg
+                output_epsg = 'EPSG:' + myepsg
+
+                # Define options for gdal.VectorTranslate
+                gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
+
+                # Run gdal.VectorTranslate
+                gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=myshp, options=gdal_options)
+
+                logging.info('Input vectorfile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+
             return reprojectedshape
-
-
 
     def make_geometryobject(self, parameter_content):
         """ 
