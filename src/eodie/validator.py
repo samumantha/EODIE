@@ -129,7 +129,7 @@ class Validator(object):
             if object given by the user is in a supported format 
         """
 
-        supported_formats = ['.shp', '.gpkg', '.geojson', '.csv', '.fgb'] 
+        supported_formats = ['shp', 'gpkg', 'geojson', 'csv', 'fgb'] 
         if extension not in supported_formats:
             exit('Input format is not supported, please use a supported format (shp, gpkg, geojson, csv or fgb)')
         else:
@@ -150,7 +150,7 @@ class Validator(object):
             if extension is .csv and epsg is not None
         """
 
-        if extension == ".csv":
+        if extension == "csv":
             if epsg == None:
                 exit('If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
         else:
@@ -172,7 +172,7 @@ class Validator(object):
             if extension is gpkg with only one layer or if the layer to be used has been determined
         """
 
-        if extension == ".gpkg":
+        if extension == "gpkg":
 
             file = basename + ".gpkg"
             gpkg = gdal.OpenEx(file)
