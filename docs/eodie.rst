@@ -52,10 +52,10 @@ eodie.rastervalidator\_s2 module
    :undoc-members:
    :show-inheritance:
 
-eodie.splitshp module
+eodie.tilesplitter module
 ---------------------
 
-.. automodule:: eodie.splitshp
+.. automodule:: eodie.tilesplitter
    :members:
    :undoc-members:
    :show-inheritance:

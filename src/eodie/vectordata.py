@@ -8,7 +8,6 @@ authors: Samantha Wittke
 import os
 from osgeo import osr, ogr, gdal
 import fiona
-import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
 import logging
@@ -128,8 +127,8 @@ class VectorData(object):
         boundingbox: object
             polygon object of the boundingbox for the whole vectorfile
         """
-        with fiona.open(self.geometries,'r') as open_shp:
-            bounding_box_coordinates = open_shp.bounds
+        with fiona.open(self.geometries,'r') as open_vectordata:
+            bounding_box_coordinates = open_vectordata.bounds
             logging.info(bounding_box_coordinates)
         return Polygon.from_bounds(bounding_box_coordinates[0], bounding_box_coordinates[1], bounding_box_coordinates[2], bounding_box_coordinates[3] )
         

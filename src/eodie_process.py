@@ -5,7 +5,6 @@ import argparse
 import re
 import sys
 import os
-import subprocess
 from eodie.extractor import Extractor
 from eodie.mask import Mask
 from eodie.index import Index
@@ -14,7 +13,7 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.userinput import UserInput
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
@@ -45,7 +44,7 @@ if userinput.input_type != '.shp':
 
 
 tiles = None
-shp_directory, shp_name = os.path.split(userinput.vectorbase)
+vector_directory, _ = os.path.split(userinput.vectorbase)
 
 #setup logging for prints in file and stdout
 if userinput.verbose:
@@ -57,18 +56,18 @@ else:
 logging.info('All inputs for this process: '+ str(vars(userinput).items()))
 
 if not userinput.exclude_splitbytile:
-    #Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+    #Read userinput.vectorbase and worldtiles, do tilesplit_world, then tilesplit_mp and give new vectorfiles to next step. 
     small_polygon_vectorfile = userinput.vectorbase + '.shp'
     
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
-    shapesplitter = SplitshpObject(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
-    shapesplitter.splitshp()
-    tiles = shapesplitter.tiles
-    shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = shapesplitter.basename
+    tileplitter = TileSplitter(small_polygon_vectorfile, world_tiles, vector_directory, fieldname)
+    tilesplitter.tilesplit()
+    tiles = tilesplitter.tiles
+    vector_directory = os.path.join(vector_directory, 'EODIE_temp')
+    basevectorname = tilesplitter.basename
 else:
-    baseshapename = userinput.vectorbase
+    basevectorname = userinput.vectorbase
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
@@ -107,9 +106,9 @@ for path in userinput.input:
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
 
-            shpname = baseshapename + '_' + pathfinderobject.tile + '.shp'
+            vectorname = basevectorname + '_' + pathfinderobject.tile + '.shp'
 
-            geoobject = VectorData(os.path.join(shp_directory,shpname))
+            geoobject = VectorData(os.path.join(vector_directory,vectorname))
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries

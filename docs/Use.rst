@@ -111,8 +111,8 @@ Note that some parameters have options, some have defaults and some are optional
 | [optional] Absolute path and name of external cloudmask (without tile and date and extension) if available
 | **type:** String
 
-| ``--exclude_splitshp``
-| Flag to indicate that splitshp has been run manually beforehand
+| ``--exclude_splitbytile``
+| Flag to indicate that split_by_tile.py has been run manually beforehand
 | **type:** flag
 
 | ``--verbose``
@@ -159,7 +159,7 @@ EODIE also includes other configuration files called config_x.yml with x being s
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-| ``--platform --dir/--file --shp --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
+| ``--platform --rasterdir/--rasterfile --vector --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
 | ``--index`` also needs to be given, unless ``--platform tif``
 
 
