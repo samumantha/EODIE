@@ -73,7 +73,7 @@ class VectorData(object):
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now')
+        logging.info('Checking the projection of the inputfile now...')
         vectorepsg = self.get_epsg()
         head,_,root,ext = self._split_path()
 
