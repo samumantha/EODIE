@@ -80,7 +80,7 @@ class UserInput(object):
             # this searches for exact right files fitting a given pattern
             self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
         
-        self.input_type = "." + args.input_type
+        self.input_type = args.input_type
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
