@@ -52,18 +52,18 @@ eodie.rastervalidator\_s2 module
    :undoc-members:
    :show-inheritance:
 
-eodie.tilesplitter module
--------------------------
-
-.. automodule:: eodie.tilesplitter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 eodie.test\_all module
 ----------------------
 
 .. automodule:: eodie.test_all
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+eodie.tilesplitter module
+-------------------------
+
+.. automodule:: eodie.tilesplitter
    :members:
    :undoc-members:
    :show-inheritance:
