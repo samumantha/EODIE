@@ -101,10 +101,9 @@ class VectorData(object):
             #update the objects shapefile
             self.geometries = reprojectedshape
 
-
-
     def get_properties(self):
         """ extract driver, schema and crs from vectorfile
+        
         Returns
         --------
         driver: str
@@ -183,7 +182,6 @@ class VectorData(object):
         output: str
             the name of the output file (basename.shp)
         """
-        
         logging.info('Converting vector input to a shapefile...')
         # Open input file with gdal
         input_file = gdal.OpenEx(self.geometries)              
@@ -199,8 +197,8 @@ class VectorData(object):
         
     def csv_to_shp(self, output, epsg):
         """ converts the input csv file into shapefile for processing. 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         output: str
             the name of the output file (basename.shp)
         epsg: str
@@ -221,8 +219,8 @@ class VectorData(object):
 
     def gpkg_to_shp(self, output, layer):
         """ converts the layer from input gpkg file into shapefile for processing. This function is used with geopackages with more than one layer.
-        Parameters:
-        -----------
+        Parameters
+        ----------
         output: str
             the name of the output file (basename.shp)
         layer: str

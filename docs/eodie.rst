@@ -53,7 +53,7 @@ eodie.rastervalidator\_s2 module
    :show-inheritance:
 
 eodie.tilesplitter module
----------------------
+-------------------------
 
 .. automodule:: eodie.tilesplitter
    :members:
