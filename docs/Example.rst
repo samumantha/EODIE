@@ -50,6 +50,56 @@ with:
 5. If not, please check your installation and that the testfiles were downloaded correctly.
 
 
+Examples on using different vector input formats
+================================================
+
+With shapefile inputs, the example command line calls provided above are sufficient.
+
+If the input vector format is not ESRI Shapefile, a new input parameter called ``input_type`` needs to be defined. The supported vector formats are GeoPackage, GeoJSON, FlatGeobuf and csv.
+The ``input_type`` parameters for these formats are, respectively, ``gpkg, geojson, fgb & csv``. EODIE will throw an error, if ``input_type`` is not defined with these formats.
+
+Below are shown functional examples of each vector input formats EODIE currently supports, based on the call in small example above.
+
+GeoJSON
+-------
+
+Let's imagine the testfiles are not in ESRI shapefile format but in GeoJSON. In that case, we need to tell EODIE to convert the GeoJSON into shapefile for further processing.
+This happens with parameter --input_type in the call. GeoJSON does not need any other defining factors. 
+
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type geojson --id id --statistics_out --statistics mean std median --exclude_splitbytile``
 
 
+FlatGeobuf
+----------
 
+If the input files are in FlatGeobuf format, defining --input_type parameter is enough, again. For FlatGeobuf, the abbreviated version (and file extension name) ``fgb`` is used with --input_type. 
+
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type fgb --id id --statistics_out --statistics mean std median --exclude_splitbytile``
+
+
+GeoPackage
+----------
+
+GeoPackages can contain one or several vector layers, which complicates things a bit.
+
+If there is only one layer in the input GeoPackage, defining --input_type is enough. For GeoPackage, the --input_type parameter is ``gpkg``.
+
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type gpkg --id id --statistics_out --statistics mean std median --exclude_splitbytile``
+
+If there are more than one layers in the input GeoPackage, the user needs to additionally define the layer to be used. If no layer is defined, EODIE will throw an error.
+Let's imagine the test_polygons.gpkg contains two layers, called ``polygons`` and ``points``, and we want to use the ``polygons`` layer. In this case, we will define the name of the layer with argument --gpkg_layer.
+The call would then be
+
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type gpkg --gpkg_layer polygons --id id --statistics_out --statistics mean std median --exclude_splitbytile``
+
+CSV 
+---
+
+To be used with EODIE, csv file needs to contain the spatial information in one column as well-known text (WKT). Currently columns with x & y point coordinates are not supported.
+Additionally, EODIE has to know in which EPSG-code the spatial information is provided. This EPSG-code will be defined with another input parameter --epsg_for_csv. If --epsg_for_csv is not defined, EODIE will throw an error. 
+
+The EPSG code for the test_polygons file is 3067, so it will be used here as an example.
+
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type csv --epsg_for_csv 3067 --id id --statistics_out --statistics mean std median --exclude_splitbytile``
+
+If the EPSG code is defined wrong, EODIE might produce no results. 
