@@ -5,8 +5,9 @@ Inputs:
 One GeoPackage file (extension .gpkg)
 
 Output prints to terminal:
-- Number of layers in GeoPackage
-- Layer names and the geometry types
+- layer names
+- geometry types
+- feature counts 
 
 Usage: python examine_geopackage.py path/to/geopackage.gpkg
 
