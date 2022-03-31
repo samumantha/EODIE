@@ -92,6 +92,7 @@ The call would then be
 
 ``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --input_type gpkg --gpkg_layer polygons --id id --statistics_out --statistics mean std median --exclude_splitbytile``
 
+If you do not know, how many layers your GeoPackage contains and what the layer names are, you can examine the GeoPackage with auxiliary script ``examine_geopackage.py`` (see also :ref:`auxfiles`).
 CSV 
 ---
 
