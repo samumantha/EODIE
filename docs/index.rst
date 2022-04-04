@@ -92,6 +92,30 @@ Acknowledgements
 This project was initiated under the Academy of Finland research project 295047 in collaboration with Paula Litkey and Miloš Pandžić and has been supported also from the project 316096/320075. Part of the work has also been done under the umbrella of Academy of Finland flagship project UNITE (337656). Ms. Wittke acknowledges the PhD grant from Aalto School of Engineering. We are also grateful for the constructive comments on the code and documentation by the Nordic-RSE community (Richard Darst, Radovan Bast, Luca Ferranti, Enrico Glerean and Matthew West). The development of the `EODIE Galaxy Tool <https://usegalaxy.eu/root?tool_id=toolshed.g2.bx.psu.edu/repos/climate/eodie/eodie/1.0.2>`_ has been supported by EOSC-Nordic, a project funded by the European Union’s Horizon 2020 research and innovation programme under grant agreement No 857652 and implemented by Anne Fouilloux.
 
 
+Changelog
+----------
+
+1.1.0
+^^^^^^
+
+* Added vector file support for GeoPackage, GeoJSON, FlatGeoBuf and csv files.
+* Added user inputs for different file types
+* Changed user input names (--dir to --rasterdir, --file to --rasterfile, --shp to --vector, --exclude_splitshp to --exclude_splitbytile)
+* Removed need for subprocess
+* Added helper script examine_geopackage.py
+
+
+1.0.2
+^^^^^^
+
+* set usable CPUs for splitshp to 1, if number of available CPUs <= 2
+
+1.0.1
+^^^^^^
+
+* Landsat 8 support enabled
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
