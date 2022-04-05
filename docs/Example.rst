@@ -17,7 +17,7 @@ with:
 * ``--platform`` which platform the data in ``--file`` comes from
 * ``--rasterfile`` the location of the tif file to be processed,
 * ``--vector`` the location and name of the vector file with polygons to extract information of
-* ``--id`` the fieldname of a unique ID for each polygon in the shapefile
+* ``--id`` the fieldname of a unique ID for each polygon in the vectorfile
 * ``--statistics_out`` to get statistics as output
 * ``--statistics mean std median`` which statistics to process for each polygon in ``--vector``
 * ``--exclude_splitbytile`` necessary flag when not working with supported tiled data
@@ -40,7 +40,7 @@ with:
 
 * ``--rasterdir`` the location of the Sentinel-2 SAFE products to be processed,
 * ``--vector`` the location and name of the vector with polygons to extract information of
-* ``--id`` the fieldname of a unique ID for each polygon in the shapefile
+* ``--id`` the fieldname of a unique ID for each polygon in the vectorfile
 * ``--out`` the location where outputs of the process will be stored
 * ``--statistics_out`` to get statistics as output
 * ``--platform`` which platform the data in ``--dir`` comes from
