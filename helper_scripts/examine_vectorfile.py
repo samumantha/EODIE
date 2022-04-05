@@ -6,7 +6,7 @@ input: location and name of a vectorfile
 
 output: prints available fieldnames in terminal
 
-use: python examine_shapefile.py path/to/vectorfile.*
+use: python examine_vectorfile.py path/to/vectorfile.*
 
 """
 
