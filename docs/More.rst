@@ -95,7 +95,7 @@ A few auxiliary files are available in the aux directory.
 
 | ``create_binary_cloudmask.py``
 | ``examine_geopackage.py``
-| ``examine_shapefile.py``
+| ``examine_vectorfile.py``
 | ``get_cloudcover.py``
 
 Please refer to the scripts top for more information and how to use them.
