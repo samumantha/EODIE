@@ -51,7 +51,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--input_type``
 | The file extension of the input file provided in --vector. Supported extensions are shp, gpkg, geojson, csv and fgb. If you are using GeoPackage with more than one layer, you need to determine the name of the layer with --gpkg_layer.  Csv files need a column for well-known text (WKT) to determine the spatial extent of each feature and the EPSG code determined with --epsg_for_csv
 | **type:** String
-| **default:** .shp
+| **default:** shp
 
 | ``--gpkg_layer``
 | The name of the layer in GeoPackage, if there are more than one of layers. With one layer only this parameter is not needed.
