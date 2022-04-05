@@ -103,6 +103,7 @@ Changelog
 * Changed user input names (--dir to --rasterdir, --file to --rasterfile, --shp to --vector, --exclude_splitshp to --exclude_splitbytile)
 * Removed need for subprocess
 * Added helper script examine_geopackage.py
+* Renamed helper script examine_shapefile.py to examine_vectorfile.py
 
 
 1.0.2
