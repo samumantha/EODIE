@@ -30,7 +30,8 @@ Larger example using Sentinel-2 data
 
 0. If you have not done so yet, follow the installation instructions to install EODIE and activate the eodie environment.
 1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip`` and unzip ``unzip testfiles.zip`` to a place of your choice, this may take a moment.
-2. Also download the Sentinel-2 tile shapefile , originally provided by https://fromgistors.blogspot.com/2016/10/how-to-identify-sentinel-2-granule.html, ``wget -O sentinel2_tiles_world.zip https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/sentinel2_tiles_world.zip`` and unzip them ``unzip sentinel2_tiles_world.zip``
+2. Also download the Sentinel-2 tilegrid in KML format from `here <https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products>`_ and run the following command from within your EODIE/helper_scripts directory:
+``python tilegrid_to_shp.py path/to/tilegrid/KML/file`` . After running, there should be a folder ``sentinel2_tiles_world`` within EODIE/src directory, containing ``sentinel2_tiles_world.shp`` and auxiliary files. 
 
 3. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
