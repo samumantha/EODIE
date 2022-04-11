@@ -35,7 +35,7 @@ Larger example using Sentinel-2 data
 
 3. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --dir /path/to/testfiles/S2 --vector /path/to/testfiles/shp/test_parcels_32635 --out ./results --id ID --statistics_out --platform s2 --index ndvi --statistics mean median std``
+``python eodie_process.py --rasterdir /path/to/testfiles/S2 --vector /path/to/testfiles/shp/test_parcels_32635 --out ./results --id ID --statistics_out --platform s2 --index ndvi --statistics mean median std``
 
 with:
 
