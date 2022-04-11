@@ -57,7 +57,3 @@ for file in featurefiles:
         os.rename(file, outputname)
     except:
         print("Error renaming file ", file)
-  
-
-
-
