@@ -4,7 +4,15 @@ channels:
   - defaults
 dependencies:
   - python=3.7
-  - sphinx
+  - shapely
+  - rasterio
+  - rasterstats
+  - fiona
+  - numpy
+  - gdal
+  - pyyaml
+  - pytest
+  - matplotlib
   - pip
   - pip:
     - sphinxcontrib.napoleon

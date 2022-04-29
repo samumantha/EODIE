@@ -4,6 +4,9 @@ eodie package
 Submodules
 ----------
 
+This document describes the different modules available in EODIE.
+
+
 eodie.extractor module
 ----------------------
 
