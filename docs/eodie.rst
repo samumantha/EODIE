@@ -4,6 +4,8 @@ eodie package
 Submodules
 ----------
 
+Testing this
+
 eodie.docs module
 -----------------
 
