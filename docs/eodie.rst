@@ -4,15 +4,8 @@ eodie package
 Submodules
 ----------
 
-Testing this
+This document describes the different modules available in EODIE.
 
-eodie.docs module
------------------
-
-.. automodule:: eodie.docs
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 eodie.extractor module
 ----------------------
