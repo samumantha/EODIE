@@ -41,6 +41,7 @@ class UserInput(object):
         parser.add_argument('--start', dest='startdate',default = '20160101', help='give startdate of timerange of interest')
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
         parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
+        parser.add_argument('--tiles', dest = 'tiles', default = None, help = 'Tile or tiles to be processed', nargs = '*')
         
         parser.add_argument('--test', dest='test', action='store_true', help='only needed for automatic testing')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
@@ -96,6 +97,8 @@ class UserInput(object):
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.keep_shp = args.keep_shp
+
+        self.tiles = args.tiles
 
         self.geotiff_out = args.geotiff_out
         self.test = args.test
