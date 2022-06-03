@@ -81,17 +81,19 @@ for path in userinput.input:
         logging.info('Date is {}'.format(pathfinderobject.date))
 
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
+
+            if userinput.nomask is not True:
         
-            if userinput.extmask is None:
-                mask = Mask(pathfinderobject.imgpath, cfg, userinput.test)
-                cloudmask = mask.create_cloudmask()
+                if userinput.extmask is None:
+                    mask = Mask(pathfinderobject.imgpath, cfg, userinput.test)
+                    cloudmask = mask.create_cloudmask()
                 
-            else:
-                cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
-                extmask = glob.glob(cname)[0]
-                cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
-                logging.info('Using external cloudmask {}'.format(extmask))
-            logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
+                else:
+                    cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
+                    extmask = glob.glob(cname)[0]
+                    cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
+                    logging.info('Using external cloudmask {}'.format(extmask))
+                logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
 
@@ -122,12 +124,15 @@ for path in userinput.input:
                     else:
                         array = vegindex.calculate_index(index)
                     
-                    
-                    masked_array= vegindex.mask_array(array,cloudmask)
-                    affine = vegindex.affine
+                    # If user input --no_cloudmask was used, do not apply cloudmask:
+                    if userinput.nomask: 
+                        affine = vegindex.affine
+                        extractorobject = Extractor(array, shapefile, userinput.idname, affine, userinput.statistics, userinput.exclude_border)                    
+                    else:
+                        masked_array = vegindex.mask_array(array,cloudmask)
+                        affine = vegindex.affine
+                        extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
 
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
-                    
                     for format in userinput.format:
                         extractedarray = extractorobject.extract_format(format)
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
