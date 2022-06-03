@@ -29,7 +29,6 @@ cfg = userinput.config
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
-tiles = None
 shp_directory, shp_name = os.path.split(userinput.shpbase)
 
 #setup logging for prints in file and stdout
@@ -49,7 +48,11 @@ if not userinput.exclude_splitshp:
     fieldname = cfg['fieldname']
     shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
     shapesplitter.splitshp()
-    tiles = shapesplitter.tiles
+    # Check if user limited the tiles to be processed
+    if userinput.tiles is not None:
+        tiles = userinput.tiles
+    else:
+        tiles = shapesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
     baseshapename = shapesplitter.basename
 else:
