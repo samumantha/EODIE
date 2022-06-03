@@ -5,7 +5,7 @@ class to validate user inputs
 authors: Samantha Wittke
 
 """
-
+import glob
 import os
 import datetime
 from eodie.index import Index
@@ -26,6 +26,7 @@ class Validator(object):
         self.input_exists_check(args.mydir, args.myfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
+        self.vector_check(args.shpbase)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
 
@@ -59,12 +60,15 @@ class Validator(object):
                 os.path.isdir(dir)
             except:
                 exit('Please check the path to your input data directory: ' + dir )
+            # Check if given input directory is empty                 
+            if (len(os.listdir(dir)) == 0):
+                exit('The input directory is empty. Please check the path: ' + dir )
+            
         if file is not None:
             try:
                 os.path.isfile(file)
             except:
                 exit('Please check the path to yout input file and make sure it exists: ' + file)
-
 
     def date_check(self, date):
         """ check that given date is a valid date (typocheck) and a date before today
@@ -112,8 +116,14 @@ class Validator(object):
             exit('Chosen index/band {} not available, please make sure you typed the names correctly.'.format(','.join(unknownindices)))
         else:
             return True
-       
 
-
-    
- 
+    def vector_check(self, vectorfile):
+        """ Check that given vectorfile exists
+        Parameters:
+        -----------
+        vectorfile:
+            path to user-given vectorfile
+        """
+        vectordirfiles = glob.glob(vectorfile + ".*")
+        if (len(vectordirfiles) == 0):
+            exit('No files were found with the given vectorfile path and name. Please check your inputs.')
