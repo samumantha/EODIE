@@ -64,5 +64,6 @@ class Pathfinder(object):
     def get_dateinfo(self):
         """extract date from filename according to pattern from from config"""
         datepattern = r'%s' % self.cfg['datepattern']
-        self.date = re.search(datepattern,self.imgpath).group(0)
+        splitted_imgpath = self.imgpath.split("/")[-2]         
+        self.date = re.search(datepattern, splitted_imgpath).group(0)
 
