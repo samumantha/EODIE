@@ -42,8 +42,9 @@ logging.info('All inputs for this process: '+ str(vars(userinput).items()))
 
 if not userinput.exclude_splitshp:
     #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
-    small_polygon_shapefile = userinput.shpbase + '.shp'
-    
+    geoobject = VectorData(userinput.shpbase + '.shp')
+    logging.info('Checking vectorfile validity...')
+    small_polygon_shapefile = geoobject.check_validity()   
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
     shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
@@ -54,7 +55,7 @@ if not userinput.exclude_splitshp:
     else:
         tiles = shapesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = shapesplitter.basename
+    baseshapename = shapesplitter.basename    
 else:
     baseshapename = userinput.shpbase
 
@@ -68,7 +69,7 @@ for path in userinput.input:
     if userinput.platform == 'tif':
         logging.info('File to be processed {}'.format(path))
         raster = RasterData(path,cfg)
-        geoobject = VectorData(userinput.shpbase + '.shp')
+        geoobject = VectorData(baseshapename + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
         extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics ,userinput.exclude_border)
         for format in userinput.format:
