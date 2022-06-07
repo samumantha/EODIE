@@ -59,6 +59,7 @@ class SplitshpObject(object):
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
         #all input shapefiles to EPSG: 4326
+        logging.info(" Reprojecting input vectorfile and S2-tile grid to EPSG:4326 ")
         self.small_polygon_shapefile = self.reproject_to_epsg(small_polygon_shapefile,'4326')
         self.large_polygon_shapefile = self.reproject_to_epsg(large_polygon_shapefile,'4326')
         self.test = test
@@ -78,8 +79,7 @@ class SplitshpObject(object):
         --------
         reprojectedshape: str
             location and name of the reprojected shapefile
-        """
-        logging.info('checking the projection of the inputfile now')
+        """        
         head, tail = os.path.split(myshp)
         root, ext = os.path.splitext(tail)
         rootprj = root + '.prj'
@@ -91,7 +91,7 @@ class SplitshpObject(object):
         srs.AutoIdentifyEPSG()
         epsgcode = srs.GetAuthorityCode(None)
         if epsgcode == myepsg:
-            logging.info('input shapefile has EPSG '  +myepsg + ' that works!')
+            logging.info(' {} shapefile has EPSG:{} that works!'.format(myshp, myepsg))
             return myshp
         else:
             root = re.sub(r'_reprojected_\d*', '', root)
@@ -100,7 +100,7 @@ class SplitshpObject(object):
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + myshp
                 #print(reprojectcommand)
                 subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG ' + myepsg + ' but was reprojected and works now')
+                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(myshp, myepsg))
             return reprojectedshape
 
 
@@ -249,13 +249,13 @@ class SplitshpObject(object):
                 break         
         if not exists:
             self.splitshp_mp()
-            logging.info('splitted shapefiles now exist')
+            logging.info(' Splitted shapefiles now exist')
         else:
-            logging.info('splitted shapefiles already exist')
+            logging.info(' Splitted shapefiles already exist')
         removelist = glob.glob(os.path.join(self.output_directory, largeroot + '_' + root + '.*'))
         for file in removelist:
             os.remove(file)
-        logging.info('deleted splitted worldtiles')
+        logging.info(' Deleted splitted worldtiles')
 
     def splitshp_world(self):
         """ extract only tiles from large polygon shapefile that overlap with the boundingbox of small polygon shapefile"""
@@ -277,7 +277,7 @@ class SplitshpObject(object):
                 usable_number_of_cores = 1
             else:
                 usable_number_of_cores = mp.cpu_count()-2
-        logging.info('number of usable cores for shapesplitting is ' + str(usable_number_of_cores))
+        logging.info(' Number of usable cores for shapesplitting is {}.'.format(usable_number_of_cores))
 
         pool = mp.Pool(usable_number_of_cores)
 
@@ -293,7 +293,7 @@ class SplitshpObject(object):
         for file in shp_remove_list:
             os.remove(file)
         os.rmdir(self.output_directory)
-        logging.info('deleted splitted shapefiles')
+        logging.info(' Deleted splitted shapefiles')
 
 
 
