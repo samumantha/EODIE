@@ -26,7 +26,7 @@ class Validator(object):
         self.input_exists_check(args.mydir, args.myfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
-        self.vector_check(args.shpbase)
+        self.vector_exists(args.shpbase)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
 
@@ -117,7 +117,7 @@ class Validator(object):
         else:
             return True
 
-    def vector_check(self, vectorfile):
+    def vector_exists(self, vectorfile):
         """ Check that given vectorfile exists
         Parameters:
         -----------
