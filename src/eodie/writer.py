@@ -75,7 +75,7 @@ class Writer(object):
         """ writing statistics results from json into csv
         """
         self.outpath = self.outpath + '_statistics.csv'
-        logging.info('stat to csv in: ' + self.outpath)
+        logging.info(' Statistics to csv in: ' + self.outpath)
         with open(self.outpath, mode='w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',')
             csv_writer.writerow(['id']+ self.statistics )
@@ -86,7 +86,7 @@ class Writer(object):
     def write_array(self):
         """ writing extracted arrays to pickle"""
         self.outpath = self.outpath + '_array.pickle'
-        logging.info('arrays to pickle in: ' + self.outpath)
+        logging.info(' Arrays to pickle in: ' + self.outpath)
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
 
@@ -94,9 +94,9 @@ class Writer(object):
         """ Writing extracted arrays to geotiff file
         """
         self.outpath = self.outpath + '_array'
-        logging.info('arrays to geotiff in: ' + self.outpath)
+        logging.info(' Arrays to geotiff in: ' + self.outpath)
         for key in self.extractedarrays.keys():
-            logging.info('arrays to geotiff in: ' + self.outpath)
+            logging.info(' Arrays to geotiff in: ' + self.outpath)
             data = self.extractedarrays[key]
             nrows, ncols = data['array'].shape
             #this may happen with external tif file, int64 is not supported
@@ -135,7 +135,7 @@ class Writer(object):
                     IDs.append(polygon['properties'][idname])
             with open(lookup, 'a') as f:
                 f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
-            logging.info('Appended tile ' + self.tile + ' to lookup table')
+            logging.info(' Appended tile ' + self.tile + ' to lookup table')
 
 
 

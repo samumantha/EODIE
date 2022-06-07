@@ -85,7 +85,6 @@ class VectorData(object):
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now')
         epsgcode = self.get_epsg()
         head,_,root,ext = self._split_path()
 
@@ -98,9 +97,9 @@ class VectorData(object):
             if not os.path.exists(reprojectedshape):
                 # use ogr commandline utility to reproject and save shapefile
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + self.geometries
-                logging.info('Reprojectcommand: {}'.format(reprojectcommand))
+                logging.info(' Reprojectcommand: {}'.format(reprojectcommand))
                 subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(self.geometries, myepsg))
             #update the objects shapefile
             self.geometries = reprojectedshape
 

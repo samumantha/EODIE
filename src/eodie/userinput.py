@@ -69,12 +69,16 @@ class UserInput(object):
 
         self.mydir = args.mydir
         self.myfile = args.myfile
-        if args.myfile is not None:
+        if args.myfile is not None:            
             self.input = [args.myfile]
+            if self.myfile[-1] == "/":
+                self.myfile = self.myfile[:-1]
         else:
             #self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
             self.input = [os.path.join(self.mydir, file) for file in os.listdir(self.mydir) if re.search(self.config['filepattern'], file)]
+            if self.mydir[-1] == "/":
+                self.mydir = self.mydir[:-1]
         
         # remove extension if given by mistake
         if args.shpbase.endswith('.shp'):
