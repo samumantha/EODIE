@@ -11,6 +11,8 @@ import fiona
 import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
+import shapely
+import geopandas as gpd
 import logging
 from shutil import copyfile
 import re
@@ -85,7 +87,7 @@ class VectorData(object):
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now')
+        logging.info(' Checking the projection of the inputfile now')
         epsgcode = self.get_epsg()
         head,_,root,ext = self._split_path()
 
@@ -100,7 +102,7 @@ class VectorData(object):
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + self.geometries
                 logging.info('Reprojectcommand: {}'.format(reprojectcommand))
                 subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+                logging.info(' Input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
             #update the objects shapefile
             self.geometries = reprojectedshape
 
@@ -174,3 +176,36 @@ class VectorData(object):
         inDataSource = None
         outDataSource = None
         return convexhullp
+
+    def check_validity(self):
+        """ Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
+        Returns:
+            path to the shapefile to continue processing with (either original or filtered one)
+        """
+        # Read shapefile into a geopandas data frame
+        vectorfile = gpd.read_file(self.geometries)         
+        # Filter out rows where 'geometry' is None     
+        vectorfile_geometries = vectorfile.loc[vectorfile['geometry'] != None].copy()  
+        # Check if there are erroneus features without geometries:
+        if (len(vectorfile.loc[vectorfile['geometry'] == None]) > 0):
+            logging.info(" Number of objects with no geometry: {}".format(len(vectorfile.loc[vectorfile['geometry'] == None])))
+        # For existing geometries, create a boolean column 'validity' 
+        vectorfile_geometries['validity'] = vectorfile_geometries['geometry'].is_valid        
+        # Filter valid geometries into a new dataframe copy.   
+        valid = vectorfile_geometries.loc[vectorfile_geometries['validity'] == True].copy()    
+        # Compare the row numbers of original file and filtered file and save files accordingly
+        if (len(valid) < len(vectorfile)):        
+            logging.info(" Number of objects with invalid geometry: {}".format(len(vectorfile) - len(valid)))
+            # Extract filepath
+            head,_ ,root,_ = self._split_path()
+            # Build output filename
+            outputfilename = root + "_valid.shp"
+            # Save the valid file and proceed with that
+            valid.to_file(os.path.join(head, outputfilename), index = False)   
+            logging.info(" A vectorfile with only valid geometries has been written.")
+            # Return the new filename to continue processing.         
+            return os.path.join(head, outputfilename)
+        else:
+            # If nothing was changed, continue with the original file. 
+            logging.info(" All geometries of {} are valid.".format(self.geometries))
+            return self.geometries
