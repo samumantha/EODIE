@@ -87,7 +87,7 @@ class TileSplitter(object):
 
         # If vector EPSG matches input EPSG, no conversion needed
         if vectorepsg == myepsg:
-            logging.info(' {} has EPSG:{} that works!'.format(vectorfile), myepsg)
+            logging.info(' {} has EPSG:{} that works!'.format(vectorfile, myepsg))
             return vectorfile
         else:
             logging.info('Input vector has EPSG {} that will be reprojected to EPSG {}'.format(vectorepsg, myepsg))
@@ -109,7 +109,7 @@ class TileSplitter(object):
                 # Run gdal.VectorTranslate
                 gdal.VectorTranslate(destNameOrDestDS=reprojectedvectorfile, srcDS=vectorfile, options=gdal_options)
 
-                logging.info('Input vectorfile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+                logging.info(' Input vectorfile had other than EPSG:{} but was reprojected and works now'.format(myepsg))
 
             return reprojectedvectorfile
 
