@@ -234,5 +234,3 @@ class VectorData(object):
                 # Write input contents into a shapefile 
                 output_shp.writerecords(input)
         logging.info('Shapefile conversion completed!')
-
->>>>>>> Extended_file_support
