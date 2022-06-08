@@ -95,7 +95,7 @@ class VectorData(object):
                 # Run gdal.VectorTranslate
                 gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
 
-                logging.info('Input shapefile had other than EPSG {} but was reprojected and works now'.format(rasterepsg))
+                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(self.geometries, rasterepsg))
 
                 
             #update the objects shapefile

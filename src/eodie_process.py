@@ -46,15 +46,40 @@ if userinput.input_type != 'shp':
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.vectorbase)
 
+# 
+
 #setup logging for prints in file and stdout
-if userinput.verbose:
-    handlers= [logging.FileHandler(os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')), logging.StreamHandler()]
-    logging.basicConfig(level=logging.INFO, handlers = handlers)
+
+# Extract input file or directory name from input for naming the log file accordingly
+if userinput.myfile is not None:
+    filename = os.path.split(userinput.myfile)[1].split(".")[0]
 else:
-    logging.basicConfig(filename= os.path.join(userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + '.log'),level=logging.INFO)
+    dirname = os.path.split(userinput.mydir)[1]     
 
-logging.info('All inputs for this process: '+ str(vars(userinput).items()))
+# If --verbose was given, logging outputs will be printed to terminal
+if userinput.verbose:  
+    # If --file was given, filename will be used as basename for logging file.
+    if userinput.myfile is not None:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+    # If --dir was given, directory name will be used as basename for logging file.
+    else:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
+    logging.basicConfig(level = logging.INFO, handlers = handlers)
+else:
+    # If --file was given, filename will be used as basename for logging file
+    if userinput.myfile is not None:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+    # If --dir was given, directory name will be used as basename for logging file. 
+    else:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
 
+logging.info(' ALL INPUTS FOR THIS PROCESS:')
+# Loop through userinputs and print key: value to log file.
+for key in vars(userinput).keys():
+    logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
+
+
+logging.info(' STARTING TILESPLITTING ')
 if not userinput.exclude_splitbytile:
     #Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
     small_polygon_vectorfile = userinput.vectorbase + '.shp'
@@ -69,6 +94,7 @@ if not userinput.exclude_splitbytile:
 else:
     baseshapename = userinput.vectorbase
 
+logging.info(' STARTING TO PROCESS IMAGERY')
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
 
@@ -77,38 +103,41 @@ for path in userinput.input:
         tiles = pathfinderobject.tile
 
     if userinput.platform == 'tif':
-        logging.info('File to be processed {}'.format(path))
+        logging.info(' File to be processed {}'.format(path))
         raster = RasterData(path,cfg)
         geoobject = VectorData(userinput.vectorbase + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
-        extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics ,userinput.exclude_border)
+        extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics, userinput.exclude_border)
+        # Write results in user-defined formats
         for format in userinput.format:
             extractedarray = extractorobject.extract_format(format)
             writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics, raster.crs)
             writerobject.write_format(format)
     else:
-        logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
-        logging.info('Tile is {}'.format(pathfinderobject.tile))
-        logging.info('Date is {}'.format(pathfinderobject.date))
+        logging.info(' Imagepath is {}'.format(pathfinderobject.imgpath))
+        logging.info(' Tile is {}'.format(pathfinderobject.tile))
+        logging.info(' Date is {}'.format(pathfinderobject.date))
 
+        # Check that dates and tiles match user input
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
         
             if userinput.extmask is None:
+                logging.info(' Creating cloudmask...')
                 mask = Mask(pathfinderobject.imgpath, cfg, userinput.test)
                 cloudmask = mask.create_cloudmask()
                 
             else:
-                cname = userinput.extmask + '_'+ pathfinderobject.date +'_'+ pathfinderobject.tile+ '.*'
+                cname = userinput.extmask + '_' + pathfinderobject.date + '_' + pathfinderobject.tile + '.*'
                 extmask = glob.glob(cname)[0]
                 cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
-                logging.info('Using external cloudmask {}'.format(extmask))
-            logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
+                logging.info(' Using external cloudmask {}'.format(extmask))
+            logging.info(' Shape of cloudmask is {}'.format(cloudmask.shape))
 
-            vegindex = Index(pathfinderobject.imgpath,cfg)
+            vegindex = Index(pathfinderobject.imgpath, cfg)
 
             shpname = baseshapename + '_' + pathfinderobject.tile + '.shp'
 
-            geoobject = VectorData(os.path.join(shp_directory,shpname))
+            geoobject = VectorData(os.path.join(shp_directory, shpname))
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
@@ -116,8 +145,8 @@ for path in userinput.input:
             maxcloudcover = cfg['maxcloudcover']
             if userinput.platform == 's2':
                 rastervalidatorobject = RasterValidatorS2(path, maxcloudcover, geoobject)
-                logging.info('Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.not_cloudcovered))
-                logging.info('Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
+                logging.info(' Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.not_cloudcovered))
+                logging.info(' Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
                 not_cloudcovered = rastervalidatorobject.not_cloudcovered
                 datacovered = rastervalidatorobject.datacovered
             else:
@@ -134,11 +163,11 @@ for path in userinput.input:
                         array = vegindex.calculate_index(index)
                     
                     
-                    masked_array= vegindex.mask_array(array,cloudmask)
+                    masked_array= vegindex.mask_array(array, cloudmask)
                     affine = vegindex.affine
 
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
-                    
+                    extractorobject = Extractor(masked_array, shapefile, userinput.idname, affine, userinput.statistics, userinput.exclude_border)
+                    logging.info(" Writing results for {}".format(index))
                     for format in userinput.format:
                         extractedarray = extractorobject.extract_format(format)
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
@@ -149,9 +178,10 @@ for path in userinput.input:
                     writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
                    
             else:
-                logging.warning('Cloudcovered or no data in Area of interest!')
+                logging.warning(' Cloudcovered or no data in Area of interest in {}'.format(path))
 
 
 if not userinput.exclude_splitbytile:
     if not userinput.keep_splitted: 
         tilesplit.delete_splitted_files()
+logging.info(' Processing complete!')

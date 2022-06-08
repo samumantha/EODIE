@@ -75,10 +75,14 @@ class UserInput(object):
         self.rasterfile = args.rasterfile
         if args.rasterfile is not None:
             self.input = [args.rasterfile]
+        if self.rasterfile[-1] == "/":
+            self.rasterfile = self.rasterfile[:-1]
         else:
             #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
             self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
+            if self.rasterdir[-1] == "/":
+                self.rasterdir = self.rasterdir[:-1]
         
         self.input_type = args.input_type
         self.epsg_for_csv = args.epsg_for_csv
