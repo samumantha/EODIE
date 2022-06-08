@@ -58,6 +58,7 @@ class TileSplitter(object):
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
         #all input vectorfiles to EPSG: 4326
+        logging.info(" Reprojecting input vectorfile and S2-tile grid to EPSG:4326 ")
         self.small_polygon_vectorfile = self.reproject_to_epsg(small_polygon_vectorfile,'4326')
         self.large_polygon_vectorfile = self.reproject_to_epsg(large_polygon_vectorfile,'4326')
         self.test = test
@@ -77,8 +78,7 @@ class TileSplitter(object):
         --------
         reprojectedvectorfile: str
             location and name of the reprojected vectorfile
-        """
-        logging.info('Checking the projection of the inputfile now...')
+        """        
         with fiona.open(vectorfile,'r') as proj:
             # Read spatial reference 
             spatialRef = proj.crs
@@ -87,7 +87,7 @@ class TileSplitter(object):
 
         # If vector EPSG matches input EPSG, no conversion needed
         if vectorepsg == myepsg:
-            logging.info('Input vector has EPSG '  +myepsg + ' that works!')
+            logging.info(' {} has EPSG:{} that works!'.format(vectorfile), myepsg))
             return vectorfile
         else:
             logging.info('Input vector has EPSG {} that will be reprojected to EPSG {}'.format(vectorepsg, myepsg))
@@ -258,13 +258,13 @@ class TileSplitter(object):
                 break         
         if not exists:
             self.tilesplit_mp()
-            logging.info('splitted vectordata by tile now exist')
+            logging.info(' Splitted vectordata by tile now exist')
         else:
-            logging.info('splitted vectordata by tile already exist')
+            logging.info(' Splitted vectordata by tile already exist')
         removelist = glob.glob(os.path.join(self.output_directory, largeroot + '_' + root + '.*'))
         for file in removelist:
             os.remove(file)
-        logging.info('deleted splitted worldtiles')
+        logging.info(' Deleted splitted worldtiles')
 
     def tilesplit_world(self):
         """ extract only tiles from large polygon vectorfile that overlap with the boundingbox of small polygon vectorfile"""
@@ -286,7 +286,7 @@ class TileSplitter(object):
                 usable_number_of_cores = 1
             else:
                 usable_number_of_cores = mp.cpu_count()-2
-        logging.info('number of usable cores for shapesplitting is ' + str(usable_number_of_cores))
+        logging.info(' Number of usable cores for tilesplitting is {}'.format(usable_number_of_cores))
 
         pool = mp.Pool(usable_number_of_cores)
 
@@ -302,7 +302,7 @@ class TileSplitter(object):
         for file in remove_list:
             os.remove(file)
         os.rmdir(self.output_directory)
-        logging.info('deleted splitted vectorfiles')
+        logging.info(' Deleted splitted vectorfiles')
 
 
 
