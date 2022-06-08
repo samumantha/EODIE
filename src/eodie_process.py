@@ -13,7 +13,7 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.userinput import UserInput
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
@@ -29,8 +29,22 @@ cfg = userinput.config
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
+# If data is not in shapefile format, transform it to shapefile:
+if userinput.input_type != 'shp': 
+    object_to_shp = VectorData(userinput.vectorbase + "." + userinput.input_type)
+    # If input format is csv, run csv_to_shp
+    if userinput.input_type == 'csv':
+        object_to_shp.csv_to_shp(userinput.vectorbase + ".shp", userinput.epsg_for_csv)
+    # If input format is geopackage with a defined layername, run gpkg_to_shp
+    elif (userinput.input_type == 'gpkg') & (userinput.gpkg_layer != None):
+        object_to_shp.gpkg_to_shp(userinput.vectorbase + ".shp", userinput.gpkg_layer)
+    # Otherwise run convert_to_shp
+    else:      
+        object_to_shp.convert_to_shp(userinput.vectorbase + ".shp")
+
+
 tiles = None
-shp_directory, shp_name = os.path.split(userinput.shpbase)
+shp_directory, shp_name = os.path.split(userinput.vectorbase)
 
 #setup logging for prints in file and stdout
 if userinput.verbose:
@@ -41,19 +55,19 @@ else:
 
 logging.info('All inputs for this process: '+ str(vars(userinput).items()))
 
-if not userinput.exclude_splitshp:
-    #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
-    small_polygon_shapefile = userinput.shpbase + '.shp'
+if not userinput.exclude_splitbytile:
+    #Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+    small_polygon_vectorfile = userinput.vectorbase + '.shp'
     
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
-    shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
-    shapesplitter.splitshp()
-    tiles = shapesplitter.tiles
-    shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = shapesplitter.basename
+    tilesplit = TileSplitter(small_polygon_vectorfile, world_tiles, shp_directory, fieldname)
+    tilesplit.tilesplit()
+    tiles = tilesplit.tiles
+    shp_directory = os.path.join(shp_directory, 'EODIE_temp')
+    baseshapename = tilesplit.basename
 else:
-    baseshapename = userinput.shpbase
+    baseshapename = userinput.vectorbase
 
 #running through either one file, if file was given or multiple files if dir was given
 for path in userinput.input:
@@ -65,7 +79,7 @@ for path in userinput.input:
     if userinput.platform == 'tif':
         logging.info('File to be processed {}'.format(path))
         raster = RasterData(path,cfg)
-        geoobject = VectorData(userinput.shpbase + '.shp')
+        geoobject = VectorData(userinput.vectorbase + '.shp')
         geoobject.reproject_to_epsg(raster.epsg)
         extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics ,userinput.exclude_border)
         for format in userinput.format:
@@ -138,6 +152,6 @@ for path in userinput.input:
                 logging.warning('Cloudcovered or no data in Area of interest!')
 
 
-if not userinput.exclude_splitshp:
-    if not userinput.keep_shp: 
-        shapesplitter.delete_splitted_files()
+if not userinput.exclude_splitbytile:
+    if not userinput.keep_splitted: 
+        tilesplit.delete_splitted_files()

@@ -21,7 +21,7 @@ from eodie.vectordata import VectorData
 from eodie.index import Index
 from eodie.rasterdata import RasterData
 from eodie.writer import Writer
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 import yaml
 import fiona
 
@@ -119,12 +119,6 @@ class TestAll(object):
         splitpathlist = [head,tail,root,ext]
         rightsplitpathlist = ['testfiles' + os.sep + 'shp', 'test_parcels_32635.shp','test_parcels_32635', '.shp']
         assert (splitpathlist == rightsplitpathlist), 'Splitpath fails'
-
-        projectionfile = geometryobject.get_projectionfile()
-        rightprojectionfile = 'testfiles/shp/test_parcels_32635.prj'
-        rightprojectionfile = rightprojectionfile.replace('/', os.sep)
-
-        assert (projectionfile == rightprojectionfile), 'Projectionfile fails'
 
         epsg = geometryobject.get_epsg()
         rightepsg = '32635'
@@ -232,7 +226,7 @@ class TestAll(object):
 
         del writerobject
     
-    def test_splitshp(self):
+    def test_tilesplitter(self):
         tmpdir = 'testfiles/temp'
         tmpdir = tmpdir.replace('/', os.sep)
         if not os.path.exists(tmpdir):
@@ -241,10 +235,10 @@ class TestAll(object):
         largetiles = 'testfiles/shp/sentinel2_tiles_test.shp'
         smallparcels = smallparcels.replace('/', os.sep)
         largetiles = largetiles.replace('/', os.sep)
-        shapesplitter = SplitshpObject(smallparcels, largetiles, tmpdir, 'Name', True)
+        shapesplitter = TileSplitter(smallparcels, largetiles, tmpdir, 'Name', True)
         tmpshpdir = shapesplitter.output_directory
         assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
-        shapesplitter.splitshp()
+        shapesplitter.tilesplit()
         assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_test_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted testtiles'
         assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
         for tile in ['34VFN', '35VLH']:

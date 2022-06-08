@@ -21,10 +21,10 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 project = 'EODIE'
 copyright = '2021, Finnish Geospatial Research Institute'
-author = 'Samantha Wittke'
+author = 'Samantha Wittke, Petteri Lehti, Juuso Varho, Arttu Kivimäki'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '1.1.0'
 
 
 # -- General configuration ---------------------------------------------------

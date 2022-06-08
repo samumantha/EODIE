@@ -2,7 +2,7 @@
    sphinx-quickstart on Fri Mar 12 19:57:28 2021.
 
 
-EODIE 1.0.2 Documentation
+EODIE 1.1.0 Documentation
 ==========================
 
 Purpose 
@@ -17,7 +17,7 @@ Earth Observation data are available to the users via for example earth explorer
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
 agricultural field parcels, forest plots, or areas of a certain land cover type.
 
-EODIE takes the objects in as polygons in a shapefile as well as the timeframe of interest and the features (eg vegetation indices) 
+EODIE takes the objects in as polygons in a vector file as well as the timeframe of interest and the features (eg vegetation indices) 
 to be extracted. The output is a per polygon timeseries of the selected features over the timeframe of interest.
 
 Is EODIE suitable for me?
@@ -27,8 +27,7 @@ To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
 
 * Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
-* A geospatial vector data file with polygons of your objects of interests - supported formats are ESRI 
-Shapefile, (GeoPackage, GeoJSON, csv and FlatGeoBuf coming soon!)
+* A geospatial vector file with polygons of your objects of interests - supported formats are ESRI shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
 EODIE produces human and machine readable csv files containing all information needed to start working with the data.
@@ -62,6 +61,7 @@ Contributors
 * Paula Litkey
 * Miloš Pandžić ([ORCiD]( https://orcid.org/0000-0003-4982-2630))
 * Mika Karjalainen
+* Arttu Kivimäki
 
 
 Citation 
@@ -90,6 +90,31 @@ Acknowledgements
 -----------------
 
 This project was initiated under the Academy of Finland research project 295047 in collaboration with Paula Litkey and Miloš Pandžić and has been supported also from the project 316096/320075. Part of the work has also been done under the umbrella of Academy of Finland flagship project UNITE (337656). Ms. Wittke acknowledges the PhD grant from Aalto School of Engineering. We are also grateful for the constructive comments on the code and documentation by the Nordic-RSE community (Richard Darst, Radovan Bast, Luca Ferranti, Enrico Glerean and Matthew West). The development of the `EODIE Galaxy Tool <https://usegalaxy.eu/root?tool_id=toolshed.g2.bx.psu.edu/repos/climate/eodie/eodie/1.0.2>`_ has been supported by EOSC-Nordic, a project funded by the European Union’s Horizon 2020 research and innovation programme under grant agreement No 857652 and implemented by Anne Fouilloux.
+
+
+Changelog
+----------
+
+1.1.0
+^^^^^^
+
+* Added vector file support for GeoPackage, GeoJSON, FlatGeoBuf and csv files.
+* Added user inputs for different file types
+* Changed user input names (--dir to --rasterdir, --file to --rasterfile, --shp to --vector, --exclude_splitshp to --exclude_splitbytile)
+* Removed need for subprocess
+* Added helper script examine_geopackage.py
+* Renamed helper script examine_shapefile.py to examine_vectorfile.py
+
+
+1.0.2
+^^^^^^
+
+* set usable CPUs for splitshp to 1, if number of available CPUs <= 2
+
+1.0.1
+^^^^^^
+
+* Landsat 8 support enabled
 
 
 .. toctree::

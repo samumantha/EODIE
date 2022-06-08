@@ -91,11 +91,13 @@ See above for the parameters that need to be included in the config_x.yml file t
 Auxiliary files
 ----------------
 
-A few auxiliary files are available in the aux directory.
+A few auxiliary files are available in the helper_scripts directory.
 
 | ``create_binary_cloudmask.py``
-| ``examine_shapefile.py``
+| ``examine_geopackage.py``
+| ``examine_vectorfile.py``
 | ``get_cloudcover.py``
+| ``tilegrid_to_shp.py``
 
 Please refer to the scripts top for more information and how to use them.
 
