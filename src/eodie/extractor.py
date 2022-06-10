@@ -11,6 +11,7 @@ import os
 import csv
 import numpy as np
 from rasterstats import zonal_stats
+import logging
 
 class Extractor(object):
 
@@ -90,6 +91,7 @@ class Extractor(object):
                 
                 statlist.append(onestat)
             extractedarrays[myid] = statlist
+        logging.info(" EXTRACTED ARRAYS ARE: {}".format(extractedarrays))
         return extractedarrays
 
     def extract_array(self):
