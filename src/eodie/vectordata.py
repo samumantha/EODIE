@@ -11,6 +11,7 @@ import fiona
 import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
+from shapely.validation import explain_validity
 import shapely
 import geopandas as gpd
 import logging
@@ -177,35 +178,65 @@ class VectorData(object):
         outDataSource = None
         return convexhullp
 
-    def check_validity(self):
-        """ Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
+    def check_empty(self, vectorfile):
+        ''' Checks for empty geometries in vectorfile
+        Parameters:
+        -----------
+            vectorfile: geodataframe the user-defined vectorfile
         Returns:
-            path to the shapefile to continue processing with (either original or filtered one)
+        --------
+            None; prints the rows with non-existent geometries.
+        '''
+        logging.info(" Checking for empty geometries...")
+        # Filter rows where geometry is None
+        vectorfile_nogeom = vectorfile[vectorfile['geometry'] == None]
+        # Log accordingly 
+        if len(vectorfile_nogeom) > 0:
+            logging.info(" Following features have no geometry:\n\n {}".format(vectorfile_nogeom))
+        else:
+            logging.info(" All features have geometries.")
+
+    def check_validity(self, drop):
+        """ Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
+        Parameters:
+        -----------
+            drop: Flag to indicate if invalid geometries should be dropped.     
+        Returns:
+        --------
+        vectorfilepath: str
+            Path to either the original vectorfile or a filtered one, from which features with empty or invalid geometries have been removed. 
         """
         # Read shapefile into a geopandas data frame
-        vectorfile = gpd.read_file(self.geometries)         
-        # Filter out rows where 'geometry' is None     
-        vectorfile_geometries = vectorfile.loc[vectorfile['geometry'] != None].copy()  
-        # Check if there are erroneus features without geometries:
-        if (len(vectorfile.loc[vectorfile['geometry'] == None]) > 0):
-            logging.info(" Number of objects with no geometry: {}".format(len(vectorfile.loc[vectorfile['geometry'] == None])))
-        # For existing geometries, create a boolean column 'validity' 
-        vectorfile_geometries['validity'] = vectorfile_geometries['geometry'].is_valid        
-        # Filter valid geometries into a new dataframe copy.   
-        valid = vectorfile_geometries.loc[vectorfile_geometries['validity'] == True].copy()    
-        # Compare the row numbers of original file and filtered file and save files accordingly
-        if (len(valid) < len(vectorfile)):        
-            logging.info(" Number of objects with invalid geometry: {}".format(len(vectorfile) - len(valid)))
-            # Extract filepath
-            head,_ ,root,_ = self._split_path()
-            # Build output filename
-            outputfilename = root + "_valid.shp"
-            # Save the valid file and proceed with that
-            valid.to_file(os.path.join(head, outputfilename), index = False)   
-            logging.info(" A vectorfile with only valid geometries has been written.")
-            # Return the new filename to continue processing.         
-            return os.path.join(head, outputfilename)
+        vectorfile = gpd.read_file(self.geometries)
+        # Check empty geometries
+        self.check_empty(vectorfile)         
+        # Check validity of geometries
+        vectorfile['validity'] = vectorfile['geometry'].is_valid 
+        # Extract only rows with existing geometries   
+        vectorfile_with_geom = vectorfile.loc[vectorfile['geometry'] != None].copy()
+        # Filter rows where geometries were invalid
+        vectorfile_with_invalid_geom = vectorfile_with_geom.loc[vectorfile_with_geom['validity'] == False].copy()
+        # If invalid geometries exist, run explain_validity for them
+        if len(vectorfile_with_invalid_geom) > 0:
+            vectorfile_with_invalid_geom['explanation'] = vectorfile_with_invalid_geom.apply(lambda row: explain_validity(row.geometry), axis = 1)
+            logging.info(" Following features have invalid geometries:\n\n {}".format(vectorfile_with_invalid_geom))   
         else:
-            # If nothing was changed, continue with the original file. 
-            logging.info(" All geometries of {} are valid.".format(self.geometries))
+            logging.info(" All features have valid geometries.")
+
+        # If --delete_invalid_geometries was defined, rewrite a new file without invalid geometries.
+        if drop:
+            # Extract filepath
+            head,_ , root, ext = self._split_path()
+            # Build output filename and path
+            outputfilename = root + "_valid" + ext
+            outputpath = os.join(head, outputfilename)
+            
+            # Filter only valid geometries 
+            vectorfile_with_valid_geom = vectorfile_with_geom.loc[vectorfile_with_geom['validity'] == True].copy()
+            # Write a file from the geodataframe
+            vectorfile_with_valid_geom.to_file(outputpath, index = False)
+
+            return outputpath    
+
+        else:
             return self.geometries
