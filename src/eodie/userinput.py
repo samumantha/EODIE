@@ -47,6 +47,7 @@ class UserInput(object):
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
         parser.add_argument('--external_cloudmask', dest= 'extmask', default = None, help= ' location and name of external cloudmask (without tile and date and extension) if available')
         parser.add_argument('--no_cloudmask', dest = 'nomask', action = 'store_true', help = "Flag to indicate that cloudmask shall not be applied.")
+        parser.add_argument('--delete_invalid_geometries', dest = 'drop_geom', action = 'store_true', help = 'Flag to indicate if invalid geometries should be removed from the processing.')
         parser.add_argument('--exclude_splitshp', dest='exclude_splitshp', action='store_true',help='if this flag is set, it is assumed that splitshp has been run manually beforehand')
         parser.add_argument('--verbose', '-v',dest='verbose', action='store_true',help=' logging in logfile and prints in terminal')
 
@@ -99,6 +100,8 @@ class UserInput(object):
         self.enddate = args.enddate
         self.keep_shp = args.keep_shp
 
+        self.drop_geom = args.drop_geom
+
         self.tiles = args.tiles
 
         self.geotiff_out = args.geotiff_out
@@ -123,7 +126,3 @@ class UserInput(object):
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append('statistics')
-
-
-
-        
