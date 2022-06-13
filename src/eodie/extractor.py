@@ -11,7 +11,6 @@ import os
 import csv
 import numpy as np
 from rasterstats import zonal_stats
-import logging
 
 class Extractor(object):
 
@@ -57,7 +56,6 @@ class Extractor(object):
         nothing itself, but runs given format function which returns a dictionary for the given format 
 
         """
-
         default = "Unavailable format"
         return getattr(self, 'extract_' + format, lambda: default)()
         
@@ -91,7 +89,6 @@ class Extractor(object):
                 
                 statlist.append(onestat)
             extractedarrays[myid] = statlist
-        logging.info(" EXTRACTED ARRAYS ARE: {}".format(extractedarrays))
         return extractedarrays
 
     def extract_array(self):
