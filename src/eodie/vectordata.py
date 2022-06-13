@@ -229,7 +229,7 @@ class VectorData(object):
             head,_ , root, ext = self._split_path()
             # Build output filename and path
             outputfilename = root + "_valid" + ext
-            outputpath = os.join(head, outputfilename)
+            outputpath = os.path.join(head, outputfilename)
             
             # Filter only valid geometries 
             vectorfile_with_valid_geom = vectorfile_with_geom.loc[vectorfile_with_geom['validity'] == True].copy()
