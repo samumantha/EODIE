@@ -44,8 +44,7 @@ if not userinput.exclude_splitshp:
     #Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
     geoobject = VectorData(userinput.shpbase + '.shp')
     logging.info(' Checking vectorfile validity...')
-    small_polygon_shapefile = geoobject.check_validity(userinput.drop_geom)  
-    small_polygon_shapefile = userinput.shpbase + '.shp' 
+    small_polygon_shapefile = geoobject.check_validity(userinput.drop_geom)      
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
     shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
@@ -80,9 +79,10 @@ for path in userinput.input:
             writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics, raster.crs)
             writerobject.write_format(format)
     else:
-        logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
-        logging.info('Tile is {}'.format(pathfinderobject.tile))
-        logging.info('Date is {}'.format(pathfinderobject.date))
+        if pathfinderobject.tile in tiles:
+            logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
+            logging.info('Tile is {}'.format(pathfinderobject.tile))
+            logging.info('Date is {}'.format(pathfinderobject.date))
 
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
 
@@ -97,6 +97,7 @@ for path in userinput.input:
                     extmask = glob.glob(cname)[0]
                     cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
                     logging.info('Using external cloudmask {}'.format(extmask))
+                    
                 logging.info('Shape of cloudmask is {}'.format(cloudmask.shape))
 
             vegindex = Index(pathfinderobject.imgpath,cfg)
@@ -112,7 +113,7 @@ for path in userinput.input:
             if userinput.platform == 's2':
                 rastervalidatorobject = RasterValidatorS2(path, maxcloudcover, geoobject)
                 logging.info('Cloudcover below {}: {}'.format(maxcloudcover, rastervalidatorobject.not_cloudcovered))
-                logging.info('Data within area of interest: {}'.format(rastervalidatorobject.datacovered))
+                logging.info('Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
                 not_cloudcovered = rastervalidatorobject.not_cloudcovered
                 datacovered = rastervalidatorobject.datacovered
             else:
@@ -120,7 +121,7 @@ for path in userinput.input:
                 datacovered = True
             
             if not_cloudcovered and datacovered:
-                logging.info(' STARTING TO LOOP THROUGH INDICES...')
+                logging.info(' LOOPING THROUGH GIVEN INDICES')
                 for index in userinput.indexlist:
 
                     if re.match(cfg['band_designation'], index):
@@ -130,19 +131,18 @@ for path in userinput.input:
                     
                     # If user input --no_cloudmask was used, do not apply cloudmask:
                     if userinput.nomask: 
+                        logging.info(" Cloudmask will not be applied as input --no_cloudmask was entered.")
                         affine = vegindex.affine
                         extractorobject = Extractor(array, shapefile, userinput.idname, affine, userinput.statistics, userinput.exclude_border)                    
                     else:
                         logging.info(' Applying cloudmask...')
                         masked_array = vegindex.mask_array(array,cloudmask)
                         affine = vegindex.affine
-                        logging.info (' Extracting...')
                         extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
                     
                     logging.info(' Writing results...')
                     for format in userinput.format:
                         extractedarray = extractorobject.extract_format(format)
-                        logging.info(' EXTRACTEDARRAY IS: {}'.format(extractedarray))
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
                         
