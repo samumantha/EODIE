@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 from shapely.validation import explain_validity
-import shapely
 
 # Create argument parser
 
