@@ -55,8 +55,7 @@ if not userinput.exclude_splitshp:
     else:
         tiles = shapesplitter.tiles
     shp_directory = os.path.join(shp_directory, 'EODIE_temp_shp')
-    baseshapename = shapesplitter.basename    
-    logging.info(" BASESHAPENAME IS: {}".format(baseshapename))
+    baseshapename = shapesplitter.basename
 else:
     baseshapename = userinput.shpbase
 
