@@ -82,6 +82,8 @@ for path in userinput.input:
             logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
             logging.info('Tile is {}'.format(pathfinderobject.tile))
             logging.info('Date is {}'.format(pathfinderobject.date))
+        else:
+            logging.info(' Data from tile {} was found within input folder but was not processed.'.format(pathfinderobject.tile))
 
         if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
 
