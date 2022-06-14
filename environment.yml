@@ -13,4 +13,4 @@ dependencies:
   - pyyaml=5.4.1
   - pytest
   - matplotlib
-
+  - geopandas
