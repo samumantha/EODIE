@@ -12,7 +12,7 @@ Recommended installation instructions
 --------------------------------------
 
 1. Install `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_ 
-2. Get the code from gitlab ``git clone https://gitlab.com/eetun-tiimi/EODIE.git``
+2. Get the code from gitlab ``git clone https://gitlab.com/fgi_nls/public/EODIE.git``
 3. Create conda environment from environment.yml ``conda env create -f environment.yml`` 
 4. Activate conda environment eodie ``conda activate eodie``
 5. Move into EODIE directory ``cd EODIE/src/eodie``
