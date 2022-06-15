@@ -2,7 +2,8 @@
 Script for manipulating or inspecting vectordata before running EODIE. 
 Use python manipulate_vector.py --help for detailed instructions.
 
-Written by Arttu Kivimäki (FGI) in June 2022.
+Written by Arttu Kivimäki (FGI) in June 2022. 
+The script should work with all vector data formats supported by EODIE (.shp, .gpkg, .geojson, .fgb and .csv) but has not been extensively tested.
 
 '''
 
