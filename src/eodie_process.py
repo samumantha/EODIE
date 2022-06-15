@@ -70,16 +70,18 @@ for path in userinput.input:
         tiles = pathfinderobject.tile
 
     if userinput.platform == 'tif':
-        logging.info('File to be processed {}'.format(path))
-        raster = RasterData(path,cfg)
-        geoobject = VectorData(baseshapename + '.shp')
-        geoobject.reproject_to_epsg(raster.epsg)
-        extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics ,userinput.exclude_border)
+        for band in userinput.tifbands:
+            band = int(band)
+            logging.info('File and band to be processed {}, band '.format(path, band))
+            raster = RasterData(path,cfg)
+            geoobject = VectorData(baseshapename + '.shp')
+            geoobject.reproject_to_epsg(raster.epsg)
+            extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics, band, userinput.exclude_border)
         
-        for format in userinput.format:
-            extractedarray = extractorobject.extract_format(format)
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.platform, "", userinput.statistics, raster.crs)
-            writerobject.write_format(format)
+            for format in userinput.format:
+                extractedarray = extractorobject.extract_format(format)
+                writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'] + "_band_" + str(band), userinput.platform, "", userinput.statistics, raster.crs)
+                writerobject.write_format(format)
     else:
         if pathfinderobject.tile in tiles:
             logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
