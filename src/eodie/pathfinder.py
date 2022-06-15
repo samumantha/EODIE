@@ -44,10 +44,12 @@ class Pathfinder(object):
         if not self.cfg['platform'] == 'tif':
             self.get_imgpath()
             self.get_tileinfo()
+            self.get_dateinfo()
         else:
             self.tile = ''
             self.imgpath = self.rasterdir
-        self.get_dateinfo()
+            self.date = ''
+        
         
 
     def get_imgpath(self):
