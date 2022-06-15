@@ -25,12 +25,43 @@ Validator(userinput)
 
 cfg = userinput.config
 
+#setup logging for prints in file and stdout
+
+# Extract input file or directory name from input for naming the log file accordingly
+if userinput.rasterfile is not None:
+    filename = os.path.split(userinput.rasterfile)[1].split(".")[0]
+else:
+    dirname = os.path.split(userinput.rasterdir)[1]     
+
+# If --verbose was given, logging outputs will be printed to terminal
+if userinput.verbose:  
+    # If --file was given, filename will be used as basename for logging file.
+    if userinput.rasterfile is not None:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+    # If --dir was given, directory name will be used as basename for logging file.
+    else:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
+    logging.basicConfig(level = logging.INFO, handlers = handlers)
+else:
+    # If --file was given, filename will be used as basename for logging file
+    if userinput.rasterfile is not None:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+    # If --dir was given, directory name will be used as basename for logging file. 
+    else:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
+
+logging.info(' ALL INPUTS FOR THIS PROCESS:')
+# Loop through userinputs and print key: value to log file.
+for key in vars(userinput).keys():
+    logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
+
 #create results dir 
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
 # If data is not in shapefile format, transform it to shapefile:
 if userinput.input_type != 'shp': 
+    logging.info(" CONVERTING {} TO A SHAPEFILE".format(userinput.vectorbase))
     object_to_shp = VectorData(userinput.vectorbase + "." + userinput.input_type)
     # If input format is csv, run csv_to_shp
     if userinput.input_type == 'csv':
@@ -42,41 +73,12 @@ if userinput.input_type != 'shp':
     else:      
         object_to_shp.convert_to_shp(userinput.vectorbase + ".shp")
 
+    logging.info(" SHAPEFILE CONVERSION COMPLETED")
 
 tiles = None
 shp_directory, shp_name = os.path.split(userinput.vectorbase)
 
 # 
-
-#setup logging for prints in file and stdout
-
-# Extract input file or directory name from input for naming the log file accordingly
-if userinput.myfile is not None:
-    filename = os.path.split(userinput.myfile)[1].split(".")[0]
-else:
-    dirname = os.path.split(userinput.mydir)[1]     
-
-# If --verbose was given, logging outputs will be printed to terminal
-if userinput.verbose:  
-    # If --file was given, filename will be used as basename for logging file.
-    if userinput.myfile is not None:
-        handlers = [logging.FileHandler(os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
-    # If --dir was given, directory name will be used as basename for logging file.
-    else:
-        handlers = [logging.FileHandler(os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
-    logging.basicConfig(level = logging.INFO, handlers = handlers)
-else:
-    # If --file was given, filename will be used as basename for logging file
-    if userinput.myfile is not None:
-        logging.basicConfig(filename = os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
-    # If --dir was given, directory name will be used as basename for logging file. 
-    else:
-        logging.basicConfig(filename = os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
-
-logging.info(' ALL INPUTS FOR THIS PROCESS:')
-# Loop through userinputs and print key: value to log file.
-for key in vars(userinput).keys():
-    logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
 
 
 logging.info(' STARTING TILESPLITTING ')

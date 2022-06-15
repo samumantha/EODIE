@@ -73,10 +73,11 @@ class UserInput(object):
 
         self.rasterdir = args.rasterdir
         self.rasterfile = args.rasterfile
-        if args.rasterfile is not None:
-            self.input = [args.rasterfile]
-        if self.rasterfile[-1] == "/":
-            self.rasterfile = self.rasterfile[:-1]
+        if self.rasterfile is not None:
+            if self.rasterfile[-1] == "/":
+                self.rasterfile = self.rasterfile[:-1]
+            self.input = [self.rasterfile]
+        
         else:
             #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
