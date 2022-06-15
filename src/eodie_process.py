@@ -25,6 +25,10 @@ Validator(userinput)
 
 cfg = userinput.config
 
+#create results dir 
+if not os.path.exists(userinput.outpath):
+    os.mkdir(userinput.outpath)
+
 #setup logging for prints in file and stdout
 
 # Extract input file or directory name from input for naming the log file accordingly
@@ -55,9 +59,7 @@ logging.info(' ALL INPUTS FOR THIS PROCESS:')
 for key in vars(userinput).keys():
     logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
 
-#create results dir 
-if not os.path.exists(userinput.outpath):
-    os.mkdir(userinput.outpath)
+
 
 # If data is not in shapefile format, transform it to shapefile:
 if userinput.input_type != 'shp': 
