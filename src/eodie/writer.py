@@ -28,7 +28,7 @@ class Writer(object):
         tilename of the raster product where data was extracted from
     """
 
-    def __init__(self,outdir, date, tile, extractedarrays, index, orbit, statistics = ['count'], crs = None):
+    def __init__(self,outdir, date, tile, extractedarrays, index, platform, orbit, statistics = ['count'], crs = None):
         """initialize writer object
         Parameters
         -----------
@@ -42,14 +42,18 @@ class Writer(object):
             extracted array and its information
         index: str
             indexname of the data to be stored
+        platform: str
+            platform of input raster data
         statistics: list of str, default=['count']
             extracted statistics
         crs: str
             coordinate reference system
 
         """
-
-        self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile + '_orbit_' + str(orbit))
+        if platform == "s2":
+            self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile + '_orbit_' + str(orbit))
+        else:
+            self.outpath = os.path.join(outdir, index)
         self.extractedarrays = extractedarrays
         self.tile = tile
         self.statistics = statistics
