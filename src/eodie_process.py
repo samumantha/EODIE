@@ -24,6 +24,7 @@ userinput = UserInput()
 Validator(userinput)
 
 cfg = userinput.config
+tiles = None
 
 #create results dir 
 if not os.path.exists(userinput.outpath):
@@ -77,7 +78,7 @@ for path in userinput.input:
         
         for format in userinput.format:
             extractedarray = extractorobject.extract_format(format)
-            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics, raster.crs)
+            writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.platform, "", userinput.statistics, raster.crs)
             writerobject.write_format(format)
     else:
         if pathfinderobject.tile in tiles:
@@ -119,6 +120,7 @@ for path in userinput.input:
                 logging.info('Data withing area of interest: {}'.format(rastervalidatorobject.datacovered))
                 not_cloudcovered = rastervalidatorobject.not_cloudcovered
                 datacovered = rastervalidatorobject.datacovered
+                orbit = rastervalidatorobject.get_orbit_number()
             else:
                 not_cloudcovered = True
                 datacovered = True
@@ -146,7 +148,7 @@ for path in userinput.input:
                     logging.info(' Writing results...')
                     for format in userinput.format:
                         extractedarray = extractorobject.extract_format(format)
-                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
+                        writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.platform, orbit, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
                         
                 if 'array' in userinput.format:
