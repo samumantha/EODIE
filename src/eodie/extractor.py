@@ -16,7 +16,7 @@ class Extractor(object):
 
     """Extracting object based information from an array with affine information and a shapefile"""
 
-    def __init__(self, maskedarray, shapefile, idname, affine, statistics, exclude_border=False):
+    def __init__(self, maskedarray, shapefile, idname, affine, statistics, band = 1,  exclude_border=False):
         """Initializing the Extractor object
 
         Parameters
@@ -42,6 +42,7 @@ class Extractor(object):
         self.all_touched = not exclude_border
         self.maskedarray = maskedarray
         self.statistics = statistics
+        self.band = int(band)
 
     def extract_format(self, format):
         """ runs own class method based on format given 
@@ -68,7 +69,7 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band = self.band, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
         extractedarrays = {}
         for x in a:
             try:
