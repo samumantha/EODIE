@@ -28,7 +28,7 @@ class Writer(object):
         tilename of the raster product where data was extracted from
     """
 
-    def __init__(self,outdir, date, tile, extractedarrays, index, statistics = ['count'],crs=None):
+    def __init__(self,outdir, date, tile, extractedarrays, index, orbit, statistics = ['count'], crs = None):
         """initialize writer object
         Parameters
         -----------
@@ -48,11 +48,12 @@ class Writer(object):
             coordinate reference system
 
         """
-        self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile)
+
+        self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile + '_orbit_' + str(orbit))
         self.extractedarrays = extractedarrays
         self.tile = tile
         self.statistics = statistics
-        self.crs = crs
+        self.crs = crs        
 
     def write_format(self, format):
         """ runs own class method based on format given 
