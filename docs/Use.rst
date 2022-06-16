@@ -47,6 +47,7 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** String
 | **example:** ``--id id``
 | Not all vector files use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. If your vector file is not a GeoPackage, you may examine available fieldnames with the auxiliary script `examine_vectorfile.py`. With GeoPackage, you may use `examine_geopackage.py` (see also :ref:`auxfiles`).
+| **ALERT**: Field names longer than 10 characters will be shortened to first 10 characters during shapefile conversion. You need to use the shortened name of the ID field as --id for EODIE to work! 
 
 | ``--input_type``
 | The file extension of the input file provided in --vector. Supported extensions are shp, gpkg, geojson, csv and fgb. If you are using GeoPackage with more than one layer, you need to determine the name of the layer with --gpkg_layer.  Csv files need a column for well-known text (WKT) to determine the spatial extent of each feature and the EPSG code determined with --epsg_for_csv
