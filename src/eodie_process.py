@@ -18,6 +18,7 @@ from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
 from datetime import datetime 
+import timeit
 
 
 userinput = UserInput()
@@ -49,7 +50,16 @@ if not userinput.exclude_splitshp:
     world_tiles = cfg['tileshp']+'.shp'
     fieldname = cfg['fieldname']
     shapesplitter = SplitshpObject(small_polygon_shapefile, world_tiles, shp_directory, fieldname)
+    tic = timeit.default_timer()
     shapesplitter.splitshp()
+    toc = timeit.default_timer()
+    tilesplit_time = toc - tic
+    if tilesplit_time > 60:
+        tilesplit_time = round(tilesplit_time/60)
+        logging.info(' Tilesplitting completed, process took {} minutes'.format(tilesplit_time))
+    else:
+        tilesplit_time = round(tilesplit_time + 1)
+        logging.info(' Tilesplitting completed, process took {} seconds'.format(tilesplit_time))
     # Check if user limited the tiles to be processed
     if userinput.tiles is not None:
         tiles = userinput.tiles
@@ -70,13 +80,13 @@ for path in userinput.input:
         tiles = pathfinderobject.tile
 
     if userinput.platform == 'tif':
-        for band in userinput.tifbands:
+        for band in userinput.tifbands:            
             band = int(band)
             logging.info('File and band to be processed {}, band '.format(path, band))
             raster = RasterData(path,cfg)
             geoobject = VectorData(baseshapename + '.shp')
             geoobject.reproject_to_epsg(raster.epsg)
-            extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics, band, userinput.exclude_border)
+            extractorobject = Extractor(path, geoobject.geometries, userinput.idname, raster.affine, userinput.statistics, None, band, userinput.exclude_border)
         
             for format in userinput.format:
                 extractedarray = extractorobject.extract_format(format)
@@ -114,7 +124,7 @@ for path in userinput.input:
             geoobject.reproject_to_epsg(vegindex.epsg)
 
             shapefile = geoobject.geometries
-
+            
             maxcloudcover = cfg['maxcloudcover']
             if userinput.platform == 's2':
                 rastervalidatorobject = RasterValidatorS2(path, maxcloudcover, geoobject)
@@ -130,7 +140,7 @@ for path in userinput.input:
             if not_cloudcovered and datacovered:
                 logging.info(' LOOPING THROUGH GIVEN INDICES')
                 for index in userinput.indexlist:
-
+                    logging.info(' Calculating {}'.format(index))
                     if re.match(cfg['band_designation'], index):
                         array = vegindex.get_array(index)
                     else:
@@ -140,16 +150,24 @@ for path in userinput.input:
                     if userinput.nomask: 
                         logging.info(" Cloudmask will not be applied as input --no_cloudmask was entered.")
                         affine = vegindex.affine
-                        extractorobject = Extractor(array, shapefile, userinput.idname, affine, userinput.statistics, userinput.exclude_border)                    
+                        extractorobject = Extractor(array, shapefile, userinput.idname, affine, userinput.statistics, orbit, userinput.exclude_border)                    
                     else:
                         logging.info(' Applying cloudmask...')
                         masked_array = vegindex.mask_array(array,cloudmask)
                         affine = vegindex.affine
-                        extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
+                        extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics, orbit, userinput.exclude_border)
                     
                     logging.info(' Writing results...')
                     for format in userinput.format:
+                        tic = timeit.default_timer()
                         extractedarray = extractorobject.extract_format(format)
+                        toc = timeit.default_timer()
+                        extracting_time = toc - tic
+                        if extracting_time > 60:
+                            extracting_time = round(extracting_time/60)
+                            logging.info(' Extracting {} for {} took {} minutes'.format(format, index, extracting_time))
+                        else:
+                            logging.info(' Extracting {} for {} took {} seconds'.format(format, index, round(extracting_time)))
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.platform, orbit, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
                         
@@ -159,7 +177,7 @@ for path in userinput.input:
                    
             else:
                 logging.warning('Cloudcovered or no data in Area of interest!')
-
+    logging.info(' ')
 
 if not userinput.exclude_splitshp:
     if not userinput.keep_shp: 
