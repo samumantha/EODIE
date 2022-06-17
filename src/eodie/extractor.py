@@ -129,6 +129,3 @@ class Extractor(object):
             extractedarrays[myid]['array'] = myarray.filled(-99999)
             extractedarrays[myid]['affine'] = x['properties']['mini_raster_affine']
         return extractedarrays
-        
-
-    

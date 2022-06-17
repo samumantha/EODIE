@@ -12,6 +12,7 @@ import logging
 import pickle
 import fiona
 import rasterio
+import sqlite3
 
 class Writer(object):
     """ 
@@ -57,7 +58,10 @@ class Writer(object):
         self.extractedarrays = extractedarrays
         self.tile = tile
         self.statistics = statistics
-        self.crs = crs        
+        self.crs = crs
+        self.date = date
+        self.outdir = outdir
+        self.index = index
 
     def write_format(self, format):
         """ runs own class method based on format given 
@@ -76,6 +80,44 @@ class Writer(object):
         default = "Unavailable format"
         return getattr(self, 'write_' + format, lambda: default)()
 
+    def write_database(self):
+        """ Writing statistics results from json into sqlite3 database
+        """
+        # Defining output path - all data is stored into same .db file, so no separate file naming is needed.
+        self.outdir = self.outdir + '/EODIE_results.db'
+        # Creating a logging entry
+        logging.info("Statistics to database in: " + self.outdir)
+
+        # Connecting to the database. If it does not exists already, it will be created.
+        connection = sqlite3.connect(self.outdir)
+        # Activating cursor for editing database.
+        cursor = connection.cursor()
+        # Defining database table column names from statistics. 
+        columns = " float, ".join(self.statistics)
+        # Define command for creating the table with the name of current index and columns for id, date and statistics. 
+        command = "CREATE TABLE IF NOT EXISTS " + self.index + " (id integer, date text, tile text," + columns + " float)"
+
+        # Executing table creation command.
+        cursor.execute(command)
+        # Create enough question marks for building the values command
+        question_marks = ','.join(list('?' * (len(self.statistics) + 3)))
+        # Define command for inserting values into database
+        insert_SQL = 'INSERT INTO ' + self.index + ' VALUES (' + question_marks + ')'
+        # Loop through keys in extractedarray
+        for key in self.extractedarrays.keys():
+            # Define one row 
+            onerow = [key] + self.extractedarrays[key]
+            # Add the date to the 2nd slot of the list
+            onerow.insert(1, self.date)
+            # Add the tile to the 3rd slot of the list
+            onerow.insert(2, self.tile)
+            # Run insert_SQL
+            cursor.execute(insert_SQL, onerow)
+            # Commit changes
+            connection.commit()
+        # Close connection
+        connection.close()
+        
     def write_statistics(self):
         """ writing statistics results from json into csv
         """

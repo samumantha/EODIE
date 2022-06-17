@@ -92,6 +92,9 @@ for path in userinput.input:
                 extractedarray = extractorobject.extract_format(format)
                 writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'] + "_band_" + str(band), userinput.platform, "", userinput.statistics, raster.crs)
                 writerobject.write_format(format)
+                if format == 'statistics' and userinput.database_out:
+                    writerobject.write_format('database')
+
     else:
         if pathfinderobject.tile in tiles:
             logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
@@ -157,9 +160,18 @@ for path in userinput.input:
                         affine = vegindex.affine
                         extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics, orbit, userinput.exclude_border)
                     
+<<<<<<< src/eodie_process.py
                     logging.info(' Writing results...')
                     for format in userinput.format:
                         tic = timeit.default_timer()
+=======
+                    masked_array= vegindex.mask_array(array,cloudmask)
+                    affine = vegindex.affine
+
+                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
+                    
+                    for format in userinput.format:                                                  
+>>>>>>> src/eodie_process.py
                         extractedarray = extractorobject.extract_format(format)
                         toc = timeit.default_timer()
                         extracting_time = toc - tic
@@ -170,6 +182,8 @@ for path in userinput.input:
                             logging.info(' Extracting {} for {} took {} seconds'.format(format, index, round(extracting_time)))
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.platform, orbit, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
+                        if format == 'statistics' and userinput.database_out:
+                            writerobject.write_format('database')
                         
                 if 'array' in userinput.format:
                     lookup_file = cfg['lookup']

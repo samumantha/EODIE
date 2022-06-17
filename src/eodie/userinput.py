@@ -55,6 +55,7 @@ class UserInput(object):
         parser.add_argument('--geotiff_out', dest='geotiff_out', action='store_true', help='flag to indicate that geotiffs shall be extracted')
         parser.add_argument('--statistics_out', dest='statistics_out',action='store_true',help='flag to indicate that statistics shall be calculated')
         parser.add_argument('--array_out', dest= 'array_out', action='store_true', help='flag to indicate that arrays shall be extracted')
+        parser.add_argument('--database_out', dest = 'database_out', action = 'store_true', help = 'flag to indicate that statistics shall be saved to a database')
 
         args = parser.parse_args()
 
@@ -100,6 +101,7 @@ class UserInput(object):
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.keep_shp = args.keep_shp
+        self.database_out = args.database_out
 
         self.drop_geom = args.drop_geom
 
@@ -123,7 +125,7 @@ class UserInput(object):
         if self.geotiff_out:
             self.format.append('geotiff')
         if self.array_out:
-            self.format.append('array')       
+            self.format.append('array')  
 
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
