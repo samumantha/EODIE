@@ -125,37 +125,3 @@ class Extractor(object):
             extractedarrays[myid]['array'] = myarray.filled(-99999)
             extractedarrays[myid]['affine'] = x['properties']['mini_raster_affine']
         return extractedarrays
-    
-    def extract_database(self):
-        """extracting per polygon statistics from rasterfile with affine information"""
-        # following is necessary for external tif which is not a masked array
-        try:
-            self.maskedarray.dtype
-            filledraster = self.maskedarray.filled(-99999)
-        except AttributeError:
-            filledraster = self.maskedarray
-        
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
-        extractedarrays = {}
-        for x in a:
-            try:
-                myid = x['properties'][self.idname]
-            except KeyError:
-                myid = x[self.idname]
-            statlist = []
-            for stat in self.statistics:
-                if stat == 'count':
-                    onestat = str(int(x['properties'][stat]))
-                else:
-                    #setting precision of results to .3
-                    #WARNING: std should always be rounded up, but is not with this approach
-                    if not x['properties'][stat] is None:
-                        onestat = format(x['properties'][stat], '.3f')
-                    else:
-                        onestat = None
-                
-                statlist.append(onestat)
-            extractedarrays[myid] = statlist
-        return extractedarrays
-
-    
