@@ -109,3 +109,8 @@ class RasterValidatorS2(object):
         else:
             return True
         
+    def get_orbit_number(self):
+        """ gets the orbit number of the imagery to attach to output file names to avoid pixel misalignment """
+        doc = self.read_xml(self.get_xml())
+        orbit_number = int(doc.getElementsByTagName('SENSING_ORBIT_NUMBER')[0].firstChild.data)
+        return orbit_number

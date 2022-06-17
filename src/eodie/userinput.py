@@ -41,10 +41,14 @@ class UserInput(object):
         parser.add_argument('--start', dest='startdate',default = '20160101', help='give startdate of timerange of interest')
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
         parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
-        
+        parser.add_argument('--tiles', dest = 'tiles', default = None, help = 'Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters', nargs = '*')
+        parser.add_argument('--tifbands', dest = 'tifbands', default = 1, nargs = "*", help = 'Bands of tif to be processed. Defaults to 1.')
+
         parser.add_argument('--test', dest='test', action='store_true', help='only needed for automatic testing')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
         parser.add_argument('--external_cloudmask', dest= 'extmask', default = None, help= ' location and name of external cloudmask (without tile and date and extension) if available')
+        parser.add_argument('--no_cloudmask', dest = 'nomask', action = 'store_true', help = "Flag to indicate that cloudmask shall not be applied.")
+        parser.add_argument('--delete_invalid_geometries', dest = 'drop_geom', action = 'store_true', help = 'Flag to indicate if invalid geometries should be removed from the processing.')
         parser.add_argument('--exclude_splitshp', dest='exclude_splitshp', action='store_true',help='if this flag is set, it is assumed that splitshp has been run manually beforehand')
         parser.add_argument('--verbose', '-v',dest='verbose', action='store_true',help=' logging in logfile and prints in terminal')
 
@@ -99,10 +103,16 @@ class UserInput(object):
         self.keep_shp = args.keep_shp
         self.database_out = args.database_out
 
+        self.drop_geom = args.drop_geom
+
+        self.tiles = args.tiles
+        self.tifbands = args.tifbands
+
         self.geotiff_out = args.geotiff_out
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
+        self.nomask = args.nomask
         self.exclude_splitshp = args.exclude_splitshp
         if self.platform == 'tif':
             self.exclude_splitshp = True
@@ -120,7 +130,3 @@ class UserInput(object):
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append('statistics')
-
-
-
-        

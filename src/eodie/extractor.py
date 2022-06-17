@@ -16,7 +16,7 @@ class Extractor(object):
 
     """Extracting object based information from an array with affine information and a shapefile"""
 
-    def __init__(self, maskedarray, shapefile, idname, affine, statistics, exclude_border=False):
+    def __init__(self, maskedarray, shapefile, idname, affine, statistics, orbit = None, band = 1,  exclude_border=False):
         """Initializing the Extractor object
 
         Parameters
@@ -29,8 +29,10 @@ class Extractor(object):
             Fieldname of unique ID field of the shapefile (will be used as polygon identifier for storing statistics)
         affine: Affine object
             containing affine/transform information of the array
-        statsistics: list of str, optional, default: empty list
+        statistics: list of str, optional, default: empty list
             list of statistics to be extracted for each polygon
+        band: integer, default = 1
+            which band from a multiband geotif should be handled
         exclude_border: boolean, optional, default: False
             indicator if border pixels should be in- (False) or excluded (True)
         
@@ -42,6 +44,8 @@ class Extractor(object):
         self.all_touched = not exclude_border
         self.maskedarray = maskedarray
         self.statistics = statistics
+        self.orbit = orbit
+        self.band = int(band)        
 
     def extract_format(self, format):
         """ runs own class method based on format given 
@@ -56,7 +60,6 @@ class Extractor(object):
         nothing itself, but runs given format function which returns a dictionary for the given format 
 
         """
-
         default = "Unavailable format"
         return getattr(self, 'extract_' + format, lambda: default)()
         
@@ -69,8 +72,8 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
-        extractedarrays = {}
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band = self.band, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
+        extractedarrays = {}        
         for x in a:
             try:
                 myid = x['properties'][self.idname]
@@ -89,7 +92,8 @@ class Extractor(object):
                         onestat = None
                 
                 statlist.append(onestat)
-            extractedarrays[myid] = statlist
+            statlist.insert(0, self.orbit)
+            extractedarrays[myid] = statlist            
         return extractedarrays
 
     def extract_array(self):
@@ -100,7 +104,7 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=self.band, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:
@@ -115,7 +119,7 @@ class Extractor(object):
             filledraster = self.maskedarray.filled(+99999)
         except AttributeError:
             filledraster = self.maskedarray
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=1, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=self.band, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
 
         extractedarrays = {}
         for x in a:

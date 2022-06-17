@@ -44,10 +44,12 @@ class Pathfinder(object):
         if not self.cfg['platform'] == 'tif':
             self.get_imgpath()
             self.get_tileinfo()
+            self.get_dateinfo()
         else:
             self.tile = ''
             self.imgpath = self.rasterdir
-        self.get_dateinfo()
+            self.date = ''
+        
         
 
     def get_imgpath(self):
@@ -64,5 +66,6 @@ class Pathfinder(object):
     def get_dateinfo(self):
         """extract date from filename according to pattern from from config"""
         datepattern = r'%s' % self.cfg['datepattern']
-        self.date = re.search(datepattern,self.imgpath).group(0)
+        splitted_imgpath = self.imgpath.split("/")[-5]       
+        self.date = re.search(datepattern, splitted_imgpath).group(0)
 

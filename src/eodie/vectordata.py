@@ -11,6 +11,9 @@ import fiona
 import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
+from shapely.validation import explain_validity
+import shapely
+import geopandas as gpd
 import logging
 from shutil import copyfile
 import re
@@ -85,7 +88,7 @@ class VectorData(object):
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now')
+        logging.info(' Checking the projection of the inputfile now')
         epsgcode = self.get_epsg()
         head,_,root,ext = self._split_path()
 
@@ -100,7 +103,7 @@ class VectorData(object):
                 reprojectcommand = 'ogr2ogr -t_srs EPSG:' + myepsg + ' ' +  reprojectedshape + ' ' + self.geometries
                 logging.info('Reprojectcommand: {}'.format(reprojectcommand))
                 subprocess.call(reprojectcommand, shell=True)
-                logging.info('input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
+                logging.info(' Input shapefile had other than EPSG {} but was reprojected and works now'.format(myepsg))
             #update the objects shapefile
             self.geometries = reprojectedshape
 
@@ -174,3 +177,66 @@ class VectorData(object):
         inDataSource = None
         outDataSource = None
         return convexhullp
+
+    def check_empty(self, vectorfile):
+        ''' Checks for empty geometries in vectorfile
+        Parameters:
+        -----------
+            vectorfile: geodataframe the user-defined vectorfile
+        Returns:
+        --------
+            None; prints the rows with non-existent geometries.
+        '''
+        logging.info(" Checking for empty geometries...")
+        # Filter rows where geometry is None
+        vectorfile_nogeom = vectorfile[vectorfile['geometry'] == None]
+        # Log accordingly 
+        if len(vectorfile_nogeom) > 0:
+            logging.info(" Following features have no geometry:\n\n {}".format(vectorfile_nogeom))
+        else:
+            logging.info(" All features have geometries.")
+
+    def check_validity(self, drop):
+        """ Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
+        Parameters:
+        -----------
+            drop: Flag to indicate if invalid geometries should be dropped.     
+        Returns:
+        --------
+        vectorfilepath: str
+            Path to either the original vectorfile or a filtered one, from which features with empty or invalid geometries have been removed. 
+        """
+        # Read shapefile into a geopandas data frame
+        vectorfile = gpd.read_file(self.geometries)
+        # Check empty geometries
+        self.check_empty(vectorfile)         
+        # Check validity of geometries
+        vectorfile['validity'] = vectorfile['geometry'].is_valid 
+        # Extract only rows with existing geometries   
+        vectorfile_with_geom = vectorfile.loc[vectorfile['geometry'] != None].copy()
+        # Filter rows where geometries were invalid
+        vectorfile_with_invalid_geom = vectorfile_with_geom.loc[vectorfile_with_geom['validity'] == False].copy()
+        # If invalid geometries exist, run explain_validity for them
+        if len(vectorfile_with_invalid_geom) > 0:
+            vectorfile_with_invalid_geom['explanation'] = vectorfile_with_invalid_geom.apply(lambda row: explain_validity(row.geometry), axis = 1)
+            logging.info(" Following features have invalid geometries:\n\n {}".format(vectorfile_with_invalid_geom))   
+        else:
+            logging.info(" All features have valid geometries.")
+
+        # If --delete_invalid_geometries was defined, rewrite a new file without invalid geometries.
+        if drop:
+            # Extract filepath
+            head,_ , root, ext = self._split_path()
+            # Build output filename and path
+            outputfilename = root + "_valid" + ext
+            outputpath = os.path.join(head, outputfilename)
+            
+            # Filter only valid geometries 
+            vectorfile_with_valid_geom = vectorfile_with_geom.loc[vectorfile_with_geom['validity'] == True].copy()
+            # Write a file from the geodataframe
+            vectorfile_with_valid_geom.to_file(outputpath, index = False)
+
+            return outputpath    
+
+        else:
+            return self.geometries
