@@ -83,7 +83,7 @@ class Writer(object):
         logging.info('stat to csv in: ' + self.outpath)
         with open(self.outpath, mode='w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',')
-            csv_writer.writerow(['id']+ self.statistics )
+            csv_writer.writerow(['id']+ ['orbit']+ self.statistics )
             for key in self.extractedarrays.keys():
                 onerow = [key] + self.extractedarrays[key]
                 csv_writer.writerow(onerow)
