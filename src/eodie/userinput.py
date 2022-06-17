@@ -116,8 +116,6 @@ class UserInput(object):
             self.format.append('geotiff')
         if self.array_out:
             self.format.append('array')  
-        if self.database_out:
-            self.format.append('database')     
 
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
