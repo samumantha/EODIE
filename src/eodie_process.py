@@ -72,6 +72,8 @@ for path in userinput.input:
             extractedarray = extractorobject.extract_format(format)
             writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, cfg['name'], userinput.statistics, raster.crs)
             writerobject.write_format(format)
+            if format == 'statistics' and userinput.database_out:
+                writerobject.write_format('database')
     else:
         logging.info('Imagepath is {}'.format(pathfinderobject.imgpath))
         logging.info('Tile is {}'.format(pathfinderobject.tile))
@@ -125,10 +127,12 @@ for path in userinput.input:
 
                     extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
                     
-                    for format in userinput.format:
+                    for format in userinput.format:                                                  
                         extractedarray = extractorobject.extract_format(format)
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
+                        if format == 'statistics' and userinput.database_out:
+                            writerobject.write_format('database')
                         
                 if 'array' in userinput.format:
                     lookup_file = cfg['lookup']
