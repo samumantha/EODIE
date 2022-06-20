@@ -14,4 +14,3 @@ dependencies:
   - pytest
   - matplotlib
   - geopandas
-  - timeit
