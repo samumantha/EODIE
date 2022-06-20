@@ -14,7 +14,7 @@ To test if the script runs as intended in your machine and to get familiar with 
 
 with:
 
-* ``--platform`` which platform the data in ``--file`` comes from
+* ``--platform`` which platform the data in ``--rasterfile`` comes from
 * ``--rasterfile`` the location of the tif file to be processed,
 * ``--vector`` the location and name of the vector file with polygons to extract information of
 * ``--id`` the fieldname of a unique ID for each polygon in the vectorfile
