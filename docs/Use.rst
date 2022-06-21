@@ -12,8 +12,11 @@ The following sections describe EODIEs command line arguments and the configurat
 Command line arguments
 ++++++++++++++++++++++
 
-The following parameters can be used in the commandline:
-Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given 
+The following parameters and flags can be used in the commandline (more information on each parameter and flag below):
+
+``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <> --input_type <> --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotif_out --array_out --statistics <> --index <> --start <> --end <> --keep_splitted --exclude_border --external_cloudmask <> --exclude_split_by_tile --verbose --test ``
+
+Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given.
 
 | ``--platform``
 | Which platform does the data come from? 
