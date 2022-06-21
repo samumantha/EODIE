@@ -3,15 +3,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.7
-  - shapely=1.7
-  - rasterio=1.2
-  - rasterstats=0.14
-  - fiona=1.8
-  - numpy=1.20
-  - gdal=3.1.4
-  - pyyaml=5.4.1
+  - python=3.9.13
+  - shapely=1.8.2
+  - rasterio=1.2.10
+  - rasterstats=0.16.0
+  - fiona=1.8.21
+  - numpy=1.22.4
+  - gdal=3.4.3
+  - pyyaml=6.0
+  - matplotlib=3.5.2
+  - geopandas=0.10.2
   - pytest
-  - matplotlib
-  - geopandas
-  - timeit
