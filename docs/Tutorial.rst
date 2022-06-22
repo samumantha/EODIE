@@ -91,9 +91,10 @@ Case 3: As Case 1 but processing done on HPC environment with SLURM
     #SBATCH --output=/path/to/job/output/array_job_out_%A_%a.txt # Path to where the output text files will be saved
     #SBATCH --error=/path/to/job/output/array_job_err_%A_%a.txt # Path to where the error text files will be saved
     #SBATCH --time=00:15:00 # Estimation of the time it takes to process one file
-    #SBATCH --ntasks=1 # The number of cores per one task
+    #SBATCH --ntasks=1 # The number of tasks
     #SBATCH --partition=small # The estimated processing power needed limitations (more partitions can be found in https://docs.csc.fi/computing/running/batch-job-partitions/)
     #SBATCH --mem-per-cpu=5000 # Estimation of how much memory is needed per cpu
+    #SBATCH --cpus-per-task=n # Change n to the number of CPUs per task
     #SBATCH --array=1-n # Change n to the number of files you have (how many jobs will be created), eg 'wc -l all_filenames.txt'
 
     module load geoconda # Loads the needed module for processing
@@ -109,12 +110,12 @@ Case 3: As Case 1 but processing done on HPC environment with SLURM
 
     mkdir $path/$local_dir # creates the local directory which was described in previous line
 
-    cp -r /path/to/the/original/shapefiles $path/$local_dir # Copies the shapefile to every temporary local directory
+    cp -r /path/to/the/original/shapefiles $path/$local_dir # Copies the shapefile to every temporary local directory. Note that with shp, the auxiliary files need to be copied as well (use * after filename).
 
-    cd /path/to/the/program/EODIE/src/eodie # Needs to be in the EODIE directory to work properly
+    cd /path/to/the/program/EODIE/src/ # Needs to be in the EODIE directory to work properly
 
     # The actual processing:
-    python eodie_process.py --rasterfile $name --vector name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi
+    python eodie_process.py --platform s2 --rasterfile $name --vector $path/$local_dir/name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi 
     # More specific arguments and their purpose can be found in EODIE documentation:  https://eodie.readthedocs.io/en/latest/
     rm -r $path/$local_dir # Removes the temporary directory which is not needed anymore
 
