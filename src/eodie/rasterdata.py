@@ -1,6 +1,6 @@
 """
 
-class for everyhing around the rasterdata
+Class for everyhing around the rasterdata.
 
 authors: Samantha Wittke
 
@@ -15,7 +15,8 @@ import rasterio
 from rasterio.enums import Resampling
 
 class RasterData(object):
-    """ Raster data related information and transformations
+    """Raster data related information and transformations.
+
     Attributes
     -----------
     cfg: dict
@@ -35,8 +36,7 @@ class RasterData(object):
     """
 
     def __init__(self, inpath, cfg='test_config.yml', test=False):
-
-        """ Initializing the raster object
+        """Initialize the raster object.
 
         Parameters
         -----------
@@ -48,7 +48,6 @@ class RasterData(object):
             If testing is performed
 
         """
-
         self.cfg = cfg
         self.inpath = inpath
         self.get_metadata()
@@ -64,7 +63,8 @@ class RasterData(object):
         self.test = test
 
     def get_bandfile(self, bandname):
-        """ get bandfile given a band name 
+        """Get bandfile given a band name.
+
         Parameters
         -----------
         bandname: str
@@ -77,8 +77,6 @@ class RasterData(object):
         resolution: str
             pixelsize of the band file found    
         """
-
-
         pathbuildinglist = self.cfg['pathbuildinglist']
 
         pathbuildinglist = [bandname if item == 'bandname' else item for item in pathbuildinglist]
@@ -104,7 +102,7 @@ class RasterData(object):
 
 
     def get_metadata(self):
-        """ get affine from red band file as representation for all"""
+        """Get affine from red band file as representation for all."""
         if self.cfg['platform'] == 'tif':
             bandfile = self.inpath
         else:
@@ -115,7 +113,8 @@ class RasterData(object):
             self.affine = src.transform
 
     def read_array(self, bandfile, dtype='f4'):
-        """ get array in given datatype according to bandname
+        """Get array in given datatype according to bandname.
+
         Parameters
         -----------
         bandfile: str
@@ -128,7 +127,6 @@ class RasterData(object):
             bandfile as numpy array with dtype
         
         """
-
         with rasterio.open(bandfile) as f:
             array = np.array(f.read(1))
         if self.test:
@@ -137,7 +135,7 @@ class RasterData(object):
         return array
 
     def dn_to_reflectance(self, array):
-        """ transformation of the digital number used when storing raster data to reflectance
+        """Transform of the digital number used when storing raster data to reflectance.
 
         Parameters
         ----------
@@ -152,7 +150,7 @@ class RasterData(object):
         return reflectance
 
     def get_array(self, band, resampling_method=None):
-        """ retreive an array based on band request
+        """Retrieve an array based on band request.
         
         Parameters
         -----------
@@ -166,7 +164,6 @@ class RasterData(object):
         array
             array that has been resampled and transformed as needed based on inputs
         """
-
         resampling_method = resampling_method if resampling_method is not None else self.cfg['resampling_method']
 
         if re.match(r'%s' % self.cfg['band_designation'], band):
@@ -188,7 +185,8 @@ class RasterData(object):
             return self.dn_to_reflectance(array)
 
     def resample(self, bandfile, scaling_factor, resampling_method, dtype='f4'):
-        """ reading the information of a band from raster product and resampling it to fit requirements (inputs)
+        """Read the information of a band from raster product and resampling it to fit requirements (inputs).
+
         Parameters
         ----------
         bandfile: str
@@ -204,7 +202,6 @@ class RasterData(object):
         data: numpy array
             array with the data trnsformed according to inputs
         """
-
         with rasterio.open(bandfile) as dataset:
             data = dataset.read(
                 out_shape=(int(dataset.height * scaling_factor),

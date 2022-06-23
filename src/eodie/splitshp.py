@@ -1,8 +1,8 @@
 """
 
-class to split a shapefile with small polygons based on a shapefile with larger polygons to one shapefile per large polygon
+Class to split a shapefile with small polygons based on a shapefile with larger polygons to one shapefile per large polygon.
 
-authors: Petteri Lehti, Samantha Wittke
+Authors: Petteri Lehti, Samantha Wittke
 
 """
 
@@ -20,9 +20,8 @@ import re
 import yaml
 
 class SplitshpObject(object):
+    """Class to take care of preparing a shapefile for use in EODIE.
 
-    """
-    Class to take care of preparing a shapefile for use in EODIE
     Attributes
     ----------
     fieldname: str
@@ -38,7 +37,8 @@ class SplitshpObject(object):
     """
 
     def __init__(self, small_polygon_shapefile, large_polygon_shapefile, shp_directory, fieldname, test= False):
-        """ initialize Spitshp object
+        """Initialize Spitshp object.
+
         Parameters
         ----------
         small_polygon_shapefile: str
@@ -66,7 +66,8 @@ class SplitshpObject(object):
 
 
     def reproject_to_epsg(self, myshp,myepsg):
-        """ reprojecting a shapefile to another CRS based on EPSG code
+        """Reproject a vectorfile to another CRS based on EPSG code.
+
         Parameters
         ----------
         myshp: str
@@ -106,7 +107,8 @@ class SplitshpObject(object):
 
 
     def make_geometryobject(self, parameter_content):
-        """ 
+        """Make a geometry object.
+
         Parameters
         -----------
         parameter_content:str
@@ -119,7 +121,8 @@ class SplitshpObject(object):
         return shape(parameter_content)
 
     def get_shp_properties(self, shapefile):
-        """ 
+        """Get the properties of vectorfile.
+
         Parameters
         -----------
         shapefile: object
@@ -139,7 +142,8 @@ class SplitshpObject(object):
         return driver,schema,crs
 
     def get_bounding_box(self, shapefile):
-        """ 
+        """Get the bounding box of vectorfile features.
+
         Parameters
         -----------
         shapefile: str
@@ -156,7 +160,8 @@ class SplitshpObject(object):
 
 
     def write_splitted_shapefiles(self, bounding_box_small_poly_shp,tile,outshpdir, small_poly_shp):
-        """ creates and writes the shapefile with small polygons splitted according to large polygons (tiles)
+        """Create and write the shapefile with small polygons splitted according to large polygons (tiles).
+
         Parameters
         -----------
         bounding_box_small_poly_shp: object
@@ -196,7 +201,8 @@ class SplitshpObject(object):
                 self.remove_empty(outshpname)
 
     def remove_empty(self,outshpname):
-        """ removes shapefiles that are created empty
+        """Remove shapefiles that are created empty.
+
         Parameters
         -----------
         outshpname: str
@@ -210,7 +216,8 @@ class SplitshpObject(object):
 
 
     def extract_needed_tiles(self, small_poly_shp, large_poly_shp, outshpname):
-        """ adds tiles that overlap with small polygons to tiles list
+        """Add tiles that overlap with small polygons to tiles list.
+
         Parameters
         -----------
         small_poly_shp: str
@@ -220,7 +227,6 @@ class SplitshpObject(object):
         outshpname: str
             name of the output shapefile
         """
-
         bounding_box_small_poly_shp = self.get_bounding_box(small_poly_shp)
 
         with fiona.open(large_poly_shp,'r') as s2shp:
@@ -237,7 +243,7 @@ class SplitshpObject(object):
 
 
     def splitshp(self):
-        """ run splithshape operation """
+        """Run splithshape operation."""
         self.splitshp_world()
         root = os.path.split(os.path.splitext(self.small_polygon_shapefile)[0])[1]
         self.basename = root
@@ -258,14 +264,14 @@ class SplitshpObject(object):
         logging.info('deleted splitted worldtiles')
 
     def splitshp_world(self):
-        """ extract only tiles from large polygon shapefile that overlap with the boundingbox of small polygon shapefile"""
+        """Extract only tiles from large polygon shapefile that overlap with the boundingbox of small polygon shapefile."""
         #build the output name from both input files
         self.out_shape_name = os.path.join(self.output_directory, os.path.splitext(os.path.split(self.large_polygon_shapefile)[-1])[0] + '_' + os.path.split(self.small_polygon_shapefile)[-1] )
 
         self.extract_needed_tiles(self.small_polygon_shapefile, self.large_polygon_shapefile, self.out_shape_name)
 
     def splitshp_mp(self):
-        """  run splitshape operation in parallel on available cores -2 cores split by tile"""
+        """Run splitshape operation in parallel on available cores -2 cores split by tile."""
         self.large_polygon_shapefile = self.reproject_to_epsg(self.out_shape_name,'4326')
 
         bounding_box_small_poly_shp = self.get_bounding_box(self.small_polygon_shapefile)
@@ -288,7 +294,7 @@ class SplitshpObject(object):
             pool.join()
 
     def delete_splitted_files(self):
-        """ removes all files created by this class"""
+        """Remove all files created by this class."""
         shp_remove_list = glob.glob(os.path.join(self.output_directory, '*'))  
         for file in shp_remove_list:
             os.remove(file)

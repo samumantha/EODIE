@@ -1,8 +1,8 @@
 """
 
-Class to create and adapt cloudmask array
+Class to create and adapt cloudmask array.
     
-authors: Samantha Wittke, Petteri Lehti
+Authors: Samantha Wittke, Petteri Lehti
 
 """
 import numpy as np
@@ -10,7 +10,8 @@ import rasterio
 from eodie.rasterdata import RasterData
 
 class Mask(RasterData):
-    """ Retrieving and transforming a cloudmask from Remote Sensing product or external
+    """Retrieve and transform a cloudmask from Remote Sensing product or external source.
+
     Attributes
     -----------
     cloudmask: boolean/int numpy array
@@ -20,7 +21,7 @@ class Mask(RasterData):
     """
 
     def __init__(self,inpath: str, cfg:dict = 'test_config.yml', test=False, external=None):
-        """ Initializing the mask object
+        """Initialize the mask object.
 
         Parameters
         -----------
@@ -34,15 +35,14 @@ class Mask(RasterData):
             location and name of the external cloudmask to be used
 
         """
-
         super().__init__(inpath,cfg, test)
         if external is not None:
             self.cloudmask = self.load_binary_mask(external)
         self.cfg = cfg
 
     def load_binary_mask(self,external):
-        """ Loads an external mask that needs to be a rasterfile with one/True is cloud, 0/False no cloud, 
-        with pixelsize as given in cfg and overlap exactly with the file to be masked 
+        """Load an external mask that needs to be a rasterfile with one/True is cloud, 0/False no cloud, with pixelsize as given in cfg and overlap exactly with the file to be masked.
+        
         Parameters
         -----------
         external: str
@@ -56,7 +56,8 @@ class Mask(RasterData):
             return np.array(f.read(1)).astype(int)
 
     def binarize_cloudmask(self,sclarray):
-        """ takes in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use 
+        """Take in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use.
+        
         Parameters
         -----------
         sclarray: numpy array
@@ -76,8 +77,8 @@ class Mask(RasterData):
         
 
     def create_cloudmask(self):
-        """ creates a mask from a file with mask information (eg about cloudy pixels), 
-        binarizes it, and resamples it to 10m pixel size 
+        """Create a mask from a file with mask information (eg about cloudy pixels), binarizes it, and resamples it to 10m pixel size.
+
         Returns
         --------
         cloudmask: boolean numpy array 
@@ -91,7 +92,8 @@ class Mask(RasterData):
 
 
     def createbitmask(self, maskarr, tobemasked):
-        """ creates a bitmask
+        """Create a bitmask.
+        
         Parameters
         -----------
         maskarr: numpy array
@@ -105,7 +107,8 @@ class Mask(RasterData):
         return np.vectorize(lambda somearr: self.checkbits(somearr, tobemasked))(maskarr)
         
     def checkbits(self, data, tobemaskedlist):
-        """ checks bits if they should be masked
+        """Check bits if they should be masked.
+
         Parameters
         ----------
         data: numpy array or int

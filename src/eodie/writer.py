@@ -1,9 +1,8 @@
 """
 
-class for writing results into file
+Class for writing results into file.
 
-
-authors: Samantha Wittke, Juuso Varho
+Authors: Samantha Wittke, Juuso Varho
 """
 
 import os
@@ -15,8 +14,8 @@ import rasterio
 import sqlite3
 
 class Writer(object):
-    """ 
-    Writing lists/arrays/georeferenced arrays to file
+    """Write lists/arrays/georeferenced arrays to file.
+
     Attributes
     -----------
     outpath: str
@@ -30,7 +29,8 @@ class Writer(object):
     """
 
     def __init__(self,outdir, date, tile, extractedarrays, index, platform, orbit, statistics = ['count'], crs = None):
-        """initialize writer object
+        """Initialize writer object.
+
         Parameters
         -----------
         outdir: str
@@ -64,7 +64,7 @@ class Writer(object):
         self.index = index
 
     def write_format(self, format):
-        """ runs own class method based on format given 
+        """Run own class method based on format given.
 
         Parameters
         -----------
@@ -76,13 +76,11 @@ class Writer(object):
         nothing itself, but runs given format function which writes data to file
 
         """
-
         default = "Unavailable format"
         return getattr(self, 'write_' + format, lambda: default)()
 
     def write_database(self):
-        """ Writing statistics results from json into sqlite3 database
-        """
+        """Write statistics results from json into sqlite3 database."""
         # Defining output path - all data is stored into same .db file, so no separate file naming is needed.
         self.outdir = self.outdir + '/EODIE_results.db'
         # Creating a logging entry
@@ -119,8 +117,7 @@ class Writer(object):
         connection.close()
         
     def write_statistics(self):
-        """ writing statistics results from json into csv
-        """
+        """Write statistics results from json into csv."""
         self.outpath = self.outpath + '_statistics.csv'
         logging.info('stat to csv in: ' + self.outpath)
         with open(self.outpath, mode='w') as csv_file:
@@ -131,15 +128,14 @@ class Writer(object):
                 csv_writer.writerow(onerow)
 
     def write_array(self):
-        """ writing extracted arrays to pickle"""
+        """Write extracted arrays to pickle."""
         self.outpath = self.outpath + '_array.pickle'
         logging.info('arrays to pickle in: ' + self.outpath)
         with open(self.outpath, mode='wb') as pkl_file:
             pickle.dump(self.extractedarrays,pkl_file)
 
     def write_geotiff(self):
-        """ Writing extracted arrays to geotiff file
-        """
+        """Write extracted arrays to geotiff file."""
         self.outpath = self.outpath + '_array'
         logging.info('arrays to geotiff in: ' + self.outpath)
         for key in self.extractedarrays.keys():
@@ -155,7 +151,8 @@ class Writer(object):
                 dst.write(data['array'],1)
 
     def write_lookup(self, lookup, shapefile, idname):
-        """ Writing a lookup table when extracting arrays
+        """Write a lookup table when extracting arrays.
+
         Parameters
         -----------
         lookup: string

@@ -1,8 +1,8 @@
 """
 
-class to validate user inputs
+Class to validate user inputs.
 
-authors: Samantha Wittke
+Authors: Samantha Wittke
 
 """
 import glob
@@ -13,10 +13,11 @@ import re
 
 
 class Validator(object):
-    """ validate userinputs for EODIE call"""
+    """Validate userinputs for EODIE call."""
 
     def __init__(self, args):
-        """ initialize validator object
+        """Initialize validator object.
+
         Parameters
         -----------
         args: object
@@ -32,7 +33,8 @@ class Validator(object):
 
 
     def input_amount_check(self,dir, file):
-        """ check that either directory of filename is given as input
+        """Check that either directory of filename is given as input.
+
         Parameters
         ----------
         dir: str or None
@@ -46,7 +48,8 @@ class Validator(object):
             exit('Please give only one of filename and path to directory of files')
         
     def input_exists_check(self,dir, file):
-        """ check that file or directory that are given exist (typo check) 
+        """Check that file or directory that are given exist (typo check).
+
         Parameters
         ----------
         dir: str or None
@@ -54,7 +57,6 @@ class Validator(object):
         file: str or None
             file to be processed or None (not given)
         """
-
         if dir is not None:
             try:
                 os.path.isdir(dir)
@@ -71,7 +73,8 @@ class Validator(object):
                 exit('Please check the path to yout input file and make sure it exists: ' + file)
 
     def date_check(self, date):
-        """ check that given date is a valid date (typocheck) and a date before today
+        """Check that given date is a valid date (typocheck) and a date before today.
+
         Parameters
         -----------
         date: str
@@ -96,7 +99,8 @@ class Validator(object):
         return True
 
     def index_check(self,cfg,indexlist):
-        """ check that all given indices and bands are valid strings, exits if any are not
+        """Check that all given indices and bands are valid strings, exits if any are not.
+
         Parameters
         ----------
         cfg:
@@ -118,7 +122,8 @@ class Validator(object):
             return True
 
     def vector_exists(self, vectorfile):
-        """ Check that given vectorfile exists
+        """Check that given vectorfile exists.
+
         Parameters:
         -----------
         vectorfile:
