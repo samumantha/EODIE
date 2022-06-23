@@ -21,6 +21,7 @@ parser = argparse.ArgumentParser()
 # Add flag arguments for different functions
 
 parser.add_argument("--vector", dest = 'vector', required = True, help = 'Full path to vector file to process, extension included. Please be aware that even if completing multiple tasks at one run, each task uses only the original vectorfile as input.')
+parser.add_argument("--epsg_for_csv", dest = 'epsg', help = "EPSG code if the input vectorfile is CSV. Not needed for other vector formats.")
 
 parser.add_argument("--add_unique_field", dest = 'unique', default = None, help = 'The field name in vectorfile to base the unique id field on.')
 parser.add_argument("--check_validity", dest = 'validity', action = 'store_true', help = "Flag to indicate if geometry validity within vectorfile should be checked.")
@@ -235,10 +236,35 @@ def simplify(vectorfile, tolerance_value, topology):
     print("Simplified geometries have been written to {}".format(outputpath))
     
 
+def check_csv_epsg(vectorfile, EPSG):
+    ''' Checks if the EPSG code was given for csv vectorfile.
+    Parameters:
+    -----------    
+        vectorfile: geodataframe of the user-defined vectorfile.    
+        EPSG: EPSG code from user input
+        
+    Returns:
+    --------
+        If EPSG was given, a geodataframe with set EPSG.
+        If EPSG was not given, exits.
+    '''
+    
+    if EPSG is None:
+        exit("For csv vector inputs, EPSG has to be defined. Please define EPSG.")
+    else:
+        vectorfile.set_crs(epsg = EPSG, inplace = True)
+        print("Vectorfile EPSG has been set to {}.".format(EPSG))
+        return vectorfile
+
+
+
 def main():
     # Read user-defined vectorfile into a geopandas geodataframe
+
     vectorfile = gpd.read_file(args.vector)
     print("{} has been read to a geodataframe!".format(args.vector))
+    if args.vector.lower().endswith('.csv'):
+        vectorfile = check_csv_epsg(vectorfile, args.epsg)
     # Go through inputs and proceed accordingly
     if args.unique is not None:
         add_unique_field(vectorfile, args.unique)
