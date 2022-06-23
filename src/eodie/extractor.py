@@ -12,11 +12,22 @@ import csv
 import numpy as np
 from rasterstats import zonal_stats
 
+
 class Extractor(object):
 
     """Extracting object based information from an array with affine information and a shapefile"""
 
-    def __init__(self, maskedarray, shapefile, idname, affine, statistics, orbit = None, band = 1,  exclude_border=False):
+    def __init__(
+        self,
+        maskedarray,
+        shapefile,
+        idname,
+        affine,
+        statistics,
+        orbit=None,
+        band=1,
+        exclude_border=False,
+    ):
         """Initializing the Extractor object
 
         Parameters
@@ -35,9 +46,9 @@ class Extractor(object):
             which band from a multiband geotif should be handled
         exclude_border: boolean, optional, default: False
             indicator if border pixels should be in- (False) or excluded (True)
-        
+
         """
-        
+
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
@@ -45,10 +56,10 @@ class Extractor(object):
         self.maskedarray = maskedarray
         self.statistics = statistics
         self.orbit = orbit
-        self.band = int(band)        
+        self.band = int(band)
 
     def extract_format(self, format):
-        """ runs own class method based on format given 
+        """runs own class method based on format given
 
         Parameters
         -----------
@@ -57,12 +68,12 @@ class Extractor(object):
 
         Returns
         --------
-        nothing itself, but runs given format function which returns a dictionary for the given format 
+        nothing itself, but runs given format function which returns a dictionary for the given format
 
         """
         default = "Unavailable format"
-        return getattr(self, 'extract_' + format, lambda: default)()
-        
+        return getattr(self, "extract_" + format, lambda: default)()
+
     def extract_statistics(self):
         """extracting per polygon statistics from rasterfile with affine information"""
         # following is necessary for external tif which is not a masked array
@@ -71,29 +82,39 @@ class Extractor(object):
             filledraster = self.maskedarray.filled(-99999)
         except AttributeError:
             filledraster = self.maskedarray
-        
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band = self.band, geojson_out=True, all_touched=self.all_touched, raster_out=False, affine=self.affine, nodata=-99999)
-        extractedarrays = {}        
+
+        a = zonal_stats(
+            self.shapefile,
+            filledraster,
+            stats=self.statistics,
+            band=self.band,
+            geojson_out=True,
+            all_touched=self.all_touched,
+            raster_out=False,
+            affine=self.affine,
+            nodata=-99999,
+        )
+        extractedarrays = {}
         for x in a:
             try:
-                myid = x['properties'][self.idname]
+                myid = x["properties"][self.idname]
             except KeyError:
                 myid = x[self.idname]
             statlist = []
             for stat in self.statistics:
-                if stat == 'count':
-                    onestat = str(int(x['properties'][stat]))
+                if stat == "count":
+                    onestat = str(int(x["properties"][stat]))
                 else:
-                    #setting precision of results to .3
-                    #WARNING: std should always be rounded up, but is not with this approach
-                    if not x['properties'][stat] is None:
-                        onestat = format(x['properties'][stat], '.3f')
+                    # setting precision of results to .3
+                    # WARNING: std should always be rounded up, but is not with this approach
+                    if not x["properties"][stat] is None:
+                        onestat = format(x["properties"][stat], ".3f")
                     else:
                         onestat = None
-                
+
                 statlist.append(onestat)
             statlist.insert(0, self.orbit)
-            extractedarrays[myid] = statlist            
+            extractedarrays[myid] = statlist
         return extractedarrays
 
     def extract_array(self):
@@ -103,13 +124,23 @@ class Extractor(object):
             filledraster = self.maskedarray.filled(+99999)
         except AttributeError:
             filledraster = self.maskedarray
-        
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=self.band, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+
+        a = zonal_stats(
+            self.shapefile,
+            filledraster,
+            stats=self.statistics,
+            band=self.band,
+            geojson_out=True,
+            all_touched=self.all_touched,
+            raster_out=True,
+            affine=self.affine,
+            nodata=-99999,
+        )
 
         extractedarrays = {}
         for x in a:
-            myarray = x['properties']['mini_raster_array']
-            myid = x['properties'][self.idname]
+            myarray = x["properties"]["mini_raster_array"]
+            myid = x["properties"][self.idname]
             extractedarrays[myid] = myarray.filled(-99999)
         return extractedarrays
 
@@ -119,13 +150,23 @@ class Extractor(object):
             filledraster = self.maskedarray.filled(+99999)
         except AttributeError:
             filledraster = self.maskedarray
-        a=zonal_stats(self.shapefile, filledraster, stats=self.statistics, band=self.band, geojson_out=True, all_touched=self.all_touched, raster_out=True, affine=self.affine, nodata=-99999)
+        a = zonal_stats(
+            self.shapefile,
+            filledraster,
+            stats=self.statistics,
+            band=self.band,
+            geojson_out=True,
+            all_touched=self.all_touched,
+            raster_out=True,
+            affine=self.affine,
+            nodata=-99999,
+        )
 
         extractedarrays = {}
         for x in a:
-            myarray = x['properties']['mini_raster_array']
-            myid = x['properties'][self.idname]
+            myarray = x["properties"]["mini_raster_array"]
+            myid = x["properties"][self.idname]
             extractedarrays[myid] = {}
-            extractedarrays[myid]['array'] = myarray.filled(-99999)
-            extractedarrays[myid]['affine'] = x['properties']['mini_raster_affine']
+            extractedarrays[myid]["array"] = myarray.filled(-99999)
+            extractedarrays[myid]["affine"] = x["properties"]["mini_raster_affine"]
         return extractedarrays

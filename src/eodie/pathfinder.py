@@ -13,7 +13,7 @@ import re
 
 
 class Pathfinder(object):
-    """ class dealing with paths 
+    """class dealing with paths
     Attributes
     ----------
     cfg: dict
@@ -28,7 +28,7 @@ class Pathfinder(object):
         date information of the raster product
     """
 
-    def __init__(self,rasterdir:str, cfg:dict):
+    def __init__(self, rasterdir: str, cfg: dict):
         """initializing Pathfinder object
         Parameters
         -----------
@@ -37,35 +37,32 @@ class Pathfinder(object):
         cfg: dict
             dictionary with configuration elements
         """
-        
+
         self.cfg = cfg
         self.rasterdir = rasterdir
-        
-        if not self.cfg['platform'] == 'tif':
+
+        if not self.cfg["platform"] == "tif":
             self.get_imgpath()
             self.get_tileinfo()
             self.get_dateinfo()
         else:
-            self.tile = ''
+            self.tile = ""
             self.imgpath = self.rasterdir
-            self.date = ''
-        
-        
+            self.date = ""
 
     def get_imgpath(self):
         """creating the path to the raster data band files based on path given in bandlocation"""
-        bandlocation = os.path.join(*self.cfg['bandlocation'])
-        patternimg = os.path.join(self.rasterdir ,bandlocation)
+        bandlocation = os.path.join(*self.cfg["bandlocation"])
+        patternimg = os.path.join(self.rasterdir, bandlocation)
         self.imgpath = glob.glob(patternimg)[0]
 
     def get_tileinfo(self):
         """extract tilename from filename according to pattern from from config"""
-        tilepattern = r'%s' % self.cfg['tilepattern']
-        self.tile = re.search(tilepattern,self.imgpath).group(0)
+        tilepattern = r"%s" % self.cfg["tilepattern"]
+        self.tile = re.search(tilepattern, self.imgpath).group(0)
 
     def get_dateinfo(self):
         """extract date from filename according to pattern from from config"""
-        datepattern = r'%s' % self.cfg['datepattern']
-        splitted_imgpath = self.imgpath.split("/")[-5]       
+        datepattern = r"%s" % self.cfg["datepattern"]
+        splitted_imgpath = self.imgpath.split("/")[-5]
         self.date = re.search(datepattern, splitted_imgpath).group(0)
-
