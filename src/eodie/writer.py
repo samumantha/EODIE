@@ -14,8 +14,9 @@ import fiona
 import rasterio
 import sqlite3
 
+
 class Writer(object):
-    """ 
+    """
     Writing lists/arrays/georeferenced arrays to file
     Attributes
     -----------
@@ -29,7 +30,18 @@ class Writer(object):
         tilename of the raster product where data was extracted from
     """
 
-    def __init__(self,outdir, date, tile, extractedarrays, index, platform, orbit, statistics = ['count'], crs = None):
+    def __init__(
+        self,
+        outdir,
+        date,
+        tile,
+        extractedarrays,
+        index,
+        platform,
+        orbit,
+        statistics=["count"],
+        crs=None,
+    ):
         """initialize writer object
         Parameters
         -----------
@@ -52,7 +64,9 @@ class Writer(object):
 
         """
         if platform == "s2":
-            self.outpath = os.path.join(outdir ,index+ '_' + date +'_'+ tile + '_orbit_' + str(orbit))
+            self.outpath = os.path.join(
+                outdir, index + "_" + date + "_" + tile + "_orbit_" + str(orbit)
+            )
         else:
             self.outpath = os.path.join(outdir, index)
         self.extractedarrays = extractedarrays
@@ -64,7 +78,7 @@ class Writer(object):
         self.index = index
 
     def write_format(self, format):
-        """ runs own class method based on format given 
+        """runs own class method based on format given
 
         Parameters
         -----------
@@ -78,13 +92,12 @@ class Writer(object):
         """
 
         default = "Unavailable format"
-        return getattr(self, 'write_' + format, lambda: default)()
+        return getattr(self, "write_" + format, lambda: default)()
 
     def write_database(self):
-        """ Writing statistics results from json into sqlite3 database
-        """
+        """Writing statistics results from json into sqlite3 database"""
         # Defining output path - all data is stored into same .db file, so no separate file naming is needed.
-        self.outdir = self.outdir + '/EODIE_results.db'
+        self.outdir = self.outdir + "/EODIE_results.db"
         # Creating a logging entry
         logging.info("Statistics to database in: " + self.outdir)
 
@@ -92,21 +105,27 @@ class Writer(object):
         connection = sqlite3.connect(self.outdir)
         # Activating cursor for editing database.
         cursor = connection.cursor()
-        # Defining database table column names from statistics. 
+        # Defining database table column names from statistics.
         columns = " float, ".join(self.statistics)
-        # Define command for creating the table with the name of current index and columns for id, date and statistics. 
-        command = "CREATE TABLE IF NOT EXISTS " + self.index + " (id integer, date text, tile text, orbit integer," + columns + " float)"
+        # Define command for creating the table with the name of current index and columns for id, date and statistics.
+        command = (
+            "CREATE TABLE IF NOT EXISTS "
+            + self.index
+            + " (id integer, date text, tile text, orbit integer,"
+            + columns
+            + " float)"
+        )
 
         # Executing table creation command.
         cursor.execute(command)
         # Create enough question marks for building the values command
-        question_marks = ','.join(list('?' * (len(self.statistics) + 4)))        
+        question_marks = ",".join(list("?" * (len(self.statistics) + 4)))
         # Define command for inserting values into database
-        insert_SQL = 'INSERT INTO ' + self.index + ' VALUES (' + question_marks + ')'        
+        insert_SQL = "INSERT INTO " + self.index + " VALUES (" + question_marks + ")"
         # Loop through keys in extractedarray
         for key in self.extractedarrays.keys():
-            # Define one row 
-            onerow = [key] + self.extractedarrays[key]            
+            # Define one row
+            onerow = [key] + self.extractedarrays[key]
             # Add the date to the 2nd slot of the list
             onerow.insert(1, self.date)
             # Add the tile to the 3rd slot of the list
@@ -117,45 +136,52 @@ class Writer(object):
             connection.commit()
         # Close connection
         connection.close()
-        
+
     def write_statistics(self):
-        """ writing statistics results from json into csv
-        """
-        self.outpath = self.outpath + '_statistics.csv'
-        logging.info('stat to csv in: ' + self.outpath)
-        with open(self.outpath, mode='w') as csv_file:
-            csv_writer = csv.writer(csv_file, delimiter=',')
-            csv_writer.writerow(['id']+ ['orbit']+ self.statistics )
+        """writing statistics results from json into csv"""
+        self.outpath = self.outpath + "_statistics.csv"
+        logging.info("stat to csv in: " + self.outpath)
+        with open(self.outpath, mode="w") as csv_file:
+            csv_writer = csv.writer(csv_file, delimiter=",")
+            csv_writer.writerow(["id"] + ["orbit"] + self.statistics)
             for key in self.extractedarrays.keys():
                 onerow = [key] + self.extractedarrays[key]
                 csv_writer.writerow(onerow)
 
     def write_array(self):
-        """ writing extracted arrays to pickle"""
-        self.outpath = self.outpath + '_array.pickle'
-        logging.info('arrays to pickle in: ' + self.outpath)
-        with open(self.outpath, mode='wb') as pkl_file:
-            pickle.dump(self.extractedarrays,pkl_file)
+        """writing extracted arrays to pickle"""
+        self.outpath = self.outpath + "_array.pickle"
+        logging.info("arrays to pickle in: " + self.outpath)
+        with open(self.outpath, mode="wb") as pkl_file:
+            pickle.dump(self.extractedarrays, pkl_file)
 
     def write_geotiff(self):
-        """ Writing extracted arrays to geotiff file
-        """
-        self.outpath = self.outpath + '_array'
-        logging.info('arrays to geotiff in: ' + self.outpath)
+        """Writing extracted arrays to geotiff file"""
+        self.outpath = self.outpath + "_array"
+        logging.info("arrays to geotiff in: " + self.outpath)
         for key in self.extractedarrays.keys():
-            logging.info('arrays to geotiff in: ' + self.outpath)
+            logging.info("arrays to geotiff in: " + self.outpath)
             data = self.extractedarrays[key]
-            nrows, ncols = data['array'].shape
-            #this may happen with external tif file, int64 is not supported
-            if data['array'].dtype == 'int64':
-                data['array'] = data['array'].astype('int32')
+            nrows, ncols = data["array"].shape
+            # this may happen with external tif file, int64 is not supported
+            if data["array"].dtype == "int64":
+                data["array"] = data["array"].astype("int32")
 
-            with rasterio.open(self.outpath+'_id_'+str(key)+'.tif', 'w', driver='GTiff', height=nrows, width=ncols, count=1, crs=self.crs,  
-                dtype=data['array'].dtype, transform=data['affine']) as dst: 
-                dst.write(data['array'],1)
+            with rasterio.open(
+                self.outpath + "_id_" + str(key) + ".tif",
+                "w",
+                driver="GTiff",
+                height=nrows,
+                width=ncols,
+                count=1,
+                crs=self.crs,
+                dtype=data["array"].dtype,
+                transform=data["affine"],
+            ) as dst:
+                dst.write(data["array"], 1)
 
     def write_lookup(self, lookup, shapefile, idname):
-        """ Writing a lookup table when extracting arrays
+        """Writing a lookup table when extracting arrays
         Parameters
         -----------
         lookup: string
@@ -170,7 +196,7 @@ class Writer(object):
                 table = f.read().splitlines()
             lookup_tiles = []
             for line in table:
-                lookup_tiles.append(line.split(':')[0])
+                lookup_tiles.append(line.split(":")[0])
             intable = self.tile in lookup_tiles
         else:
             intable = False
@@ -179,10 +205,7 @@ class Writer(object):
             IDs = []
             with fiona.open(shapefile) as shp:
                 for polygon in shp:
-                    IDs.append(polygon['properties'][idname])
-            with open(lookup, 'a') as f:
-                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
-            logging.info('Appended tile ' + self.tile + ' to lookup table')
-
-
-
+                    IDs.append(polygon["properties"][idname])
+            with open(lookup, "a") as f:
+                f.write(self.tile + ":" + ",".join(str(id) for id in IDs) + "\n")
+            logging.info("Appended tile " + self.tile + " to lookup table")
