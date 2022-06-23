@@ -84,7 +84,9 @@ def check_validity(vectorfile):
         print("Following features have invalid geometries:\n\n {}".format(vectorfile_with_geom))
 
         if args.drop:   
-            # Filter out invalid rows 
+            # Filter out rows without geometry
+            vectorfile = vectorfile.loc[vectorfile['geometry'] != None]
+            # Filter out rows with invalid geometries
             vectorfile = vectorfile.loc[vectorfile['validity'] == True]
             # Extract path, filename and extension from the filename
             head, tail = os.path.split(args.vector)
