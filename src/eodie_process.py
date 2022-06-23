@@ -160,18 +160,10 @@ for path in userinput.input:
                         affine = vegindex.affine
                         extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics, orbit, userinput.exclude_border)
                     
-<<<<<<< src/eodie_process.py
-                    logging.info(' Writing results...')
-                    for format in userinput.format:
-                        tic = timeit.default_timer()
-=======
-                    masked_array= vegindex.mask_array(array,cloudmask)
-                    affine = vegindex.affine
 
-                    extractorobject = Extractor(masked_array, shapefile, userinput.idname,affine, userinput.statistics,userinput.exclude_border)
-                    
+                    logging.info(' Extracting results...')                      
                     for format in userinput.format:                                                  
->>>>>>> src/eodie_process.py
+                        tic = timeit.default_timer() 
                         extractedarray = extractorobject.extract_format(format)
                         toc = timeit.default_timer()
                         extracting_time = toc - tic
@@ -179,7 +171,7 @@ for path in userinput.input:
                             extracting_time = round(extracting_time/60)
                             logging.info(' Extracting {} for {} took {} minutes'.format(format, index, extracting_time))
                         else:
-                            logging.info(' Extracting {} for {} took {} seconds'.format(format, index, round(extracting_time)))
+                            logging.info(' Extracting {} for {} took {} seconds'.format(format, index, round(extracting_time+1)))
                         writerobject = Writer(userinput.outpath, pathfinderobject.date, pathfinderobject.tile, extractedarray, index, userinput.platform, orbit, userinput.statistics, vegindex.crs)
                         writerobject.write_format(format)
                         if format == 'statistics' and userinput.database_out:
