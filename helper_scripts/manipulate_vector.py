@@ -197,7 +197,7 @@ def plot_tiles(vectorfile):
     # Plot edges of sen2tiles   
     sen2tiles.boundary.plot(ax = vectorplot, color = 'blue')
     # Add labels for tiles 
-    sen2tiles.apply(lambda x: vectorplot.annotate(text=x['Name'], xy=x.geometry.centroid.coords[0], ha='center'), axis=1)
+    sen2tiles.apply(lambda x: vectorplot.annotate(text=x['Name'], xy=x.geometry.centroid.coords[0], ha='center', size = 5), axis=1)
     # Show figure (not working in Puhti)
     plt.show()
     # Define output path
@@ -248,15 +248,15 @@ def check_csv_epsg(vectorfile, EPSG):
         If EPSG was given, a geodataframe with set EPSG.
         If EPSG was not given, exits.
     '''
-    
+    # If EPSG was not given, exit:
     if EPSG is None:
         exit("For csv vector inputs, EPSG has to be defined. Please define EPSG.")
+    # Otherwise
     else:
+        # Set vectorfile EPSG
         vectorfile.set_crs(epsg = EPSG, inplace = True)
         print("Vectorfile EPSG has been set to {}.".format(EPSG))
         return vectorfile
-
-
 
 def main():
     # Read user-defined vectorfile into a geopandas geodataframe
