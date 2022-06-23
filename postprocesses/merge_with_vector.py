@@ -72,8 +72,8 @@ for csv in csv_list:
     df_count = df_count.astype({'id':int})
     # Extract the index or band name from filename
     indexname = os.path.basename(csv).split("_")[1].split(".csv")[0]
-    # Leave the first 4 columns untouched but loop through the latter ones
-    for i in range(4, len(df_count.columns)):
+    # Leave the first 5 columns untouched but loop through the latter ones
+    for i in range(5, len(df_count.columns)):
         # Extract the current name
         current_name = df_count.columns[i]
         # Build the new name
@@ -102,7 +102,7 @@ for csv in renamed_csv:
     # Read csv
     file = pd.read_csv(csv)
     # Merge the content of the csv with the first file read outside the loop
-    first_csv = pd.merge(first_csv, file, on = ["Dates", "Tiles", "id", "count"])
+    first_csv = pd.merge(first_csv, file, on = ["Dates", "Tiles", "id", "orbit", "count"])
 
 # Print a status update
 print("All renamed csv files merged!")
