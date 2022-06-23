@@ -1,8 +1,8 @@
 """
 
-class to extract pixel values or statistics per polygon from rasterfile
+Class to extract pixel values or statistics per polygon from rasterfile.
 
-authors: Samantha Wittke, Juuso Varho
+Authors: Samantha Wittke, Juuso Varho
  
 """
 
@@ -14,9 +14,8 @@ from rasterstats import zonal_stats
 
 
 class Extractor(object):
-
-    """Extracting object based information from an array with affine information and a shapefile"""
-
+    """Extracting object based information from an array with affine information and a shapefile."""
+    
     def __init__(
         self,
         maskedarray,
@@ -28,7 +27,7 @@ class Extractor(object):
         band=1,
         exclude_border=False,
     ):
-        """Initializing the Extractor object
+        """Initialize the Extractor object.
 
         Parameters
         ----------
@@ -42,13 +41,14 @@ class Extractor(object):
             containing affine/transform information of the array
         statistics: list of str, optional, default: empty list
             list of statistics to be extracted for each polygon
+        orbit: None
+            orbit information of input raster data (Sentinel-2)
         band: integer, default = 1
             which band from a multiband geotif should be handled
         exclude_border: boolean, optional, default: False
             indicator if border pixels should be in- (False) or excluded (True)
 
         """
-
         self.affine = affine
         self.shapefile = shapefile
         self.idname = idname
@@ -59,7 +59,7 @@ class Extractor(object):
         self.band = int(band)
 
     def extract_format(self, format):
-        """runs own class method based on format given
+        """Run own class method based on format given.
 
         Parameters
         -----------
@@ -75,7 +75,7 @@ class Extractor(object):
         return getattr(self, "extract_" + format, lambda: default)()
 
     def extract_statistics(self):
-        """extracting per polygon statistics from rasterfile with affine information"""
+        """Extract per polygon statistics from rasterfile with affine information."""
         # following is necessary for external tif which is not a masked array
         try:
             self.maskedarray.dtype
@@ -118,7 +118,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_array(self):
-        """extracting per polygon arrays from rasterfile with affine information"""
+        """Extract per polygon arrays from rasterfile with affine information."""
         try:
             self.maskedarray.dtype
             filledraster = self.maskedarray.filled(+99999)
@@ -145,6 +145,7 @@ class Extractor(object):
         return extractedarrays
 
     def extract_geotiff(self):
+        """Extract per polygon geotiffs."""
         try:
             self.maskedarray.dtype
             filledraster = self.maskedarray.filled(+99999)

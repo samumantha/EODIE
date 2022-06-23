@@ -1,7 +1,7 @@
 """
-Class with all userinput for running eodie as command line tool
+Class with all userinput for running eodie as command line tool.
 
-authors: Samantha Wittke, Juuso Varho, Petteri Lehti
+Authors: Samantha Wittke, Juuso Varho, Petteri Lehti
 
 """
 
@@ -14,18 +14,19 @@ import yaml
 
 
 class UserInput(object):
-    """Userinput object for EODIE
+    """Userinput object for EODIE.
+
     Attributes
     -----------
     see help text for description of each attribute
     """
 
     def __init__(self):
+        """Initialize UserInput object."""
         self.get_userinput()
 
     def get_userinput(self):
-        """gets all userinput from commandline call to run the tool and stores them as userinput attributes"""
-
+        """Get all userinput from commandline call to run the tool and stores them as userinput attributes."""
         parser = argparse.ArgumentParser()
         parser.add_argument(
             "--platform",
