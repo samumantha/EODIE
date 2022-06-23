@@ -1,8 +1,8 @@
 """
 
-class to handle everything regarding the vectordata, atm only ESRI shapefile
+Class to handle everything regarding the vectordata, atm only ESRI shapefile.
     
-authors: Samantha Wittke
+Authors: Samantha Wittke
 
 """
 import os
@@ -20,7 +20,8 @@ import re
 
 
 class VectorData(object):
-    """Vector data related information and transformations
+    """Vector data related information and transformations.
+
     Attributes
     -----------
     geometries: str
@@ -28,7 +29,8 @@ class VectorData(object):
     """
 
     def __init__(self, geometries):
-        """initialize vectordata object
+        """Initialize vectordata object.
+
         Parameters
         -----------
         geometries: str
@@ -37,7 +39,8 @@ class VectorData(object):
         self.geometries = geometries
 
     def _split_path(self):
-        """split shapefile path into parts
+        """Split shapefile path into parts.
+
         Returns
         --------
         head: str
@@ -54,7 +57,8 @@ class VectorData(object):
         return head, tail, root, ext
 
     def get_projectionfile(self):
-        """get path to the projectionfile that is associated with the shapefile
+        """Get path to the projectionfile that is associated with the shapefile.
+
         Returns
         --------
         projectionfile: str
@@ -66,7 +70,8 @@ class VectorData(object):
         return projectionfile
 
     def get_epsg(self):
-        """extract epsg code from prj file
+        """Extract epsg code from prj file.
+
         Returns
         --------
         epsgcode: str
@@ -82,7 +87,8 @@ class VectorData(object):
         return epsgcode
 
     def reproject_to_epsg(self, myepsg):
-        """reproject shapefile to given EPSG code, save as new shapefile file
+        """Reproject shapefile to given EPSG code, save as new shapefile file.
+
         Parameters
         -----------
         myepsg: str
@@ -120,7 +126,8 @@ class VectorData(object):
             self.geometries = reprojectedshape
 
     def get_properties(self):
-        """extract driver, schema and crs from vectorfile
+        """Extract driver, schema and crs from vectorfile.
+
         Returns
         --------
         driver: str
@@ -137,7 +144,8 @@ class VectorData(object):
             return driver, schema, crs
 
     def get_boundingbox(self):
-        """extract bounding box Polygon object from shapefile
+        """Extract bounding box Polygon object from shapefile.
+        
         Returns
         --------
         boundingbox: object
@@ -154,7 +162,8 @@ class VectorData(object):
         )
 
     def get_convex_hull(self):
-        """extract convex hull of given shapefile, save to new shapefile; adjusted from https://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html#save-the-convex-hull-of-all-geometry-from-an-input-layer-to-an-output-layer
+        """Extract convex hull of given shapefile, save to new shapefile; adjusted from https://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html#save-the-convex-hull-of-all-geometry-from-an-input-layer-to-an-output-layer.
+
         Returns
         --------
         convexhull: str
@@ -199,7 +208,8 @@ class VectorData(object):
         return convexhullp
 
     def check_empty(self, vectorfile):
-        """Checks for empty geometries in vectorfile
+        """Check for empty geometries in vectorfile.
+
         Parameters:
         -----------
             vectorfile: geodataframe the user-defined vectorfile
@@ -220,6 +230,7 @@ class VectorData(object):
 
     def check_validity(self, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
+        
         Parameters:
         -----------
             drop: Flag to indicate if invalid geometries should be dropped.
