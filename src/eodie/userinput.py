@@ -42,7 +42,7 @@ class UserInput(object):
         parser.add_argument('--end', dest='enddate',default= datetime.now().strftime("%Y%m%d") ,help='give enddate of timerange of interest')
         parser.add_argument('--keep_shp', dest='keep_shp', action='store_true', help='flag to indicate that newly created shapefiles should be stored')
         parser.add_argument('--tiles', dest = 'tiles', default = None, help = 'Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters', nargs = '*')
-        parser.add_argument('--tifbands', dest = 'tifbands', default = 1, nargs = "*", help = 'Bands of tif to be processed. Defaults to 1.')
+        parser.add_argument('--tifbands', dest = 'tifbands', default = [1], nargs = "*", help = 'Bands of tif to be processed. Defaults to 1.')
 
         parser.add_argument('--test', dest='test', action='store_true', help='only needed for automatic testing')
         parser.add_argument('--exclude_border', dest='exclude_border', action='store_true',help='if this flag is set border pixels are excluded from calculations')
