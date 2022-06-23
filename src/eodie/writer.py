@@ -95,18 +95,18 @@ class Writer(object):
         # Defining database table column names from statistics. 
         columns = " float, ".join(self.statistics)
         # Define command for creating the table with the name of current index and columns for id, date and statistics. 
-        command = "CREATE TABLE IF NOT EXISTS " + self.index + " (id integer, date text, tile text," + columns + " float)"
+        command = "CREATE TABLE IF NOT EXISTS " + self.index + " (id integer, date text, tile text, orbit integer," + columns + " float)"
 
         # Executing table creation command.
         cursor.execute(command)
         # Create enough question marks for building the values command
-        question_marks = ','.join(list('?' * (len(self.statistics) + 3)))
+        question_marks = ','.join(list('?' * (len(self.statistics) + 4)))        
         # Define command for inserting values into database
-        insert_SQL = 'INSERT INTO ' + self.index + ' VALUES (' + question_marks + ')'
+        insert_SQL = 'INSERT INTO ' + self.index + ' VALUES (' + question_marks + ')'        
         # Loop through keys in extractedarray
         for key in self.extractedarrays.keys():
             # Define one row 
-            onerow = [key] + self.extractedarrays[key]
+            onerow = [key] + self.extractedarrays[key]            
             # Add the date to the 2nd slot of the list
             onerow.insert(1, self.date)
             # Add the tile to the 3rd slot of the list
