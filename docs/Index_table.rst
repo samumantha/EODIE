@@ -5,12 +5,12 @@ Table of supported indices
 
 Below you can find the table of vegetation indices EODIE currently supports. 
 
-.. csv-table:: Supported indices    
+.. csv-table:: 
     :widths: 30, 30, 30, 30
     :header-rows: 1
 
     Index name,Abbreviation,Formula,Reference
-    Normalized Difference Vegetation Index,NDVI,,
+    Normalized Difference Vegetation Index,NDVI, (NIR-RED)/(NIR+RED), Kriegler et al. (1969)
     Ratio Vegetation Index,RVI,,
     Soil-Adjusted Vegetation Index,SAVI,,
     Normalized Burnt Ratio,NBR,,
