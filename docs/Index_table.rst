@@ -22,7 +22,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
     Enhanced Vegetation Index,EVI,2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1)),Matsushita et al. (2007)
     Enhanced Vegetation Index 2,EVI2,2.5 * ((NIR - RED) / (2.4 * RED + NIR + 1)),Jiang et al. (2008)
     Difference Vegetation Index,DVI,NIR - RED,Naji (2018)
-    Chlorophyll Vegetation Index,CVI, (NIR * RED) / (GREEN²),"Clevers, Koolstra & Van den Brande (2017)"
+    Chlorophyll Vegetation Index,CVI, (NIR * RED) / (GREEN * GREEN),"Clevers, Koolstra & Van den Brande (2017)"
     Modified Chlorophyll Absorption in Reflectance Index,MCARI,(R_EDGE - RED - 0.2 * (R_EDGE - GREEN) * (R_EDGE / RED),Daughtry et al. (2000)
     Normalized Difference Index 45,NDI45,(R_EDGE - RED) / (R_EDGE + RED),Kumar et al. (2021)
     Tasseled Cap (for Sentinel-2),TCT,"Coefficients * [BLUE, GREEN, RED, NIR, SWIR1, SWIR2]",Shi & Xu (2019)
