@@ -17,12 +17,12 @@ Below you can find the table of vegetation indices EODIE currently supports.
     Normalized Burnt Ratio,NBR,(NIR - SWIR2) / (NIR + SWIR2),
     Kernel Normalized Difference Vegetation Index,kNDVI,, `Camps-Valls et al. (2021) <https://doi.org/10.1126/sciadv.abc7447>`_
     Normalized Difference Moisture Index,NDMI,(NIR - SWIR1) / (NIR + SWIR1),Gao (1996)
-    Normalized Difference Water Index,NDWI,(GREEN - NIR) / (GREEN + NIR),McFeeters (1996)
-    Modified Normalized Difference Water Index,mNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),Xu (2007)
-    Enhanced Vegetation Index,EVI,2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1)),Matsushita et al. (2007)
-    Enhanced Vegetation Index 2,EVI2,2.5 * ((NIR - RED) / (2.4 * RED + NIR + 1)),Jiang et al. (2008)
-    Difference Vegetation Index,DVI,NIR - RED,Naji (2018)
-    Chlorophyll Vegetation Index,CVI, (NIR * RED) / (GREEN * GREEN),"Clevers, Koolstra & Van den Brande (2017)"
-    Modified Chlorophyll Absorption in Reflectance Index,MCARI,(R_EDGE - RED - 0.2 * (R_EDGE - GREEN) * (R_EDGE / RED),Daughtry et al. (2000)
-    Normalized Difference Index 45,NDI45,(R_EDGE - RED) / (R_EDGE + RED),Kumar et al. (2021)
-    Tasseled Cap (for Sentinel-2),TCT,"Coefficients * [BLUE, GREEN, RED, NIR, SWIR1, SWIR2]",Shi & Xu (2019)
+    Normalized Difference Water Index,NDWI,(GREEN - NIR) / (GREEN + NIR),`McFeeters (1996) <https://doi.org/10.1080/01431169608948714>`_
+    Modified Normalized Difference Water Index,mNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),`Xu (2007) <https://doi.org/10.1080/01431160600589179>`_
+    Enhanced Vegetation Index,EVI,2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1)),`Matsushita et al. (2007) <https://doi.org/10.3390/s7112636>`_
+    Enhanced Vegetation Index 2,EVI2,2.5 * ((NIR - RED) / (2.4 * RED + NIR + 1)),`Jiang et al. (2008) <https://doi.org/10.1016%2Fj.rse.2008.06.006>`_
+    Difference Vegetation Index,DVI,NIR - RED,`Naji (2018) <https://doi.org/10.1088/1742-6596/1003/1/012083>`_
+    Chlorophyll Vegetation Index,CVI, (NIR * RED) / (GREEN * GREEN),"`Clevers, Koolstra & Van den Brande (2017) <https://doi.org/10.3390/rs9050405>`_"
+    Modified Chlorophyll Absorption in Reflectance Index,MCARI,(R_EDGE - RED - 0.2 * (R_EDGE - GREEN) * (R_EDGE / RED),`Daughtry et al. (2000) <https://doi.org/10.1016/S0034-4257(00)00113-9>`_
+    Normalized Difference Index 45,NDI45,(R_EDGE - RED) / (R_EDGE + RED),`Kumar et al. (2021) <https://doi.org/10.1007/978-981-16-1086-8_1>`_
+    Tasseled Cap (for Sentinel-2),TCT,"Coefficients * [BLUE, GREEN, RED, NIR, SWIR1, SWIR2]",`Shi & Xu (2019) <https://doi.org/10.1109/JSTARS.2019.2938388>`_
