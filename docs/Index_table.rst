@@ -5,10 +5,25 @@ Table of supported indices
 
 Below you can find the table of vegetation indices EODIE currently supports. 
 
-.. csv-table:: Supported indices   
-    :file: Supported_indices.csv
+.. csv-table:: Supported indices    
     :widths: 30, 30, 30, 30
     :header-rows: 1
 
-    "Testi", "Testi", "Testi", "Testi"
-    "Testi2", "Testi", "Testi2", "Testi2"
+    Index name,Abbreviation,Formula,Reference
+    Normalized Difference Vegetation Index,NDVI,,
+    Ratio Vegetation Index,RVI,,
+    Soil-Adjusted Vegetation Index,SAVI,,
+    Normalized Burnt Ratio,NBR,,
+    Kernel Normalized Difference Vegetation Index,kNDVI,,
+    Normalized Difference Moisture Index,NDMI,,
+    Normalized Difference Water Index,NDWI,,
+    Modified Normalized Difference Water Index,mNDWI,,
+    Enhanced Vegetation Index,EVI,,
+    Enhanced Vegetation Index 2,EVI2,,
+    Difference Vegetation Index,DVI,,
+    Chlorophyll Vegetation Index,CVI,,
+    Modified Chlorophyll Absorption in Reflectance Index,MCARI,,
+    Normalized Difference Index 45,NDI45,,
+    Tasseled Cap Brightness,TCTB,,
+    Tasseled Cap Greenness,TCTG,,
+    Tasseled Cap Wetness,TCTW,,
