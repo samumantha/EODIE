@@ -15,7 +15,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
     Ratio Vegetation Index,RVI,NIR / RED,Tucker (1979)
     Soil-Adjusted Vegetation Index,SAVI,(1.5 * (NIR - RED)) / (NIR + RED + 0.5),`Huete (1988) <https://www.google.com>`_
     Normalized Burnt Ratio,NBR,(NIR - SWIR2) / (NIR + SWIR2),
-    Kernel Normalized Difference Vegetation Index,kNDVI,,
+    Kernel Normalized Difference Vegetation Index,kNDVI,, `Camps-Valls et al. (2021) <https://doi.org/10.1126/sciadv.abc7447>`_
     Normalized Difference Moisture Index,NDMI,(NIR - SWIR1) / (NIR + SWIR1),Gao (1996)
     Normalized Difference Water Index,NDWI,(GREEN - NIR) / (GREEN + NIR),McFeeters (1996)
     Modified Normalized Difference Water Index,mNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),Xu (2007)
