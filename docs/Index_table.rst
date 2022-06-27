@@ -7,7 +7,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
 
 .. csv-table:: 
     :widths: 30, 30, 30, 30
-    :align: center
+    :align: "center"
     :header-rows: 1
 
     Index name,Abbreviation,Formula,Reference
