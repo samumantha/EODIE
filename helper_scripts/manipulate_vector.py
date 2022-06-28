@@ -36,7 +36,8 @@ args = parser.parse_args()
 
 
 def add_unique_field(vectorfile, fieldname):
-    ''' Add unique id field to the vectorfile based on another column.
+    """ Add unique id field to the vectorfile based on another column.
+
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
@@ -46,7 +47,7 @@ def add_unique_field(vectorfile, fieldname):
     Returns:
     --------
         None but writes a vectorfile with unique ID field to the same folder with original vectorfile. 
-    '''
+    """
     print("Adding an unique ID...")
     vectorfile['unique_id'] = pd.factorize(vectorfile[fieldname])[0]           
     # Extract path, filename and extension from the filename
@@ -60,7 +61,8 @@ def add_unique_field(vectorfile, fieldname):
     print("Vectorfile with unique ID can now be found from {}".format(outputpath))   
 
 def check_validity(vectorfile):
-    ''' Checks the validity of vectorfile geometries
+    """Check the validity of vectorfile geometries.
+
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
@@ -68,7 +70,7 @@ def check_validity(vectorfile):
     --------
         None; prints the rows with invalid geometries.
         If --drop_invalid was defined, will write a filtered vectorfile to the same folder as original vectorfile. Original will not be deleted. 
-    '''
+    """
     # Check rows with empty geometries
     check_empty(vectorfile)
     print("Checking the validity of existing geometries...")
@@ -101,14 +103,15 @@ def check_validity(vectorfile):
         print("All features have valid geometries.")
 
 def check_empty(vectorfile):
-    ''' Checks for empty geometries in vectorfile
+    """Check for empty geometries in vectorfile.
+
     Parameters:
     -----------
         vectorfile: geodataframe the user-defined vectorfile
     Returns:
     --------
         None; prints the rows with non-existent geometries.
-    '''
+    """
     print("Checking empty geometries now...")
     # Filter rows with no geometry
     vectorfile_nogeom = vectorfile[vectorfile['geometry'] == None]
@@ -118,7 +121,8 @@ def check_empty(vectorfile):
         print("All features have geometries.")
 
 def remove_fields(vectorfile, fields):
-    ''' Removes the fields (columns) from vectorfile based on user input.
+    """Remove the fields (columns) from vectorfile based on user input. 
+
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
@@ -126,7 +130,7 @@ def remove_fields(vectorfile, fields):
     Returns:
     --------
         None but writes the filtered vectorfile to the same folder with the original. 
-    '''
+    """
     print("Checking that given fields can be found in vectorfile...")
     # Create an empty list for field names
     field_names = []
@@ -168,15 +172,15 @@ def remove_fields(vectorfile, fields):
     vectorfile_filtered = None
 
 def plot_tiles(vectorfile):
-    ''' Plots the Sentinel-2 tiles that overlay with vectorfile polygons.
+    """Plots the Sentinel-2 tiles that overlay with vectorfile polygons.
+
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
     Returns:
     --------
         None but shows and saves the plot of tiles in the folder of the vectorfile.
-    '''
-    
+    """    
     # Get parent directory
     parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
     # Read Sentinel-2 tiles into a geodataframe
@@ -215,7 +219,8 @@ def plot_tiles(vectorfile):
     sen2tiles = None
 
 def simplify(vectorfile, tolerance_value, topology):
-    ''' Simplifies vectorfile geometries by given tolerance value.
+    """Simplifies vectorfile geometries by given tolerance value.
+
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
@@ -223,7 +228,7 @@ def simplify(vectorfile, tolerance_value, topology):
     Returns:
     --------
         None but writes a vectorfile with simplified geometries to the folder of original vectorfile.
-    ''' 
+    """
     print("Simplifying geometries...")
     # Run simplifying with given parameters to vectorfile geometries
     vectorfile_simplified = vectorfile.simplify(tolerance = tolerance_value, preserve_topology = topology)
@@ -239,7 +244,8 @@ def simplify(vectorfile, tolerance_value, topology):
     
 
 def check_csv_epsg(vectorfile, EPSG):
-    ''' Checks if the EPSG code was given for csv vectorfile.
+    """Checks if the EPSG code was given for csv vectorfile.
+    
     Parameters:
     -----------    
         vectorfile: geodataframe of the user-defined vectorfile.    
@@ -249,7 +255,7 @@ def check_csv_epsg(vectorfile, EPSG):
     --------
         If EPSG was given, a geodataframe with set EPSG.
         If EPSG was not given, exits.
-    '''
+    """
     # If EPSG was not given, exit:
     if EPSG is None:
         exit("For csv vector inputs, EPSG has to be defined. Please define EPSG.")
