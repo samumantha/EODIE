@@ -192,7 +192,7 @@ def plot_tiles(vectorfile):
     column_name = vectorfile.columns[0]        
     # Do overlay analysis for tiles and vectorfile
     print("Running overlay analysis for Sentinel-2 tiles and vectorfile...")
-    overlay = sen2tiles.overlay(vectorfile, how = 'union')
+    overlay = sen2tiles.overlay(vectorfile, how = 'intersection')
     # Filter out rows where values of vectorfile column are false (thus the tiles that don't reach objects)
     overlay = overlay[overlay[column_name].isna() == False]
     # Extract tile names
