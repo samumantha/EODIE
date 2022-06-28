@@ -95,7 +95,7 @@ The authors would also like to thank the developers of the following tools:
 
 * The docstring consistency and grammar have been improved with `pydocstyle <https://github.com/PyCQA/pydocstyle>`_.
 * Unused imports have been identified with `Vulture <https://github.com/jendrikseipp/vulture>`_.
-* The overall code formatting has been improved with `Black <https://github.com/psf/black>`_.`
+* The overall code formatting has been improved with `Black <https://github.com/psf/black>`_.
 
 
 .. toctree::
