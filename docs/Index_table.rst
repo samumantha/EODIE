@@ -18,7 +18,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
     Kernel Normalized Difference Vegetation Index,kNDVI,(1 - (-(NIR - RED)^2 / (2 * (0.5 * (NIR + RED)^2)))^2) / (1 + (-(NIR - RED)^2 / (2 * (0.5 * (NIR + RED)^2)))^2), `Camps-Valls et al. (2021) <https://doi.org/10.1126/sciadv.abc7447>`_
     Normalized Difference Moisture Index,NDMI,(NIR - SWIR1) / (NIR + SWIR1),`Gao (1996) <https://doi.org/10.1016/S0034-4257(96)00067-3>`_
     Normalized Difference Water Index,NDWI,(GREEN - NIR) / (GREEN + NIR),`McFeeters (1996) <https://doi.org/10.1080/01431169608948714>`_
-    Modified Normalized Difference Water Index,mNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),`Xu (2006) <https://doi.org/10.1080/01431160600589179>`_
+    Modified Normalized Difference Water Index,MNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),`Xu (2006) <https://doi.org/10.1080/01431160600589179>`_
     Enhanced Vegetation Index,EVI,2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1)),`Huete et al <https://doi.org/10.1016/S0034-4257(96)00112-5>`_
     Enhanced Vegetation Index 2,EVI2,2.5 * ((NIR - RED) / (2.4 * RED + NIR + 1)),`Jiang et al. (2008) <https://doi.org/10.1016%2Fj.rse.2008.06.006>`_
     Difference Vegetation Index,DVI,NIR - RED,Tucker (1979)
