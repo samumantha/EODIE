@@ -110,9 +110,6 @@ class Index(RasterData):
 
     def calculate_ndvi(self):
         """Calculate Normalized Difference Vegetation Index (NDVI) from red and nir bands (Kriegler FJ, Malila WA, Nalepka RF, Richardson W (1969) Preprocessing transformations and their effect on multispectral recognition. Remote Sens Environ VI:97–132."""
-        red = self.get_array('red')
-
-
         red = self.get_array("red")
         nir = self.get_array("nir")
 
@@ -121,7 +118,7 @@ class Index(RasterData):
         return ndviarray
 
     def calculate_rvi(self):
-        """Calculate Ratio Vegetation Index (RVI) (ref) from red and nir bands."""
+        """Calculate Ratio Vegetation Index (Pearson & Miller, 1972) from red and nir bands."""
         red = self.get_array("red")
         nir = self.get_array("nir")
 
@@ -130,7 +127,7 @@ class Index(RasterData):
         return rviarray
 
     def calculate_savi(self):
-        """Calculate Soil Adjusted Vegetation Index (SAVI) (ref) from red and nir bands with factors 1.5 and 0.5."""
+        """Calculate Soil Adjusted Vegetation Index (Huete (1988) - https://doi.org/10.1016/0034-4257(88)90106-X) from red and nir bands with factors 1.5 and 0.5."""
         red = self.get_array("red")
         nir = self.get_array("nir")
 
@@ -139,7 +136,7 @@ class Index(RasterData):
         return saviarray
 
     def calculate_nbr(self):
-        """Calculate Normalized Burnt Ratio (NBR) (ref) from nir and swir2 bands."""
+        """Calculate Normalized Burnt Ratio (Key & Benson (1999)) from nir and swir2 bands."""
         nir = self.get_array("nir")
         swir2 = self.get_array("swir2")
 
@@ -148,7 +145,7 @@ class Index(RasterData):
         return nbrarray
 
     def calculate_kndvi(self):
-        """Calculate kNDVI (https://github.com/IPL-UV/kNDVI) from red and nir bands with sigma pixelwise calculation."""
+        """Calculate Kernel NDVI (Camps-Valls et al. (2021) - https://doi.org/10.1126/sciadv.abc7447) from red and nir bands with sigma pixelwise calculation."""
         red = self.get_array("red")
         nir = self.get_array("nir")
 
@@ -160,7 +157,7 @@ class Index(RasterData):
         return kndviarray
 
     def calculate_ndmi(self):
-        """Calculate Normalized Moisture Index (NDMI)  as it is used by Wilson (2002) https://doi.org/10.1016/S0034-4257(01)00318-2 similar to the Gao (1996) NDWI, but NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index."""
+        """Calculate Normalized Moisture Index (NDMI)  as it is used by Wilson (2002) https://doi.org/10.1016/S0034-4257(01)00318-2 similar to the Gao (1996 - https://doi.org/10.1016/S0034-4257(96)00067-3) NDWI, but NOT McFeeters NDWI (1996) https://en.wikipedia.org/wiki/Normalized_difference_water_index."""
         nir = self.get_array(
             "nir"
         )  # B8A would be more accurate for NDWI and would fit well w/ NDMI as well?
@@ -171,7 +168,7 @@ class Index(RasterData):
         return ndmiarray
 
     def calculate_ndwi(self):
-        """Calculate Normalized Difference Water Index according to McFeeters (1996) https://doi.org/10.1080/01431169608948714."""
+        """Calculate Normalized Difference Water Index (McFeeters (1996) - https://doi.org/10.1080/01431169608948714."""
         green = self.get_array("green")
         nir = self.get_array("nir")
 
@@ -179,7 +176,7 @@ class Index(RasterData):
         return ndwiarray
 
     def calculate_mndwi(self):
-        """Calculate Normalized Difference Water Index according to McFeeters (1996) https://doi.org/10.1080/01431169608948714."""
+        """Calculate Modified Normalized Difference Water Index (Xu (2006) - https://doi.org/10.1080/01431160600589179)."""
         green = self.get_array("green")  # Modified from McFeeters NDWI
         swir1 = self.get_array("swir1")  # mir, band11 for Sentinel-2
 
@@ -187,7 +184,7 @@ class Index(RasterData):
         return mndwiarray
 
     def calculate_evi(self):
-        """Calculate Enhanced Vegetation Index (https://doi.org/10.3390/s7112636) with L =1, C1 = 6, C2 = 7.5 and G= 2.5."""
+        """Calculate Enhanced Vegetation Index (Huete et al. (1997) - https://doi.org/10.1016/S0034-4257(96)00112-5) with L =1, C1 = 6, C2 = 7.5 and G= 2.5."""
         nir = self.get_array("nir")
         red = self.get_array("red")
         blue = self.get_array("blue")
@@ -203,7 +200,7 @@ class Index(RasterData):
         return eviarray
 
     def calculate_evi2(self):
-        """Calculate Enhanced Vegetation Index 2 (Jiang, Huete, Didan & Miura (2008) https://doi.org/10.1016%2Fj.rse.2008.06.006) with L=1, C = 2.4, G=2.5."""
+        """Calculate Enhanced Vegetation Index 2 (Jiang et al. (2008) -  https://doi.org/10.1016%2Fj.rse.2008.06.006) with L=1, C = 2.4, G=2.5."""
         nir = self.get_array("nir")
         red = self.get_array("red")
 
@@ -217,7 +214,7 @@ class Index(RasterData):
         return evi2array
 
     def calculate_dvi(self):
-        """Calculate Difference Vegetation Index (https://doi.org/10.1088/1742-6596/1003/1/012083)."""
+        """Calculate Difference Vegetation Index (Tucker (1979))."""
         nir = self.get_array("nir")
         red = self.get_array("red")
 
@@ -225,7 +222,7 @@ class Index(RasterData):
         return dviarray
 
     def calculate_cvi(self):
-        """Calculate CVI (https://doi.org/10.3390/rs9050405)."""
+        """Calculate Chlorophyll Vegetation Index (Vincini, Frazzi & D'Elassio (2008) - https://doi.org/10.1007/s11119-008-9075-z))."""
         nir = self.get_array("nir")
         red = self.get_array("red")
         green = self.get_array("green")
@@ -234,7 +231,7 @@ class Index(RasterData):
         return cviarray
 
     def calculate_mcari(self):
-        """Calculate MCARI (https://doi.org/10.1016/S0034-4257(00)00113-9) only usable with platforms with bands in the red edge area (eg. Sentinel-2)."""
+        """Calculate Modified Chrolophyll Absorption in Reflectance Index (Daughtry et al. (2000) - https://doi.org/10.1016/S0034-4257(00)00113-9) only usable with platforms with bands in the red edge area (eg. Sentinel-2)."""
         red = self.get_array("red")
         green = self.get_array("green")
         r_edge = self.get_array("r_edge")
@@ -245,7 +242,7 @@ class Index(RasterData):
         return mcariarray
 
     def calculate_ndi45(self):
-        """Calculate NDI45 (https://doi.org/10.1007/978-981-16-1086-8_1) only usable with platforms with bands in the red edge area (eg. Sentinel-2)."""
+        """Calculate Normalized Difference Index 45 (Delegido et al. (2011) - https://doi.org/10.1007/s11119-008-9075-z) only usable with platforms with bands in the red edge area (eg. Sentinel-2)."""
         nir = self.get_array("r_edge")
         red = self.get_array("red")
 
@@ -253,7 +250,7 @@ class Index(RasterData):
         return ndi45array
 
     def calculate_tct(self, coeffs):
-        """Calculate general Tasseled Cap Index (https://doi.org/10.1109/JSTARS.2019.2938388).
+        """Calculate general Tasseled Cap Index with Sentinel-2 coefficients (Shi & Xu (2019) - https://doi.org/10.1109/JSTARS.2019.2938388).
 
         Parameters
         ----------
