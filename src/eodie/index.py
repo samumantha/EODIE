@@ -118,7 +118,7 @@ class Index(RasterData):
         return ndviarray
 
     def calculate_rvi(self):
-        """Calculate Ratio Vegetation Index (Pearson & Miller, 1972) from red and nir bands."""
+        """Calculate Ratio Vegetation Index (Jordan 1969 - https://doi.org/10.2307/1936256) from red and nir bands."""
         red = self.get_array("red")
         nir = self.get_array("nir")
 
@@ -136,7 +136,7 @@ class Index(RasterData):
         return saviarray
 
     def calculate_nbr(self):
-        """Calculate Normalized Burnt Ratio (Key & Benson (1999)) from nir and swir2 bands."""
+        """Calculate Normalized Burnt Ratio (Key & Benson (1999))  from nir and swir2 bands."""
         nir = self.get_array("nir")
         swir2 = self.get_array("swir2")
 
@@ -184,7 +184,7 @@ class Index(RasterData):
         return mndwiarray
 
     def calculate_evi(self):
-        """Calculate Enhanced Vegetation Index (Huete et al. (1997) - https://doi.org/10.1016/S0034-4257(96)00112-5) with L =1, C1 = 6, C2 = 7.5 and G= 2.5."""
+        """Calculate Enhanced Vegetation Index (Liu & Huete (1995) - https://doi.org/10.1109/TGRS.1995.8746027) with L =1, C1 = 6, C2 = 7.5 and G= 2.5."""
         nir = self.get_array("nir")
         red = self.get_array("red")
         blue = self.get_array("blue")
