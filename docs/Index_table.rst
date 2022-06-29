@@ -12,7 +12,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
 
     Index name,Abbreviation,Formula,Reference
     Normalized Difference Vegetation Index,NDVI,(NIR - RED) / (NIR + RED), Rouse et al. (1973)
-    Ratio Vegetation Index,RVI,NIR / RED, Pearson & Miller (1972)
+    Ratio Vegetation Index,RVI,NIR / RED, `Jordan (1969) <https://doi.org/10.2307/1936256>`_
     Soil-Adjusted Vegetation Index,SAVI,(1.5 * (NIR - RED)) / (NIR + RED + 0.5),`Huete (1988) <https://doi.org/10.1016/0034-4257(88)90106-X>`_
     Normalized Burn Ratio,NBR,(NIR - SWIR2) / (NIR + SWIR2), Key & Benson (1999)
     Kernel Normalized Difference Vegetation Index,kNDVI,(1 - (-(NIR - RED)^2 / (2 * (0.5 * (NIR + RED)^2)))^2) / (1 + (-(NIR - RED)^2 / (2 * (0.5 * (NIR + RED)^2)))^2), `Camps-Valls et al. (2021) <https://doi.org/10.1126/sciadv.abc7447>`_
@@ -21,7 +21,7 @@ Below you can find the table of vegetation indices EODIE currently supports.
     Modified Normalized Difference Water Index,MNDWI,(GREEN - SWIR1) / (GREEN + SWIR1),`Xu (2006) <https://doi.org/10.1080/01431160600589179>`_
     Enhanced Vegetation Index,EVI,2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1)),`Huete et al. (1997) <https://doi.org/10.1016/S0034-4257(96)00112-5>`_
     Enhanced Vegetation Index 2,EVI2,2.5 * ((NIR - RED) / (2.4 * RED + NIR + 1)),`Jiang et al. (2008) <https://doi.org/10.1016%2Fj.rse.2008.06.006>`_
-    Difference Vegetation Index,DVI,NIR - RED,Tucker (1979)
+    Difference Vegetation Index,DVI,NIR - RED,`Tucker (1979) <https://doi.org/10.1016/0034-4257(79)90013-0>`_
     Chlorophyll Vegetation Index,CVI, (NIR * RED) / (GREEN * GREEN),"`Vincini, Frazzi & D'Elassio (2008) <https://doi.org/10.1007/s11119-008-9075-z>`_"
     Modified Chlorophyll Absorption in Reflectance Index,MCARI,(R_EDGE - RED - 0.2 * (R_EDGE - GREEN) * (R_EDGE / RED),`Daughtry et al. (2000) <https://doi.org/10.1016/S0034-4257(00)00113-9>`_
     Normalized Difference Index 45,NDI45,(R_EDGE - RED) / (R_EDGE + RED),`Delegido et al. (2011) <https://doi.org/10.3390/s110707063>`_
