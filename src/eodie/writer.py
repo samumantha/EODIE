@@ -134,8 +134,9 @@ class Writer(object):
             onerow.insert(2, self.tile)
             # Run insert_SQL
             cursor.execute(insert_SQL, onerow)
-            # Commit changes
-            connection.commit()
+
+        # Commit changes
+        connection.commit()
         # Close connection
         connection.close()
 
