@@ -5,7 +5,7 @@ import yaml
 import sys
 from eodie.splitshp import SplitshpObject
 
-with open("./user_config.yml", "r") as ymlfile:
+with open("../user_config.yml", "r") as ymlfile:
     user_cfg = yaml.safe_load(ymlfile)
 
 
