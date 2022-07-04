@@ -174,8 +174,11 @@ for path in userinput.input:
                 logging.info("Shape of cloudmask is {}".format(cloudmask.shape))
 
             vegindex = Index(pathfinderobject.imgpath, cfg)
-
-            shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
+            
+            if not userinput.exclude_splitshp:
+                shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
+            else:
+                shpname = baseshapename + ".shp"
 
             geoobject = VectorData(os.path.join(shp_directory, shpname))
             geoobject.reproject_to_epsg(vegindex.epsg)
@@ -187,6 +190,18 @@ for path in userinput.input:
                 rastervalidatorobject = RasterValidatorS2(
                     path, maxcloudcover, geoobject
                 )
+
+                if not rastervalidatorobject.integrity:
+                    logging.info(
+                        " The input SAFE {} is missing crucial files and will be skipped.".format(
+                            path
+                        )
+                    ) 
+                    logging.info(
+                        " "
+                    )
+                    continue
+
                 logging.info(
                     "Cloudcover below {}: {}".format(
                         maxcloudcover, rastervalidatorobject.not_cloudcovered
