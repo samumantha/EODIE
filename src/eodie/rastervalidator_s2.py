@@ -9,6 +9,7 @@ Authors: Samantha Wittke
 
 import os
 import glob
+import logging
 from xml.dom import minidom
 from rasterstats import zonal_stats
 
@@ -45,8 +46,55 @@ class RasterValidatorS2(object):
         self.SAFEpath = SAFEpath
         self.maxcloudcover = maxcloudcover
         self.geometryobject = geometryobject
-        self.not_cloudcovered = self.check_cloudcover()
-        self.datacovered = self.check_datacover()
+        self.integrity = self.check_integrity()
+        if self.integrity:
+            self.not_cloudcovered = self.check_cloudcover()
+            self.datacovered = self.check_datacover()
+        
+
+    def check_integrity(self):
+        """Check the integrity of the SAFE directory. Images for all bands and metadata XML file should be found.
+        
+        Returns: 
+        --------
+        Integrity: boolean
+            integrity of the file, true if all necessary files can be found
+        """
+        
+        # Check that metadata file exists
+        xmlname = "MTD_MSIL2A.xml"
+        xmlpath = os.path.join(
+            self.SAFEpath, xmlname
+            )
+        # Default integrity to true
+        integrity = True
+
+        # If xml file exists, check for individual band directories.
+        if os.path.isfile(xmlpath):
+            
+            # In a complete SAFE directory, there are 35 .jp2 files.
+            granulepath = os.path.join(
+                self.SAFEpath, "GRANULE", "*", "IMG_DATA", "*", "*.jp2"
+            )
+            if len(glob.glob(granulepath)) < 35:
+                logging.error(
+                    " At least one image band from {} is missing.".format(
+                        self.SAFEpath
+                    )
+                )
+                integrity = False
+        else:
+            logging.error(
+                " Metadata .XML file for {} was not found.".format(
+                self.SAFEpath
+                )
+            )
+            integrity = False
+        
+        return integrity
+            
+        
+
 
     def get_xml(self):
         """Build the location and name of the xml file containing metadata for Sentinel-2."""
