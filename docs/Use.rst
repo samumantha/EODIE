@@ -62,7 +62,7 @@ Note that some parameters have options, some have defaults and some are optional
 | If none of the three above is given, only --statistics_out is set to true
 
 | ``--database_out``
-| set flag if statistics (see below) shall be calculated ber polygon and saved into a sqlite3 .db file
+| set flag if statistics (see below) shall be calculated ber polygon and saved into a sqlite3 .db file. Please be aware that with several simultaneous processes, the output database file can get locked and prevent writing results. 
 | **type:** flag
 
 | ``--statistics``
