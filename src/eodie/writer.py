@@ -148,7 +148,7 @@ class Writer(object):
             csv_writer = csv.writer(csv_file, delimiter=",")
             csv_writer.writerow(["id"] + ["orbit"] + self.statistics)
             for key in self.extractedarrays.keys():
-                onerow = [key] + self.extractedarrays[key]
+                onerow = [int(key)] + self.extractedarrays[key]
                 csv_writer.writerow(onerow)
 
     def write_array(self):
