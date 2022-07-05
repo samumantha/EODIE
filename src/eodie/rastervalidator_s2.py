@@ -31,7 +31,7 @@ class RasterValidatorS2(object):
         if area of interest (given with geometryobject) is datacovered (not all nan)
     """
 
-    def __init__(self, SAFEpath, maxcloudcover, geometryobject):
+    def __init__(self, SAFEpath, maxcloudcover):
         """Initialize raster validator object.
 
         Parameters
@@ -40,17 +40,9 @@ class RasterValidatorS2(object):
             location and name of a raster product
         maxcloudcover: int
             maximum cloudcover allowed for processing
-        geometryobject: object
-            object containing the vector data to be processed
         """
         self.SAFEpath = SAFEpath
-        self.maxcloudcover = maxcloudcover
-        self.geometryobject = geometryobject
-        self.integrity = self.check_integrity()
-        if self.integrity:
-            self.not_cloudcovered = self.check_cloudcover()
-            self.datacovered = self.check_datacover()
-        
+        self.maxcloudcover = maxcloudcover        
 
     def check_integrity(self):
         """Check the integrity of the SAFE directory. Images for all bands and metadata XML file should be found.
@@ -66,7 +58,7 @@ class RasterValidatorS2(object):
         xmlpath = os.path.join(
             self.SAFEpath, xmlname
             )
-        # Default integrity to true
+        # Default integrity to True
         integrity = True
 
         # If xml file exists, check for individual band directories.
@@ -76,6 +68,7 @@ class RasterValidatorS2(object):
             granulepath = os.path.join(
                 self.SAFEpath, "GRANULE", "*", "IMG_DATA", "*", "*.jp2"
             )
+            # With less than 35 .jp2 files, log an error message and set integrity to False
             if len(glob.glob(granulepath)) < 35:
                 logging.error(
                     " At least one image band from {} is missing.".format(
@@ -83,6 +76,7 @@ class RasterValidatorS2(object):
                     )
                 )
                 integrity = False
+        # If xml file does not exist, log an error message and set integrity to False
         else:
             logging.error(
                 " Metadata .XML file for {} was not found.".format(
@@ -92,9 +86,6 @@ class RasterValidatorS2(object):
             integrity = False
         
         return integrity
-            
-        
-
 
     def get_xml(self):
         """Build the location and name of the xml file containing metadata for Sentinel-2."""
@@ -153,9 +144,9 @@ class RasterValidatorS2(object):
         )[0]
         return bandpath
 
-    def check_datacover(self):
+    def check_datacover(self, geometryobject):
         """Check hat there is data within the convexhull of the given shapefile."""
-        convex_hull = self.geometryobject.get_convex_hull()
+        convex_hull = geometryobject.get_convex_hull()
 
         zonal_statistics = zonal_stats(
             convex_hull, self.get_bandpath(), stats="mean", band=1, nodata=-99999
