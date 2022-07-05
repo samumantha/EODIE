@@ -145,7 +145,18 @@ class RasterValidatorS2(object):
         return bandpath
 
     def check_datacover(self, geometryobject):
-        """Check hat there is data within the convexhull of the given shapefile."""
+        """Check hat there is data within the convexhull of the given shapefile.
+
+        Parameters:
+        -----------
+        geometryobject: VectorData
+            Polygons of areas of interest
+
+        Returns:
+        --------
+        boolean
+            whether there is raster data on the area(s) of interest 
+        """
         convex_hull = geometryobject.get_convex_hull()
 
         zonal_statistics = zonal_stats(
