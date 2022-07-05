@@ -31,7 +31,8 @@ if not os.path.exists(userinput.outpath):
 
 # Create subdirectory for logs
 logdir = os.path.join(userinput.outpath, "logs")
-os.mkdir(logdir)
+if not os.path.exists(logdir):
+    os.mkdir(logdir)
 
 #setup logging for prints in file and stdout
 
