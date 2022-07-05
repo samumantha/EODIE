@@ -148,8 +148,60 @@ for path in userinput.input:
             int(pathfinderobject.date) <= int(userinput.enddate)
             and int(pathfinderobject.date) >= int(userinput.startdate)
             and pathfinderobject.tile in tiles
-        ):
+        ):           
 
+            
+            
+            if not userinput.exclude_splitshp:
+                shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
+            else:
+                shpname = baseshapename + ".shp"
+
+            
+
+            maxcloudcover = cfg["maxcloudcover"]
+            if userinput.platform == "s2":
+                rastervalidatorobject = RasterValidatorS2(
+                    path, maxcloudcover
+                )
+
+                if not rastervalidatorobject.check_integrity():
+                    logging.info(
+                        " The input SAFE {} is missing crucial files and will be skipped.".format(
+                            path
+                        )
+                    ) 
+                    logging.info(
+                        " "
+                    )
+                    continue
+                else:
+
+                    vegindex = Index(pathfinderobject.imgpath, cfg)
+                    geoobject = VectorData(os.path.join(shp_directory, shpname))
+                    geoobject.reproject_to_epsg(vegindex.epsg)
+
+                    shapefile = geoobject.geometries
+
+                    not_cloudcovered = rastervalidatorobject.check_cloudcover()
+                    datacovered = rastervalidatorobject.check_datacover(geoobject)
+
+                    logging.info(
+                        "Cloudcover below {}: {}".format(
+                            maxcloudcover, not_cloudcovered
+                        )
+                    )
+                    logging.info(
+                        "Data withing area of interest: {}".format(
+                            datacovered
+                        )
+                    )
+                    
+                    orbit = rastervalidatorobject.get_orbit_number()
+            else:
+                not_cloudcovered = True
+                datacovered = True
+            
             if not userinput.nomask:
 
                 if userinput.extmask is None:
@@ -172,53 +224,7 @@ for path in userinput.input:
                     logging.info("Using external cloudmask {}".format(extmask))
 
                 logging.info("Shape of cloudmask is {}".format(cloudmask.shape))
-
-            vegindex = Index(pathfinderobject.imgpath, cfg)
-            
-            if not userinput.exclude_splitshp:
-                shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
-            else:
-                shpname = baseshapename + ".shp"
-
-            geoobject = VectorData(os.path.join(shp_directory, shpname))
-            geoobject.reproject_to_epsg(vegindex.epsg)
-
-            shapefile = geoobject.geometries
-
-            maxcloudcover = cfg["maxcloudcover"]
-            if userinput.platform == "s2":
-                rastervalidatorobject = RasterValidatorS2(
-                    path, maxcloudcover, geoobject
-                )
-
-                if not rastervalidatorobject.integrity:
-                    logging.info(
-                        " The input SAFE {} is missing crucial files and will be skipped.".format(
-                            path
-                        )
-                    ) 
-                    logging.info(
-                        " "
-                    )
-                    continue
-
-                logging.info(
-                    "Cloudcover below {}: {}".format(
-                        maxcloudcover, rastervalidatorobject.not_cloudcovered
-                    )
-                )
-                logging.info(
-                    "Data withing area of interest: {}".format(
-                        rastervalidatorobject.datacovered
-                    )
-                )
-                not_cloudcovered = rastervalidatorobject.not_cloudcovered
-                datacovered = rastervalidatorobject.datacovered
-                orbit = rastervalidatorobject.get_orbit_number()
-            else:
-                not_cloudcovered = True
-                datacovered = True
-
+                
             if not_cloudcovered and datacovered:
                 logging.info(" LOOPING THROUGH GIVEN INDICES")
                 for index in userinput.indexlist:
