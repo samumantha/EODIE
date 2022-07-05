@@ -50,7 +50,7 @@ class UserInput(object):
         parser.add_argument(
             "--out",
             dest="outpath",
-            default="./results",
+            default=os.path.join(os.getcwd(), "results"),
             help="directory where results shall be saved",
         )
         parser.add_argument(
