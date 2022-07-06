@@ -96,6 +96,8 @@ A few auxiliary files are available in the aux directory.
 | ``create_binary_cloudmask.py``
 | ``examine_shapefile.py``
 | ``get_cloudcover.py``
+| ``manipulate_vector.py``
+| ``clip_vector.py``
 
 Please refer to the scripts top for more information and how to use them.
 
