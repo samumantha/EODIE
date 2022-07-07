@@ -214,6 +214,12 @@ def plot_tiles(vectorfile):
     # Save figure
     plt.savefig(outputpath, dpi = 300)
     print("Figure showing the tiles has been saved to {}".format(outputpath))
+    # Save a text file
+    outputpath = os.path.join(head, "Tiles_for_" + filename + ".txt")
+    with open(outputpath, 'w') as textfile:
+        for tile in tiles:
+            textfile.write("{}\n".format(tile))
+    print("Textfile listing the tiles has been saved to {}".format(outputpath))
     # Empty variables
     overlay = None
     sen2tiles = None
