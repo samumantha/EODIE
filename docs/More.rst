@@ -102,6 +102,3 @@ A few auxiliary files are available in the helper_scripts directory.
 | ``tilegrid_to_shp.py``
 
 Please refer to the scripts top for more information and how to use them.
-
-
-
