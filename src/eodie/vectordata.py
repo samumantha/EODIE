@@ -85,7 +85,7 @@ class VectorData(object):
 
         return epsgcode
 
-    def reproject_to_epsg(self, myepsg):
+    def reproject_to_epsg(self, rasterepsg):
         """Reproject shapefile to given EPSG code, save as new shapefile file.
 
         Parameters
