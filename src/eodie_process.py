@@ -31,9 +31,6 @@ tiles = None
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
-<<<<<<< HEAD
-
-
 # setup logging for prints in file and stdout
 
 # Extract input file or directory name from input for naming the log file accordingly
@@ -125,7 +122,6 @@ else:
 
 logging.info(' STARTING TO PROCESS IMAGERY')
 #running through either one file, if file was given or multiple files if dir was given
->>>>>>> main
 for path in userinput.input:
 
     pathfinderobject = Pathfinder(path, cfg)
