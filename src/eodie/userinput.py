@@ -37,14 +37,14 @@ class UserInput(object):
         )
         inputrastergroupparser = parser.add_mutually_exclusive_group(required=True)
         inputrastergroupparser.add_argument(
-            "--dir", dest="mydir", help="directory where data is stored"
+            "--rasterdir", dest="rasterdir", help="directory where data is stored"
         )
-        inputrastergroupparser.add_argument("--file", dest="myfile", help="one file")
+        inputrastergroupparser.add_argument("--rasterfile", dest="rasterfile", help="one file")
 
         parser.add_argument(
-            "--shp",
-            dest="shpbase",
-            help="name of the shapefile (without extension)",
+            "--vector",
+            dest="vectorbase",
+            help="name of the vectorfile (without extension)",
             required=True,
         )
         parser.add_argument(
@@ -55,6 +55,27 @@ class UserInput(object):
         )
         parser.add_argument(
             "--id", dest="idname", help="name of ID field in shapefile", required=True
+        )
+
+        parser.add_argument(
+            "--input_type",
+            dest = 'input_type', 
+            default = 'shp',
+            help = 'Determine the input file type, supported formats: shp (default), gpkg, geojson, csv, fgb'
+        )
+
+        parser.add_argument(
+            "--gpkg_layer",
+            dest = 'gpkg_layer',
+            default = None,
+            help = 'Determine the layer in geopackage to be used'
+        )
+
+        parser.add_argument(
+            "--epsg_for_csv",
+            dest = 'epsg_for_csv',
+            default = None,
+            help = 'Determine the EPSG code if vector input is csv file'
         )
 
         parser.add_argument(
@@ -83,8 +104,8 @@ class UserInput(object):
             help="give enddate of timerange of interest",
         )
         parser.add_argument(
-            "--keep_shp",
-            dest="keep_shp",
+            "--keep_splitted",
+            dest="keep_splitted",
             action="store_true",
             help="flag to indicate that newly created shapefiles should be stored",
         )
@@ -134,10 +155,10 @@ class UserInput(object):
             help="Flag to indicate if invalid geometries should be removed from the processing.",
         )
         parser.add_argument(
-            "--exclude_splitshp",
-            dest="exclude_splitshp",
+            "--exclude_splitbytile",
+            dest="exclude_splitbytile",
             action="store_true",
-            help="if this flag is set, it is assumed that splitshp has been run manually beforehand",
+            help="if this flag is set, it is assumed that splitbytile has been run manually beforehand",
         )
         parser.add_argument(
             "--verbose",
@@ -241,7 +262,7 @@ class UserInput(object):
         self.nomask = args.nomask
         self.exclude_splitbytile = args.exclude_splitbytile
         if self.platform == "tif":
-            self.exclude_splitshp = True
+            self.exclude_splitbytile = True
         self.verbose = args.verbose
 
         # Determine output formats

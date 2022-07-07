@@ -82,9 +82,9 @@ shp_directory, shp_name = os.path.split(userinput.vectorbase)
 
 
 logging.info(' STARTING TILESPLITTING ')
-if not userinput.exclude_splitshp:
-    # Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
-    geoobject = VectorData(userinput.shpbase + ".shp")
+if not userinput.exclude_splitbytile:
+    # Read userinput.vectorbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
+    geoobject = VectorData(userinput.vectorbase + ".shp")
     logging.info(" Checking vectorfile validity...")
     small_polygon_shapefile = geoobject.check_validity(userinput.drop_geom)
     world_tiles = cfg["tileshp"] + ".shp"
@@ -181,7 +181,7 @@ for path in userinput.input:
             and pathfinderobject.tile in tiles
         ):                      
             
-            if not userinput.exclude_splitshp:
+            if not userinput.exclude_splitbytile:
                 shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
             else:
                 shpname = baseshapename + ".shp"

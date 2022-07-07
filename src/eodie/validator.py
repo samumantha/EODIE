@@ -28,7 +28,7 @@ class Validator(object):
         self.input_exists_check(args.rasterdir, args.rasterfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
-        self.vector_exists(args.shpbase)
+        self.vector_exists(args.vectorbase)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
         self.vector_check(args.input_type)
