@@ -187,24 +187,28 @@ class UserInput(object):
         # starting python 3.9: platform_cfg | user_cfg also works
         self.config = {**platform_cfg, **user_cfg}
 
-        self.mydir = args.mydir
-        self.myfile = args.myfile
-        if args.myfile is not None:
-            self.input = [args.myfile]
+        self.rasterdir = args.rasterdir
+        self.rasterfile = args.rasterfile
+        if self.rasterfile is not None:
+            if self.rasterfile[-1] == "/":
+                self.rasterfile = self.rasterfile[:-1]
+            self.input = [self.rasterfile]
+        
         else:
-            # self.input = glob.glob(os.path.join(args.mydir,self.config['productnameidentifier']))
+            #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
-            self.input = [
-                os.path.join(self.mydir, file)
-                for file in os.listdir(self.mydir)
-                if re.search(self.config["filepattern"], file)
-            ]
-
-        # remove extension if given by mistake
-        if args.shpbase.endswith(".shp"):
-            self.shpbase = os.path.splitext(args.shpbase)[0]
+            self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
+            if self.rasterdir[-1] == "/":
+                self.rasterdir = self.rasterdir[:-1]
+        
+        self.input_type = args.input_type
+        self.epsg_for_csv = args.epsg_for_csv
+        self.gpkg_layer = args.gpkg_layer
+        # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
+        if '.' in args.vectorbase:
+            self.vectorbase = os.path.splitext(args.vectorbase)[0]
         else:
-            self.shpbase = args.shpbase
+            self.vectorbase = args.vectorbase
         self.outpath = args.outpath
         self.idname = args.idname
 
@@ -219,7 +223,7 @@ class UserInput(object):
             self.statistics = args.statistics
         self.startdate = args.startdate
         self.enddate = args.enddate
-        self.keep_shp = args.keep_shp
+        self.keep_splitted = args.keep_splitted
         self.database_out = args.database_out
 
         self.drop_geom = args.drop_geom
@@ -227,12 +231,15 @@ class UserInput(object):
         self.tiles = args.tiles
         self.tifbands = args.tifbands
 
+        
+
+
         self.geotiff_out = args.geotiff_out
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
         self.nomask = args.nomask
-        self.exclude_splitshp = args.exclude_splitshp
+        self.exclude_splitbytile = args.exclude_splitbytile
         if self.platform == "tif":
             self.exclude_splitshp = True
         self.verbose = args.verbose

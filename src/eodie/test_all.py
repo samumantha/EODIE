@@ -21,7 +21,7 @@ from eodie.vectordata import VectorData
 from eodie.index import Index
 from eodie.rasterdata import RasterData
 from eodie.writer import Writer
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 import yaml
 import fiona
 
@@ -254,39 +254,25 @@ class TestAll(object):
         del maskedarray
 
         del writerobject
-
-    def test_splitshp(self):
-        tmpdir = "testfiles/temp"
-        tmpdir = tmpdir.replace("/", os.sep)
+    
+    def test_tilesplitter(self):
+        tmpdir = 'testfiles/temp'
+        tmpdir = tmpdir.replace('/', os.sep)
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
-        smallparcels = "testfiles/shp/test_parcels_32635.shp"
-        largetiles = "testfiles/shp/sentinel2_tiles_test.shp"
-        smallparcels = smallparcels.replace("/", os.sep)
-        largetiles = largetiles.replace("/", os.sep)
-        shapesplitter = SplitshpObject(smallparcels, largetiles, tmpdir, "Name", True)
+        smallparcels = 'testfiles/shp/test_parcels_32635.shp'
+        largetiles = 'testfiles/shp/sentinel2_tiles_test.shp'
+        smallparcels = smallparcels.replace('/', os.sep)
+        largetiles = largetiles.replace('/', os.sep)
+        shapesplitter = TileSplitter(smallparcels, largetiles, tmpdir, 'Name', True)
         tmpshpdir = shapesplitter.output_directory
-        assert os.path.exists(
-            os.path.join(tmpshpdir, "test_parcels_32635_reprojected_4326.shp")
-        ), "Reprojection of shapefile failed"
-        shapesplitter.splitshp()
-        # assert not glob.glob(os.path.join(tmpshpdir,  'test_parcels_32635_reprojected_4326.*')), 'Failed to delete splitted testtiles'
-        assert (
-            len(
-                glob.glob(
-                    os.path.join(tmpshpdir, "test_parcels_32635_reprojected_4326_*.shp")
-                )
-            )
-            == 2
-        ), "Wrong amount of splitted shapefiles"
-        for tile in ["34VFN", "35VLH"]:
-            with fiona.open(
-                os.path.join(
-                    tmpshpdir, "test_parcels_32635_reprojected_4326_" + tile + ".shp"
-                ),
-                "r",
-            ) as shp:
-                assert len(shp) == 3, "Wrong amount of polygons in splitted shapefile"
+        assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
+        shapesplitter.tilesplit()
+        assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_test_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted testtiles'
+        assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
+        for tile in ['34VFN', '35VLH']:
+            with fiona.open(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_' + tile + '.shp' ), 'r' ) as shp:
+                assert len(shp) == 3, 'Wrong amount of polygons in splitted shapefile'
         shapesplitter.delete_splitted_files()
         assert not os.path.exists(tmpshpdir)
 

@@ -209,7 +209,10 @@ class Writer(object):
             IDs = []
             with fiona.open(shapefile) as shp:
                 for polygon in shp:
-                    IDs.append(polygon["properties"][idname])
-            with open(lookup, "a") as f:
-                f.write(self.tile + ":" + ",".join(str(id) for id in IDs) + "\n")
-            logging.info("Appended tile " + self.tile + " to lookup table")
+                    IDs.append(polygon['properties'][idname])
+            with open(lookup, 'a') as f:
+                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
+            logging.info(' Appended tile ' + self.tile + ' to lookup table')
+
+
+

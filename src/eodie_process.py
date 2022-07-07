@@ -13,7 +13,7 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.userinput import UserInput
-from eodie.splitshp import SplitshpObject
+from eodie.tilesplitter import TileSplitter
 from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
@@ -31,29 +31,60 @@ tiles = None
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
-shp_directory, shp_name = os.path.split(userinput.shpbase)
+<<<<<<< HEAD
+
 
 # setup logging for prints in file and stdout
-if userinput.verbose:
-    handlers = [
-        logging.FileHandler(
-            os.path.join(
-                userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + ".log"
-            )
-        ),
-        logging.StreamHandler(),
-    ]
-    logging.basicConfig(level=logging.INFO, handlers=handlers)
+
+# Extract input file or directory name from input for naming the log file accordingly
+if userinput.rasterfile is not None:
+    filename = os.path.split(userinput.rasterfile)[1].split(".")[0]
 else:
-    logging.basicConfig(
-        filename=os.path.join(
-            userinput.outpath, datetime.now().strftime("%Y%m%d-%H%M%S") + ".log"
-        ),
-        level=logging.INFO,
-    )
+    dirname = os.path.split(userinput.rasterdir)[1] 
 
-logging.info("All inputs for this process: " + str(vars(userinput).items()))
+# If --verbose was given, logging outputs will be printed to terminal
+if userinput.verbose:  
+    # If --file was given, filename will be used as basename for logging file.
+    if userinput.rasterfile is not None:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+    # If --dir was given, directory name will be used as basename for logging file.
+    else:
+        handlers = [logging.FileHandler(os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
+    logging.basicConfig(level = logging.INFO, handlers = handlers)
+else:
+    # If --file was given, filename will be used as basename for logging file
+    if userinput.rasterfile is not None:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+    # If --dir was given, directory name will be used as basename for logging file. 
+    else:
+        logging.basicConfig(filename = os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
 
+logging.info(' ALL INPUTS FOR THIS PROCESS:')
+# Loop through userinputs and print key: value to log file.
+for key in vars(userinput).keys():
+    logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
+
+# If data is not in shapefile format, transform it to shapefile:
+if userinput.input_type != 'shp': 
+    logging.info(" CONVERTING {} TO A SHAPEFILE".format(userinput.vectorbase))
+    object_to_shp = VectorData(userinput.vectorbase + "." + userinput.input_type)
+    # If input format is csv, run csv_to_shp
+    if userinput.input_type == 'csv':
+        object_to_shp.csv_to_shp(userinput.vectorbase + ".shp", userinput.epsg_for_csv)
+    # If input format is geopackage with a defined layername, run gpkg_to_shp
+    elif (userinput.input_type == 'gpkg') & (userinput.gpkg_layer != None):
+        object_to_shp.gpkg_to_shp(userinput.vectorbase + ".shp", userinput.gpkg_layer)
+    # Otherwise run convert_to_shp
+    else:      
+        object_to_shp.convert_to_shp(userinput.vectorbase + ".shp")
+
+    logging.info(" SHAPEFILE CONVERSION COMPLETED")
+
+tiles = None
+shp_directory, shp_name = os.path.split(userinput.vectorbase)
+
+
+logging.info(' STARTING TILESPLITTING ')
 if not userinput.exclude_splitshp:
     # Read userinput.shpbase and worldtiles, do splitshp_world, then splitshp_mp and give new shapefile(s?) to next step. Loop in case of many shapefiles?
     geoobject = VectorData(userinput.shpbase + ".shp")
@@ -61,11 +92,11 @@ if not userinput.exclude_splitshp:
     small_polygon_shapefile = geoobject.check_validity(userinput.drop_geom)
     world_tiles = cfg["tileshp"] + ".shp"
     fieldname = cfg["fieldname"]
-    shapesplitter = SplitshpObject(
-        small_polygon_shapefile, world_tiles, shp_directory, fieldname
-    )
+    tilesplit = TileSplitter(
+        small_polygon_vectorfile, world_tiles, shp_directory, fieldname
+        )
     tic = timeit.default_timer()
-    shapesplitter.splitshp()
+    tilesplit.tilesplit()
     toc = timeit.default_timer()
     tilesplit_time = toc - tic
     if tilesplit_time > 60:
@@ -78,19 +109,23 @@ if not userinput.exclude_splitshp:
         logging.info(
             " Tilesplitting completed, process took {} seconds".format(tilesplit_time)
         )
+    
     # Check if user limited the tiles to be processed
     if userinput.tiles is not None:
         tiles = userinput.tiles
     else:
-        tiles = shapesplitter.tiles
+        tiles = tilesplitter.tiles
     shp_directory = os.path.join(shp_directory, "EODIE_temp_shp")
-
-    baseshapename = shapesplitter.basename
+    baseshapename = tilesplit.basename
 
 else:
-    baseshapename = userinput.shpbase
+    baseshapename = userinput.vectorbase
 
-# running through either one file, if file was given or multiple files if dir was given
+
+
+logging.info(' STARTING TO PROCESS IMAGERY')
+#running through either one file, if file was given or multiple files if dir was given
+>>>>>>> main
 for path in userinput.input:
 
     pathfinderobject = Pathfinder(path, cfg)
@@ -100,7 +135,7 @@ for path in userinput.input:
     if userinput.platform == "tif":
         for band in userinput.tifbands:
             band = int(band)
-            logging.info("File and band to be processed {}, band ".format(path, band))
+            logging.info("File and band to be processed {}, band {}".format(path, band))
             raster = RasterData(path, cfg)
             geoobject = VectorData(baseshapename + ".shp")
             geoobject.reproject_to_epsg(raster.epsg)
@@ -134,9 +169,9 @@ for path in userinput.input:
 
     else:
         if pathfinderobject.tile in tiles:
-            logging.info("Imagepath is {}".format(pathfinderobject.imgpath))
-            logging.info("Tile is {}".format(pathfinderobject.tile))
-            logging.info("Date is {}".format(pathfinderobject.date))
+            logging.info(' Imagepath is {}'.format(pathfinderobject.imgpath))
+            logging.info(' Tile is {}'.format(pathfinderobject.tile))
+            logging.info(' Date is {}'.format(pathfinderobject.date))
         else:
             logging.info(
                 " Data from tile {} was found within input folder but was not processed.".format(
@@ -148,16 +183,26 @@ for path in userinput.input:
             int(pathfinderobject.date) <= int(userinput.enddate)
             and int(pathfinderobject.date) >= int(userinput.startdate)
             and pathfinderobject.tile in tiles
-        ):           
-
-            
+        ):                      
             
             if not userinput.exclude_splitshp:
                 shpname = baseshapename + "_" + pathfinderobject.tile + ".shp"
             else:
                 shpname = baseshapename + ".shp"
+        
+            if userinput.extmask is None:
+                logging.info(' Creating cloudmask...')
+                mask = Mask(pathfinderobject.imgpath, cfg, userinput.test)
+                cloudmask = mask.create_cloudmask()
+                
+            else:
+                cname = userinput.extmask + '_' + pathfinderobject.date + '_' + pathfinderobject.tile + '.*'
+                extmask = glob.glob(cname)[0]
+                cloudmask = Mask(pathfinderobject.imgpath, cfg, userinput.test, extmask).cloudmask
+                logging.info(' Using external cloudmask {}'.format(extmask))
+            logging.info(' Shape of cloudmask is {}'.format(cloudmask.shape))
 
-            
+            vegindex = Index(pathfinderobject.imgpath, cfg)
 
             maxcloudcover = cfg["maxcloudcover"]
             if userinput.platform == "s2":
@@ -264,6 +309,7 @@ for path in userinput.input:
                         )
 
                     logging.info(" Extracting results...")
+
                     for format in userinput.format:
                         tic = timeit.default_timer()
                         extractedarray = extractorobject.extract_format(format)
@@ -296,15 +342,17 @@ for path in userinput.input:
                         writerobject.write_format(format)
                         if format == "statistics" and userinput.database_out:
                             writerobject.write_format("database")
-
-                if "array" in userinput.format:
-                    lookup_file = cfg["lookup"]
+                        
+                if 'array' in userinput.format:
+                    lookup_file = cfg['lookup']
                     writerobject.write_lookup(lookup_file, shapefile, userinput.idname)
-
+                   
             else:
-                logging.warning("Cloudcovered or no data in Area of interest!")
+                logging.warning(' Cloudcovered or no data in Area of interest in {}'.format(path))
+
     logging.info(" ")
 
-if not userinput.exclude_splitshp:
-    if not userinput.keep_shp:
-        shapesplitter.delete_splitted_files()
+if not userinput.exclude_splitbytile:
+    if not userinput.keep_splitted: 
+        tilesplit.delete_splitted_files()
+logging.info(' Processing complete!')

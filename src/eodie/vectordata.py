@@ -6,9 +6,8 @@ Authors: Samantha Wittke
 
 """
 import os
-from osgeo import osr, ogr
+from osgeo import osr, ogr, gdal
 import fiona
-import subprocess
 from copy import deepcopy
 from shapely.geometry import Polygon
 from shapely.validation import explain_validity
@@ -74,7 +73,7 @@ class VectorData(object):
 
         Returns
         --------
-        epsgcode: str
+        vectorepsg: str
             EPSG code of the vectorfile
         """
         # Open shapefile
@@ -91,43 +90,40 @@ class VectorData(object):
 
         Parameters
         -----------
-        myepsg: str
+        rasterepsg: str
             EPSG code to reproject the vectorfile to
         """
         # reproject and save shapefiles to given EPSG code
-        logging.info(" Checking the projection of the inputfile now")
-        epsgcode = self.get_epsg()
-        head, _, root, ext = self._split_path()
+        logging.info('Checking the projection of the inputfile now...')
+        vectorepsg = self.get_epsg()
+        head,_,root,ext = self._split_path()
 
         # check if the shapefile is already in right projection
-        if epsgcode == myepsg:
-            logging.info("Input shapefile has EPSG {} that works!".format(epsgcode))
+        if vectorepsg == rasterepsg:
+            logging.info(' Input shapefile has EPSG {} that works!'.format(vectorepsg))
         else:
-            root = re.sub(r"_reprojected_\d*", "", root)
-            reprojectedshape = os.path.join(head, root + "_reprojected_" + myepsg + ext)
-            if not os.path.exists(reprojectedshape):
-                # use ogr commandline utility to reproject and save shapefile
-                reprojectcommand = (
-                    "ogr2ogr -t_srs EPSG:"
-                    + myepsg
-                    + " "
-                    + reprojectedshape
-                    + " "
-                    + self.geometries
-                )
-                logging.info("Reprojectcommand: {}".format(reprojectcommand))
-                subprocess.call(reprojectcommand, shell=True)
-                logging.info(
-                    " Input shapefile had other than EPSG {} but was reprojected and works now".format(
-                        myepsg
-                    )
-                )
-            # update the objects shapefile
+            root = re.sub(r'_reprojected_\d*', '', root)
+            reprojectedshape = os.path.join(head, root + '_reprojected_' + rasterepsg +  ext)
+            if not os.path.exists(reprojectedshape):             
+
+                # Determine the spatial reference systems for input and output
+                input_epsg = 'EPSG:' + vectorepsg
+                output_epsg = 'EPSG:' + rasterepsg
+
+                # Define options for gdal.VectorTranslate
+                gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
+
+                # Run gdal.VectorTranslate
+                gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
+
+                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(self.geometries, rasterepsg))
+                
+            #update the objects shapefile
             self.geometries = reprojectedshape
 
     def get_properties(self):
-        """Extract driver, schema and crs from vectorfile.
-
+        """ extract driver, schema and crs from vectorfile
+        
         Returns
         --------
         driver: str
@@ -151,8 +147,8 @@ class VectorData(object):
         boundingbox: object
             polygon object of the boundingbox for the whole vectorfile
         """
-        with fiona.open(self.geometries, "r") as open_shp:
-            bounding_box_coordinates = open_shp.bounds
+        with fiona.open(self.geometries,'r') as open_vectordata:
+            bounding_box_coordinates = open_vectordata.bounds
             logging.info(bounding_box_coordinates)
         return Polygon.from_bounds(
             bounding_box_coordinates[0],
@@ -284,4 +280,65 @@ class VectorData(object):
             return outputpath
 
         else:
-            return self.geometries
+            return self.geometries      
+
+
+    def convert_to_shp(self, output):
+        """ converts the input vector file into shapefile for processing. This function is used with geojson, single-layer geopackages and flatgeobufs.
+        Parameters
+        ----------
+        output: str
+            the name of the output file (basename.shp)
+        """
+        logging.info('Converting vector input to a shapefile...')
+        # Open input file with gdal
+        input_file = gdal.OpenEx(self.geometries)              
+        # Define gdal.VectorTranslateOptions        
+        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
+        # Run gdal.VectorTranslate
+        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
+        logging.info('Shapefile conversion completed!')
+        
+
+        # Empty the file from memory
+        input_file = None
+        
+    def csv_to_shp(self, output, epsg):
+        """ converts the input csv file into shapefile for processing. 
+        Parameters
+        ----------
+        output: str
+            the name of the output file (basename.shp)
+        epsg: str
+            the EPSG code for the csv file input       
+        """
+        logging.info('Converting csv input to a shapefile...')
+        # Open file with gdal
+        input_file = gdal.OpenEx(self.geometries)
+        # Define format EPSG:epsg 
+        srs = 'EPSG:' + epsg
+        # Define gdal.VectorTranslateOptions
+        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", srcSRS=srs, dstSRS=srs)
+        # Run gdal.VectorTranslate
+        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
+        # Empty input file from memory
+        input_file = None
+        logging.info('Shapefile conversion completed!')
+
+    def gpkg_to_shp(self, output, layer):
+        """ converts the layer from input gpkg file into shapefile for processing. This function is used with geopackages with more than one layer.
+        Parameters
+        ----------
+        output: str
+            the name of the output file (basename.shp)
+        layer: str
+            the name of the layer in geopackage to convert
+        """
+        logging.info('Converting geopackage layer to a shapefile...')
+        # Open the layer with Fiona
+        with fiona.open(self.geometries, layer = layer) as input:          
+            # Create and open another file with shapefile driver, inheriting schema and crs from input geometries
+            with fiona.open(output, "w", driver = "ESRI Shapefile", schema = input.schema, crs = input.crs) as output_shp:
+                # Write input contents into a shapefile 
+                output_shp.writerecords(input)
+        logging.info('Shapefile conversion completed!')

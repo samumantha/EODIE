@@ -12,8 +12,11 @@ The following sections describe EODIEs command line arguments and the configurat
 Command line arguments
 ++++++++++++++++++++++
 
-The following parameters can be used in the commandline:
-Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given 
+The following parameters and flags can be used in the commandline (more information on each parameter and flag below):
+
+``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <> --input_type <> --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotif_out --array_out --statistics <> --index <> --start <> --end <> --keep_splitted --exclude_border --external_cloudmask <> --exclude_split_by_tile --verbose --test``
+
+Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given.
 
 | ``--platform``
 | Which platform does the data come from? 
@@ -21,21 +24,21 @@ Note that some parameters have options, some have defaults and some are optional
 | **options:** s2, ls8, tif
 | The platform information needs to be given in order for EODIE to be able to read the data the right way, eg find tile and date information in the filename. It is possible to extent EODIE to be able to process other datasources than given in options. Please refer to :ref:`extending_eodie` for further information.
 
-| ``--dir``
+| ``--rasterdir``
 | The directory where the data to be processed is stored as absolute path. 
 | **type:** String
-| EODIE can either be given a directory to process data from or a single file (use `--file` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as shapefile, EODIE finds the fitting data based on these inputs. Avoid having dates in the format of YYYYMMDD and tilenames in format 00XXX in the path!
+| EODIE can either be given a directory to process data from or a single file (use `--rasterfile` parameter instead). If a directory contains other data than what matches with `--platform`, `--startdate`/`--enddate`, (`maxcloudcover` in config) and the area of interest given as vectorfile, EODIE finds the fitting data based on these inputs. Avoid having dates in the format of YYYYMMDD and tilenames in format 00XXX in the path!
 
-| ``--file``
-| If only one file shall be processed use ``--file`` instead of ``--dir``. Cannot be used together with ``--dir``.
+| ``--rasterfile``
+| If only one file shall be processed use ``--rasterfile`` instead of ``--rasterdir``. Cannot be used together with ``--rasterdir``.
 | **type:** String
-| Either `--dir` or `--file` needs to be given by user.
+| Either `--rasterdir` or `--rasterfile` needs to be given by user.
 
-| ``--shp``
-| Absolute path to the shapefile to be used for processing, without extension and tilename.
+| ``--vector``
+| Absolute path to the vector file to be used for processing, without extension and tilename.
 | **type:** String
-| **example:** Shapefile name is test_polygons.shp in location /home/my/path, then it is given as --shp /home/my/path/test_polygons
-| The given shapefile defines the area of interest. Internally, EODIE splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
+| **example:** Vector file name is test_polygons.shp in location /home/my/path, then it is given as --vector /home/my/path/test_polygons
+| The given vector defines the area of interest. Internally, EODIE converts the vector input into a shapefile if needed, splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
 
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
@@ -43,10 +46,26 @@ Note that some parameters have options, some have defaults and some are optional
 | **default:** ``./results``
 
 | ``--id``
-| Name of the unique ID-field of the shapefile provided at ``--shp``.
+| Name of the unique ID-field of the vector file provided at ``--vector``.
 | **type:** String
 | **example:** ``--id id``
-| Not all shapefiles use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. You may examine available fieldnames with the auxiliary script `examine_shapefile.py` (see also :ref:`auxfiles`).
+| Not all vector files use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. If your vector file is not a GeoPackage, you may examine available fieldnames with the auxiliary script `examine_vectorfile.py`. With GeoPackage, you may use `examine_geopackage.py` (see also :ref:`auxfiles`).
+| **ALERT**: Field names longer than 10 characters will be shortened to first 10 characters during shapefile conversion. You need to use the shortened name of the ID field as --id for EODIE to work! 
+
+| ``--input_type``
+| The file extension of the input file provided in --vector. Supported extensions are shp, gpkg, geojson, csv and fgb. If you are using GeoPackage with more than one layer, you need to determine the name of the layer with --gpkg_layer.  Csv files need a column for well-known text (WKT) to determine the spatial extent of each feature and the EPSG code determined with --epsg_for_csv
+| **type:** String
+| **default:** shp
+
+| ``--gpkg_layer``
+| The name of the layer in GeoPackage, if there are more than one of layers. With one layer only this parameter is not needed.
+| **type:** String
+| **default:** None
+
+| ``--epsg_for_csv``
+| If --input_type is .csv, a spatial reference system needs to be defined separately for a successful conversion to a shapefile, as it is not a part of the file structure. 
+| **type:** String
+| **default:** None
 
 | ``--statistics_out``
 | set flag if statistics (see below) shall be calculated per polygon and saved as csv
@@ -88,8 +107,8 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** integer YYYYMMDD
 | **default:** todays date
 
-| ``--keep_shp``
-| Flag to indicate all necessary shapefiles created when running EODIE should be stored for further usage
+| ``--keep_splitted``
+| Flag to indicate all necessary splitted files created when running EODIE should be stored for further usage
 | **type:** flag 
 
 | ``--exclude_border``
@@ -100,8 +119,8 @@ Note that some parameters have options, some have defaults and some are optional
 | [optional] Absolute path and name of external cloudmask (without tile and date and extension) if available
 | **type:** String
 
-| ``--exclude_splitshp``
-| Flag to indicate that splitshp has been run manually beforehand
+| ``--exclude_splitbytile``
+| Flag to indicate that split_by_tile.py has been run manually beforehand
 | **type:** flag
 
 | ``--verbose``
@@ -148,7 +167,7 @@ EODIE also includes other configuration files called config_x.yml with x being s
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-| ``--platform --dir/--file --shp --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
+| ``--platform --rasterdir/--rasterfile --vector --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
 | ``--index`` also needs to be given, unless ``--platform tif``
 
 

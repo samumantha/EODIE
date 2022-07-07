@@ -2,7 +2,7 @@
    sphinx-quickstart on Fri Mar 12 19:57:28 2021.
 
 
-EODIE 1.0.2 Documentation
+EODIE 1.1.0 Documentation
 ==========================
 
 Purpose 
@@ -17,7 +17,7 @@ Earth Observation data are available to the users via for example earth explorer
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
 agricultural field parcels, forest plots, or areas of a certain land cover type.
 
-EODIE takes the objects in as polygons in a shapefile as well as the timeframe of interest and the features (eg vegetation indices) 
+EODIE takes the objects in as polygons in a vector file as well as the timeframe of interest and the features (eg vegetation indices) 
 to be extracted. The output is a per polygon timeseries of the selected features over the timeframe of interest.
 
 Is EODIE suitable for me?
@@ -27,8 +27,7 @@ To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
 
 * Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
-* A geospatial vector data file with polygons of your objects of interests - supported formats are ESRI 
-Shapefile, (GeoPackage, GeoJSON, csv and FlatGeoBuf coming soon!)
+* A geospatial vector file with polygons of your objects of interests - supported formats are ESRI shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
 EODIE produces human and machine readable csv files containing all information needed to start working with the data.
@@ -62,6 +61,7 @@ Contributors
 * Paula Litkey
 * Miloš Pandžić ([ORCiD]( https://orcid.org/0000-0003-4982-2630))
 * Mika Karjalainen
+* Arttu Kivimäki
 
 
 Citation 
@@ -96,6 +96,31 @@ The authors would also like to thank the developers of the following tools:
 * The docstring consistency and grammar have been improved with `pydocstyle <https://github.com/PyCQA/pydocstyle>`_.
 * Unused imports have been identified with `Vulture <https://github.com/jendrikseipp/vulture>`_.
 * The overall code formatting has been improved with `Black <https://github.com/psf/black>`_.
+
+
+Changelog
+----------
+
+1.1.0
+^^^^^^
+
+* Added vector file support for GeoPackage, GeoJSON, FlatGeoBuf and csv files.
+* Added user inputs for different file types
+* Changed user input names (--dir to --rasterdir, --file to --rasterfile, --shp to --vector, --exclude_splitshp to --exclude_splitbytile)
+* Removed need for subprocess
+* Added helper script examine_geopackage.py
+* Renamed helper script examine_shapefile.py to examine_vectorfile.py
+
+
+1.0.2
+^^^^^^
+
+* set usable CPUs for splitshp to 1, if number of available CPUs <= 2
+
+1.0.1
+^^^^^^
+
+* Landsat 8 support enabled
 
 
 .. toctree::

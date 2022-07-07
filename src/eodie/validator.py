@@ -8,6 +8,7 @@ Authors: Samantha Wittke
 import glob
 import os
 import datetime
+from osgeo import gdal
 from eodie.index import Index
 import re
 
@@ -23,13 +24,16 @@ class Validator(object):
         args: object
             arguments of the userinput
         """
-        self.input_amount_check(args.mydir, args.myfile)
-        self.input_exists_check(args.mydir, args.myfile)
+        self.input_amount_check(args.rasterdir, args.rasterfile)
+        self.input_exists_check(args.rasterdir, args.rasterfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
         self.vector_exists(args.shpbase)
         if not args.indexlist is None and not args.indexlist == []:
-            self.index_check(args.config, args.indexlist)
+            self.index_check(args.config,args.indexlist)
+        self.vector_check(args.input_type)
+        self.csv_check(args.input_type, args.epsg_for_csv)
+        self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
 
     def input_amount_check(self, dir, file):
         """Check that either directory of filename is given as input.
@@ -128,6 +132,78 @@ class Validator(object):
             )
         else:
             return True
+
+    def vector_check(self, extension):
+        """ Check that given object input is of a supported file format, exits if not true
+        Parameters
+        ----------
+        extension:
+            the file extension of the object, supported formats are .shp, .gpkg and .geojson
+        Returns
+        -------
+        extension_ok: boolean
+            if object given by the user is in a supported format 
+        """
+
+        supported_formats = ['shp', 'gpkg', 'geojson', 'csv', 'fgb'] 
+        if extension not in supported_formats:
+            exit('Input format is not supported, please use a supported format (shp, gpkg, geojson, csv or fgb)')
+        else:
+            return True     
+
+    def csv_check(self, extension, epsg):
+        """ Check that the EPSG has been determined for input CSV, exits if not true
+        Parameters
+        ----------
+        extension:
+            the file extension of the object
+        epsg:
+            EPSG code provided by user
+            
+        Returns
+        -------
+        csv_ok: boolean
+            if extension is .csv and epsg is not None
+        """
+
+        if extension == "csv":
+            if epsg == None:
+                exit('If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
+        else:
+            return True
+    
+    def gpkg_check(self, extension, basename, layername):
+        """ Check if there are more than one layer in .gpkg input and the layer to be used has been named
+        Parameters
+        ----------
+        extension:
+            the file extension of the object
+        basename:
+            filename of the input without extension
+        layername:
+            name of layer in geopackage to be used
+        Returns
+        -------
+        gpkg_ok: boolean
+            if extension is gpkg with only one layer or if the layer to be used has been determined
+        """
+
+        if extension == "gpkg":
+
+            file = basename + ".gpkg"
+            gpkg = gdal.OpenEx(file)
+
+            if gpkg.GetLayerCount() > 1:
+                if layername == None:
+                    exit('If using gpkg with more than one layer as a vector input, please provide the layer name with parameter --gpkg_layer')            
+            else: 
+                gpkg = None
+                return True                
+        else:
+            return True
+
+    
+
 
     def vector_exists(self, vectorfile):
         """Check that given vectorfile exists.
