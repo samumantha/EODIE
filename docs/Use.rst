@@ -80,8 +80,12 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** flag
 | If none of the three above is given, only --statistics_out is set to true
 
+| ``--database_out``
+| set flag if statistics (see below) shall be calculated ber polygon and saved into a sqlite3 .db file. Please be aware that with several simultaneous processes, the output database file can get locked and prevent writing results. 
+| **type:** flag
+
 | ``--statistics``
-| If --statistics_out is given, specify here which statistics shall be calculated per polygon separated by a space
+| If --statistics_out or --database_out is given, specify here which statistics shall be calculated per polygon separated by a space
 | **type:** list of Strings
 | **options:** one or more of: sum, std, median, mean, majority, minority, unique, range, percentile_x (with x from 0 to 100)
 | **default:** ``count`` (always included)
