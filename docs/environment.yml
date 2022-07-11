@@ -1,6 +1,7 @@
 name: eodie
 channels:
   - conda-forge
+  - blaze 
   - defaults
 dependencies:
   - python=3.7
