@@ -31,6 +31,12 @@ tiles = None
 if not os.path.exists(userinput.outpath):
     os.mkdir(userinput.outpath)
 
+# Create subdirectory for logs
+logdir = os.path.join(userinput.outpath, "logs")
+if not os.path.exists(logdir):
+    os.mkdir(logdir)
+
+
 # setup logging for prints in file and stdout
 
 # Extract input file or directory name from input for naming the log file accordingly
@@ -43,18 +49,18 @@ else:
 if userinput.verbose:  
     # If --file was given, filename will be used as basename for logging file.
     if userinput.rasterfile is not None:
-        handlers = [logging.FileHandler(os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+        handlers = [logging.FileHandler(os.path.join(logdir, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
     # If --dir was given, directory name will be used as basename for logging file.
     else:
-        handlers = [logging.FileHandler(os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
+        handlers = [logging.FileHandler(os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]        
     logging.basicConfig(level = logging.INFO, handlers = handlers)
 else:
     # If --file was given, filename will be used as basename for logging file
     if userinput.rasterfile is not None:
-        logging.basicConfig(filename = os.path.join(userinput.outpath, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+        logging.basicConfig(filename = os.path.join(logdir, filename + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
     # If --dir was given, directory name will be used as basename for logging file. 
     else:
-        logging.basicConfig(filename = os.path.join(userinput.outpath, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
+        logging.basicConfig(filename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)
 
 logging.info(' ALL INPUTS FOR THIS PROCESS:')
 # Loop through userinputs and print key: value to log file.
