@@ -1,7 +1,6 @@
 name: eodie
 channels:
   - conda-forge
-  - blaze 
   - defaults
 dependencies:
   - python=3.7
@@ -15,7 +14,7 @@ dependencies:
   - pytest
   - matplotlib
   - pip
-  - sqlite3
   - pip:
     - sphinxcontrib.napoleon
     - sphinx_rtd_theme
+    - pysqlite3
