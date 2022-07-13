@@ -21,5 +21,7 @@ shapes = fiona.open(vectorfilename)
 # first feature
 first_feature = next(iter(shapes))
 
-print('Fieldnames available for the given vectorfile: ' + str(list(first_feature['properties'].keys())))
-
+print(
+    "Fieldnames available for the given vectorfile: "
+    + str(list(first_feature["properties"].keys()))
+)
