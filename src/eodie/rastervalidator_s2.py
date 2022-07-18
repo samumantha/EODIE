@@ -144,7 +144,7 @@ class RasterValidatorS2(object):
         )[0]
         return bandpath
 
-    def check_datacover(self, geometryobject):
+    def check_datacover(self, convex_hull):
         """Check hat there is data within the convexhull of the given shapefile.
 
         Parameters:
@@ -157,11 +157,15 @@ class RasterValidatorS2(object):
         boolean
             whether there is raster data on the area(s) of interest 
         """
-        convex_hull = geometryobject.get_convex_hull()
+        
+        #convex_hull = geometryobject.get_convex_hull()
+        tile = str(self.SAFEpath[-26:-24])
+        epsgcode = "EPSG:326" + tile 
+        convex_hull_reprojected = convex_hull.to_crs(epsgcode)
 
         zonal_statistics = zonal_stats(
-            convex_hull, self.get_bandpath(), stats="mean", band=1, nodata=-99999
-        )
+            convex_hull_reprojected, self.get_bandpath(), stats="mean", band=1, nodata=-99999
+        )       
         if (
             zonal_statistics[0]["mean"] == 0.0
             or type(zonal_statistics[0]["mean"]) is not float
