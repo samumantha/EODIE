@@ -166,15 +166,34 @@ class VectorData(object):
             location and name of the created convexhull of vectorfile
         """
         # Get a Layer
-        inDriver = ogr.GetDriverByName("ESRI Shapefile")
-        inDataSource = inDriver.Open(self.geometries, 0)
-        inLayer = inDataSource.GetLayer()
+        #inDriver = ogr.GetDriverByName("ESRI Shapefile")
+        #inDataSource = inDriver.Open(self.geometries, 0)
+        #inLayer = inDataSource.GetLayer()
         # Collect all Geometry
-        geomcol = ogr.Geometry(ogr.wkbGeometryCollection)
-        for feature in inLayer:
-            geomcol.AddGeometry(feature.GetGeometryRef())
+        #geomcol = ogr.Geometry(ogr.wkbGeometryCollection)
+        #for feature in inLayer:
+            #geomcol.AddGeometry(feature.GetGeometryRef())
         # Calculate convex hull
-        convexhull = geomcol.ConvexHull()
+        #convexhull = geomcol.ConvexHull()
+        #print(convexhull.GetGeometryType)
+        #print("CONVEXHULL IS: {}".format(convexhull))
+        #print(type(convexhull))
+        #geoseries = gpd.GeoSeries.from_wkb(convexhull, crs = "EPSG:4326")
+        #print(geoseries)
+    
+        #convexhullgdf = gpd.GeoDataFrame(index = [0], crs = "epsg:4326", geometry=[convexhull])
+        #print(convexhullgdf)
+        convexhullp = os.path.splitext(self.geometries)[0] + "_convexhull.shp"
+        #convexhullgdf.to_file(convexhullp)
+
+        gdf = gpd.read_file(self.geometries)
+        ch = gdf.unary_union.convex_hull
+        chdf = gpd.GeoDataFrame(crs = gdf.crs, geometry=[ch])
+        
+
+
+
+        """
         # Save extent to a new Shapefile
         convexhullp = os.path.splitext(self.geometries)[0] + "_convexhull.shp"
         outDriver = ogr.GetDriverByName("ESRI Shapefile")
@@ -201,7 +220,8 @@ class VectorData(object):
         # Save and close DataSource
         inDataSource = None
         outDataSource = None
-        return convexhullp
+        """
+        return chdf
 
     def check_empty(self, vectorfile):
         """Check for empty geometries in vectorfile.
