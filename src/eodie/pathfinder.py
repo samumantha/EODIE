@@ -10,6 +10,7 @@ Authors: Samantha Wittke
 import os
 import glob
 import re
+from xml.dom import minidom
 
 
 class Pathfinder(object):
@@ -46,10 +47,12 @@ class Pathfinder(object):
             self.get_imgpath()
             self.get_tileinfo()
             self.get_dateinfo()
+            self.get_orbit()
         else:
             self.tile = ""
             self.imgpath = self.rasterdir
             self.date = ""
+            self.orbit = ""
 
     def get_imgpath(self):
         """Create the path to the raster data band files based on path given in bandlocation."""
@@ -67,3 +70,12 @@ class Pathfinder(object):
         datepattern = r"%s" % self.cfg["datepattern"]
         splitted_imgpath = self.imgpath.split("/")[-5]
         self.date = re.search(datepattern, splitted_imgpath).group(0)
+
+    def get_orbit(self):
+        xmlname = "MTD_MSIL2A.xml"
+        xmlpath = os.path.join(self.rasterdir, xmlname)
+        doc = minidom.parse(xmlpath)
+        orbit_number = int(
+            doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
+        )
+        self.orbit = orbit_number
