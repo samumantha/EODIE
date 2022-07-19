@@ -157,10 +157,9 @@ class RasterValidatorS2(object):
         boolean
             whether there is raster data on the area(s) of interest 
         """
-        
         #convex_hull = geometryobject.get_convex_hull()
         tile = str(self.SAFEpath[-26:-24])
-        epsgcode = "EPSG:326" + tile 
+        epsgcode = "EPSG:326" + tile         
         convex_hull_reprojected = convex_hull.to_crs(epsgcode)
 
         zonal_statistics = zonal_stats(
@@ -173,11 +172,3 @@ class RasterValidatorS2(object):
             return False
         else:
             return True
-
-    def get_orbit_number(self):
-        """Get the orbit number of the imagery to attach to output file names to avoid pixel misalignment."""
-        doc = self.read_xml(self.get_xml())
-        orbit_number = int(
-            doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
-        )
-        return orbit_number
