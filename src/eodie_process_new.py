@@ -23,7 +23,6 @@ import timeit
 from dask import delayed
 from dask import compute
 import geopandas as gpd
-from dask.diagnostics import ProgressBar
 
 def validate_userinput():
     # Read userinput class
@@ -32,13 +31,14 @@ def validate_userinput():
     # Validate the userinput with validator
     Validator(userinput)
     #print("Userinput has been validated.")
+    # VALIDATION OF USERINPUT INTO USERINPUT?
 
     return userinput
 
 def init_logs(userinput):
     userinput.create_logfile(userinput.outpath, userinput.input, userinput.verbose)    
     userinput.list_inputs(userinput)
-
+    # THESE COULD BE PUT AS INITIALIZING FUNCIONS OF USERINPUT?????
 
 def validate_safedir(safedir, cloudcover, convex_hull):    
     # Initialize RasterValidatorS2
@@ -68,6 +68,8 @@ def cloudmask_creation(safedir, config):
     # Return both pathfinderobject and the cloudmask as a tuple
     return pathfinderobject, cloudmask
 
+
+# MOVE THIS TO VECTORDATA!!!!
 def filter_vectordataframe(vectorframe, tileframe, tile, idname):
     # Select only one tile based on colum Name
     tileframe_tile = tileframe[tileframe['Name'] == tile]
@@ -132,10 +134,9 @@ def execute_delayed(input_list):
 
     return results
 
-def main():
-    
-    # CREATE LOGFILES IN USERINPUT?
-    # VALIDATION OF VECTORFILE?
+def main():    
+   
+    # VALIDATION OF VECTORFILE? INITIALIZATION FUNCTION OF CLASS VECTORDATA?
 
     userinput = validate_userinput()
     init_logs(userinput)
@@ -156,9 +157,9 @@ def main():
     for path in userinput.input:
         # Add delayed functions to the list to be computed
         validation.append(delayed(validate_safedir)(path, 95, convex_hull))
-    
           
     logging.info(" Validating safedirs...")
+    # Run delayed computation with dask
     valid = execute_delayed(validation)    
     # Filter out None values from list of valid safedirs
     valid_filtered = list(filter(None, valid[0]))       
@@ -199,8 +200,6 @@ def main():
             for index in userinput.indexlist:
                 # Add delayed function calls to the list of index_calculations
                 index_calculations.append(delayed(extract_index)(vegindex, cloudmask, index, filtered_geodataframe, userinput, pathfinderobject))
-    
-    # Begin timer    
     
     logging.info(" Calculating indices and extracting results...")
     # Process index calculations with Dask
