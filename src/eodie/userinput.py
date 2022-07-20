@@ -11,6 +11,7 @@ from datetime import datetime
 import glob
 import re
 import yaml
+import logging
 
 
 class UserInput(object):
@@ -226,11 +227,13 @@ class UserInput(object):
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
-        if '.' in args.vectorbase:
-            self.vectorbase = os.path.splitext(args.vectorbase)[0]
-        else:
-            self.vectorbase = args.vectorbase
+        #if '.' in args.vectorbase:
+            #self.vectorbase = os.path.splitext(args.vectorbase)[0]
+        #else:
+        self.vectorbase = args.vectorbase
         self.outpath = args.outpath
+        if not os.path.exists(self.outpath):
+            os.mkdir(self.outpath)
         self.idname = args.idname
 
         self.statistics_out = args.statistics_out
@@ -277,3 +280,37 @@ class UserInput(object):
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append("statistics")
+
+    def create_logfile(self, output_directory, rasterinput, verbose):
+
+        # Build logfolder name
+        logdir = os.path.join(output_directory, "logs")
+        # Check if directory exists; if not, create it
+        if not os.path.exists(logdir):
+            os.mkdir(logdir)
+
+        # Extract filename or directory name based on the length of userinput
+        if len(rasterinput) == 1:
+            inputname = os.path.split(self.rasterfile)[1].split(".")[0]
+        else:
+            dirname = os.path.split(self.rasterdir)[1] 
+
+        if verbose:
+            if len(rasterinput) == 1:
+                handlers = [logging.FileHandler(os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+            else:
+                handlers = [logging.FileHandler(os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]
+
+            logging.basicConfig(level = logging.INFO, handlers = handlers)
+        
+        else:
+            if len(rasterinput) == 1:
+                logging.basicConfig(filename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+            else:
+                logging.basicConfig(filename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)       
+
+    def list_inputs(self, userinput):
+        logging.info(" ALL INPUTS FOR THIS PROCESS:")
+        for key in vars(userinput).keys():
+            logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
+        logging.info("")
