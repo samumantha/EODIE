@@ -213,7 +213,7 @@ class Validator(object):
         vectorfile:
             path to user-given vectorfile
         """
-        vectordirfiles = glob.glob(vectorfile + ".*")
+        vectordirfiles = glob.glob(vectorfile)
         if len(vectordirfiles) == 0:
             exit(
                 "No files were found with the given vectorfile path and name. Please check your inputs."
