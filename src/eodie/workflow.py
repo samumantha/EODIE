@@ -263,58 +263,77 @@ class Workflow(object):
         # Done.
 
     def workflow_tif(self):
-        userinput = self.inputs
-        logging.info(" GEOTIFFS ARE CURRENTLY NOT SUPPORTED.")
-        
+        """Run workflow for regular GeoTIFFs."""
+        userinput = self.inputs      
         tif_extraction = []
-
+        # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase)
-
+        # Loop through paths in userinput
         for path in userinput.input:
+            # Initialize classes Pathfinder and RasterData
             pathfinderobject = Pathfinder(path, userinput.config)
-            raster = RasterData(path, userinput.config)            
+            raster = RasterData(path, userinput.config)   
+            # Reproject vector data to match raster          
             gdf = geoobject.reproject_geodataframe(geoobject.geometries, raster.crs)
-            
+            # Loop through tifbands
             for band in userinput.tifbands:
+                # Append the list of delayed functions
                 tif_extraction.append(delayed(self.extract_from_tif)(path, gdf, raster, userinput, band, pathfinderobject))
-        
+        logging.info(" Extracting results...")
         self.execute_delayed(tif_extraction)        
         
     def extract_from_tif(self, path, gdf, raster, userinput, band, pathfinderobject):
-            extractorobject = Extractor(
-                path,
-                gdf,
-                userinput.idname,
-                raster.affine,
-                userinput.statistics,
-                None,
-                band,
-                userinput.exclude_border
-            )
-            writerobject = Writer(
-                userinput.outpath,
-                pathfinderobject.date,
-                pathfinderobject.tile,
-                userinput.config["name"] + "_band_" + str(band),
-                userinput.platform,
-                "",
-                userinput.statistics,
-                raster.crs
-            )
-            for format in userinput.format:
-                extractedarray = extractorobject.extract_format(format)
-                writerobject.write_format(format, extractedarray)
+        """Extract zonal statistics from a GeoTIFF and write results accordingly.
+        
+        Parameters:
+        ----------
+        path: str
+            path to GeoTIFF
+        gdf: GeoDataFrame
+            vector features to calculate zonal statistics from
+        raster: RasterData
+            class based on the tif file
+        userinput: UserInput
+            all userinputs given
+        band: str
+            band number from multiband tifs
+        pathfinderobject: Pathfinder
+            object containing tif paths
+        
+        Returns:
+        --------
+        None but writes the results in given output formats.
+        """
+        # Initialize Extractor
+        extractorobject = Extractor(
+            path,
+            gdf,
+            userinput.idname,
+            raster.affine,
+            userinput.statistics,
+            None,
+            band,
+            userinput.exclude_border
+        )
+        # Initialize Writer
+        writerobject = Writer(
+            userinput.outpath,
+            pathfinderobject.date,
+            pathfinderobject.tile,
+            userinput.config["name"] + "_band_" + str(band),
+            userinput.platform,
+            "",
+            userinput.statistics,
+            raster.crs
+        )
+        # Loop through output formats
+        for format in userinput.format:
+            # Extract given format
+            extractedarray = extractorobject.extract_format(format)
+            # Write results in given format
+            writerobject.write_format(format, extractedarray)
 
-
-
-
-
-
-
-
-
-
-
+        return None
 
     def workflow_ls8(self):
         userinput = self.inputs
