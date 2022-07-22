@@ -68,7 +68,7 @@ class Pathfinder(object):
     def get_dateinfo(self):
         """Extract date from filename according to pattern from from config."""
         datepattern = r"%s" % self.cfg["datepattern"]
-        splitted_imgpath = self.imgpath.split("/")[-5]
+        splitted_imgpath = self.imgpath.split(os.sep)[-5]
         self.date = re.search(datepattern, splitted_imgpath).group(0)
 
     def get_orbit(self):
