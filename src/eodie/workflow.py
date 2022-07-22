@@ -197,6 +197,11 @@ class Workflow(object):
     def workflow_s2(self):
         """Run workflow for Sentinel-2 imagery."""
         userinput = self.inputs
+
+        ##################
+        ### VALIDATION ###
+        ##################
+        
         validation = []
         # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase)
