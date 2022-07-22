@@ -128,12 +128,12 @@ class VectorData(object):
         )
 
     def get_convex_hull(self, geodataframe):
-        """Extract convex hull of given shapefile, save to new shapefile; adjusted from https://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html#save-the-convex-hull-of-all-geometry-from-an-input-layer-to-an-output-layer.
+        """Extract convex hull of all features of geodataframe that are located in the area of input data.
 
-        Returns
+        Returns:
         --------
-        convexhull: str
-            location and name of the created convexhull of vectorfile
+        convexhull: GeoDataframe
+            GeoDataframe consisting of one feature, the convex hull
         """
         # Get a Layer
         #inDriver = ogr.GetDriverByName("ESRI Shapefile")
@@ -166,7 +166,7 @@ class VectorData(object):
         logging.info(" Creating unary union from envelopes took {} seconds".format(math.ceil(toc-tic)))
         tic = timeit.default_timer() 
         ch = gdf_unary_union.convex_hull
-        chdf = gpd.GeoDataFrame(crs = geodataframe.crs, geometry=[ch])
+        convexhull = gpd.GeoDataFrame(crs = geodataframe.crs, geometry=[ch])
         toc = timeit.default_timer()
         logging.info(" Creating convex hull from unary union took {} seconds.\n".format(math.ceil(toc-tic)))
         
@@ -201,7 +201,7 @@ class VectorData(object):
         #inDataSource = None
         #outDataSource = None
         
-        return chdf
+        return convexhull
 
     def check_empty(self, vectorfile):
         """Check for empty geometries in vectorfile.
