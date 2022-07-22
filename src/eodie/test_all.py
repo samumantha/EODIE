@@ -220,9 +220,9 @@ class TestAll(object):
         date = "20200626"
         tile = "34VFN"
         writerobject = Writer(
-            tmpdir, date, tile, statistics, "ndvi", "s2", 79, ["mean", "median", "std"]
+            tmpdir, date, tile, "ndvi", "s2", 79, ["mean", "median", "std"]
         )
-        writerobject.write_statistics()
+        writerobject.write_statistics(statistics)
 
         assert os.path.exists(writerobject.outpath), "Statistics writer fails"
 
