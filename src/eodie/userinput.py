@@ -12,6 +12,7 @@ import glob
 import re
 import yaml
 import logging
+from eodie.validator import Validator
 
 
 class UserInput(object):
@@ -25,6 +26,7 @@ class UserInput(object):
     def __init__(self):
         """Initialize UserInput object."""
         self.get_userinput()
+        self.create_logfile(self.outpath, self.input, self.verbose)        
 
     def get_userinput(self):
         """Get all userinput from commandline call to run the tool and stores them as userinput attributes."""
@@ -308,9 +310,3 @@ class UserInput(object):
                 logging.basicConfig(filename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
             else:
                 logging.basicConfig(filename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)       
-
-    def list_inputs(self, userinput):
-        logging.info(" ALL INPUTS FOR THIS PROCESS:")
-        for key in vars(userinput).keys():
-            logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
-        logging.info("")
