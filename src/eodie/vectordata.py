@@ -130,31 +130,17 @@ class VectorData(object):
     def get_convex_hull(self, geodataframe):
         """Extract convex hull of all features of geodataframe that are located in the area of input data.
 
+        Parameters:
+        -----------
+        geodataframe: GeoDataframe
+            geodataframe for the features to extract convex hull from
+
         Returns:
         --------
         convexhull: GeoDataframe
             GeoDataframe consisting of one feature, the convex hull
         """
-        # Get a Layer
-        #inDriver = ogr.GetDriverByName("ESRI Shapefile")
-        #inDataSource = inDriver.Open(self.geometries, 0)
-        #inLayer = inDataSource.GetLayer()
-        # Collect all Geometry
-        #geomcol = ogr.Geometry(ogr.wkbGeometryCollection)
-        #for feature in inLayer:
-            #geomcol.AddGeometry(feature.GetGeometryRef())
-        # Calculate convex hull
-        #convexhull = geomcol.ConvexHull()
-        #print(convexhull.GetGeometryType)
-        #print("CONVEXHULL IS: {}".format(convexhull))
-        #print(type(convexhull))
-        #geoseries = gpd.GeoSeries.from_wkb(convexhull, crs = "EPSG:4326")
-        #print(geoseries)
-    
-        #convexhullgdf = gpd.GeoDataFrame(index = [0], crs = "epsg:4326", geometry=[convexhull])
-        #print(convexhullgdf)
-        #convexhullp = os.path.splitext(self.geometries)[0] + "_convexhull.shp"
-        #convexhullgdf.to_file(convexhullp) 
+          
         logging.info(" Extracting convex hull...")
         tic = timeit.default_timer()
         gdf_envelope = geodataframe.envelope
@@ -168,39 +154,7 @@ class VectorData(object):
         ch = gdf_unary_union.convex_hull
         convexhull = gpd.GeoDataFrame(crs = geodataframe.crs, geometry=[ch])
         toc = timeit.default_timer()
-        logging.info(" Creating convex hull from unary union took {} seconds.\n".format(math.ceil(toc-tic)))
-        
-
-
-
-       
-        # Save extent to a new Shapefile
-        #convexhullp = os.path.splitext(self.geometries)[0] + "_convexhull.shp"
-        #outDriver = ogr.GetDriverByName("ESRI Shapefile")
-        #copyfile(
-            #os.path.splitext(self.geometries)[0] + ".prj",
-            #os.path.splitext(convexhullp)[0] + ".prj",
-        #)
-        # Remove output shapefile if it already exists
-        #if os.path.exists(convexhullp):
-            #outDriver.DeleteDataSource(convexhullp)
-        # Create the output shapefile
-        #outDataSource = outDriver.CreateDataSource(convexhullp)
-        #outLayer = outDataSource.CreateLayer("convexhull", geom_type=ogr.wkbPolygon)
-        # Add an ID field
-        #idField = ogr.FieldDefn("ID", ogr.OFTInteger)
-        #outLayer.CreateField(idField)
-        # Create the feature and set values
-        #featureDefn = outLayer.GetLayerDefn()
-        #feature = ogr.Feature(featureDefn)
-        #feature.SetGeometry(convexhull)
-        #feature.SetField("ID", 1)
-        #outLayer.CreateFeature(feature)
-        #feature = None
-        # Save and close DataSource
-        #inDataSource = None
-        #outDataSource = None
-        
+        logging.info(" Creating convex hull from unary union took {} seconds.\n".format(math.ceil(toc-tic)))        
         return convexhull
 
     def check_empty(self, vectorfile):
@@ -354,43 +308,7 @@ class VectorData(object):
 
         return clipped_geodataframe
 
-        """
-        if args.dir is not None:
-    # Glob all SAFE files in dir
-    safes = glob.glob(os.path.join(args.dir, "*.SAFE"))   
-    # Create an empty list for tiles
-    tiles = []
-    # Loop through safes
-    for safedir in safes:
-        # Extract SAFE file name
-        head, tail = os.path.split(safedir)
-        # Read tilecode without beginning T
-        tile = tail.split("_")[5][1:6]            
-        # If tilecode is not in tiles, add it
-        if tile not in tiles:
-            tiles.append(tile)  
-    
-    # Get parent directory
-    parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-    # Read Sentinel-2 tiles into a geodataframe
-    tileframe = gpd.read_file(os.path.join(parent_dir, 'src', 'sentinel2_tiles_world', 'sentinel2_tiles_world.shp'))
-    print("Tileframe read to a dataframe")
-    # Only select rows where tilename can be found in the list of tiles
-    tileframe = tileframe[tileframe['Name'].isin(tiles)]    
-    
-    # Reproject if necessary
-    if not vectorfile.crs == tileframe.crs:
-        print("Inputs are in different coordinate reference system, reprojecting...")
-        vectorfile.to_crs(crs = tileframe.crs, inplace = True)   
-        print("Reprojection completed.")
-    
-    print("Clipping {} based on data in {}.".format(args.vector, args.dir))
-    # Clip
-    clipped_vectorfile = gpd.clip(vectorfile, tileframe, keep_geom_type = True)
-    # Write output to a file
-    clipped_vectorfile.to_file(outputpath)
-    print("Clipped vectorfile was written to {}".format(outputpath))
-    """
+ 
 
     def read_tiles(self):
         tilepath = os.path.join(os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp")
