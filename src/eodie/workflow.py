@@ -265,11 +265,55 @@ class Workflow(object):
     def workflow_tif(self):
         userinput = self.inputs
         logging.info(" GEOTIFFS ARE CURRENTLY NOT SUPPORTED.")
-        quit("GEOTIFFS ARE CURRENTLY NOT SUPPORTED.")
-        to_extract = []
+        
+        tif_extraction = []
 
         geoobject = VectorData(userinput.vectorbase)
+
+        for path in userinput.input:
+            pathfinderobject = Pathfinder(path, userinput.config)
+            raster = RasterData(path, userinput.config)            
+            gdf = geoobject.reproject_geodataframe(geoobject.geometries, raster.crs)
+            
+            for band in userinput.tifbands:
+                tif_extraction.append(delayed(self.extract_from_tif)(path, gdf, raster, userinput, band, pathfinderobject))
         
+        self.execute_delayed(tif_extraction)        
+        
+    def extract_from_tif(self, path, gdf, raster, userinput, band, pathfinderobject):
+            extractorobject = Extractor(
+                path,
+                gdf,
+                userinput.idname,
+                raster.affine,
+                userinput.statistics,
+                None,
+                band,
+                userinput.exclude_border
+            )
+            writerobject = Writer(
+                userinput.outpath,
+                pathfinderobject.date,
+                pathfinderobject.tile,
+                userinput.config["name"] + "_band_" + str(band),
+                userinput.platform,
+                "",
+                userinput.statistics,
+                raster.crs
+            )
+            for format in userinput.format:
+                extractedarray = extractorobject.extract_format(format)
+                writerobject.write_format(format, extractedarray)
+
+
+
+
+
+
+
+
+
+
 
 
     def workflow_ls8(self):
