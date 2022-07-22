@@ -227,14 +227,14 @@ class TestAll(object):
         assert os.path.exists(writerobject.outpath), "Statistics writer fails"
 
         array = extractorobject.extract_array()
-        writerobject = Writer(tmpdir, date, tile, array, "ndvi", "s2", 79, ["count"])
-        writerobject.write_array()
+        writerobject = Writer(tmpdir, date, tile, "ndvi", "s2", 79, ["count"])
+        writerobject.write_array(array)
 
         assert os.path.exists(writerobject.outpath), "Array writer fails"
 
         geoarray = extractorobject.extract_geotiff()
-        writerobject = Writer(tmpdir, date, tile, geoarray, "ndvi", "s2", 79, ["count"])
-        writerobject.write_geotiff()
+        writerobject = Writer(tmpdir, date, tile, "ndvi", "s2", 79, ["count"])
+        writerobject.write_geotiff(geoarray)
 
         assert os.path.exists(
             writerobject.outpath + "_id_0.tif"
