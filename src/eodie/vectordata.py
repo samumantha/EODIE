@@ -91,7 +91,7 @@ class VectorData(object):
 
         return str(epsgcode)
 
-        def get_properties(self):
+    def get_properties(self):
         """ extract driver, schema and crs from vectorfile
         
         Returns
