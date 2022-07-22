@@ -20,7 +20,6 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.userinput import UserInput
-from eodie.tilesplitter import TileSplitter
 from eodie.rasterdata import RasterData
 from eodie.validator import Validator
 import logging
@@ -201,7 +200,7 @@ class Workflow(object):
         ##################
         ### VALIDATION ###
         ##################
-        
+
         validation = []
         # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase)
@@ -262,3 +261,18 @@ class Workflow(object):
         logging.info(" SENTINEL-2 WORKFLOW COMPLETED!")
         logging.info(" Results can be found in {}".format(userinput.outpath))
         # Done.
+
+    def workflow_tif(self):
+        userinput = self.inputs
+        logging.info(" GEOTIFFS ARE CURRENTLY NOT SUPPORTED.")
+        quit("GEOTIFFS ARE CURRENTLY NOT SUPPORTED.")
+        to_extract = []
+
+        geoobject = VectorData(userinput.vectorbase)
+        
+
+
+    def workflow_ls8(self):
+        userinput = self.inputs
+        logging.info(" LANDSAT8 IS CURRENTLY NOT SUPPORTED.")
+        quit("LANDSAT8 IS CURRENTLY NOT SUPPORTED.")
