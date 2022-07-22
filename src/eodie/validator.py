@@ -11,6 +11,7 @@ import datetime
 from osgeo import gdal
 from eodie.index import Index
 import re
+import logging
 
 
 class Validator(object):
@@ -24,6 +25,7 @@ class Validator(object):
         args: object
             arguments of the userinput
         """
+        
         self.input_amount_check(args.rasterdir, args.rasterfile)
         self.input_exists_check(args.rasterdir, args.rasterfile)
         self.date_check(args.startdate)
@@ -34,6 +36,7 @@ class Validator(object):
         self.vector_check(args.input_type)
         self.csv_check(args.input_type, args.epsg_for_csv)
         self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
+        self.list_inputs(args)
 
     def input_amount_check(self, dir, file):
         """Check that either directory of filename is given as input.
@@ -218,3 +221,9 @@ class Validator(object):
             exit(
                 "No files were found with the given vectorfile path and name. Please check your inputs."
             )
+
+    def list_inputs(self, userinput):
+        logging.info(" ALL INPUTS FOR THIS PROCESS:")
+        for key in vars(userinput).keys():
+            logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
+        logging.info("")
