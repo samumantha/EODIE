@@ -86,8 +86,7 @@ class VectorData(object):
         --------
         convexhull: GeoDataframe
             GeoDataframe consisting of one feature, the convex hull
-        """
-          
+        """          
         logging.info(" Extracting convex hull...")
         tic = timeit.default_timer()
         # Create envelopes for all features
@@ -134,13 +133,14 @@ class VectorData(object):
         
         Parameters:
         -----------
-            drop: Flag to indicate if invalid geometries should be dropped.
+        drop: boolean
+            flag to indicate if invalid geometries should be dropped.
+
         Returns:
         --------
-        vectorfilepath: str
-            Path to either the original vectorfile or a filtered one, from which features with empty or invalid geometries have been removed.
+        valid_geom: GeoDataframe
+            geodataframe with only valid geometries - if all geometries are valid, returns original geodataframe
         """
-
         geodataframe = self.geometries
         # Check empty geometries
         self.check_empty(geodataframe)
