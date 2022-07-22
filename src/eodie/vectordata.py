@@ -207,7 +207,7 @@ class VectorData(object):
         # Select only tiles that are found in input directory
         tileframe = tileframe[tileframe['Name'].isin(tiles)]
         # Reproject vector geodataframe to EPSG:4326
-        gdf = self.reprojected_geodataframe(self.geometries, tileframe.crs)
+        gdf = self.reproject_geodataframe(self.geometries, tileframe.crs)
         # Clip
         clipped_geodataframe = gpd.clip(gdf, tileframe) 
         toc = timeit.default_timer()
