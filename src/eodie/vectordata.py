@@ -29,7 +29,7 @@ class VectorData(object):
         location and name of a vectorfile
     """
 
-    def __init__(self, geometries):
+    def __init__(self, geometries, drop=True):
         """Initialize vectordata object.
 
         Parameters
@@ -37,9 +37,16 @@ class VectorData(object):
         geometries: str
             location and name of a vectorfile
         """
+        self.geometries = self.read_geodataframe(geometries)
+        self.geometries = self.check_validity(drop)
+        
+
+    def read_geodataframe(self, geometries):
         logging.info(" Reading vectorfile into a geodataframe...")
-        self.geometries = gpd.read_file(geometries)
+        geodataframe = gpd.read_file(geometries)
         logging.info(" Geodataframe read!\n")
+        
+        return geodataframe
 
     def _split_path(self):
         """Split shapefile path into parts.
@@ -256,7 +263,7 @@ class VectorData(object):
                 " Following features have no geometry:\n\n {}".format(vectorfile_nogeom)
             )
         else:
-            logging.info(" All features have geometries.")
+            logging.info(" All features have geometries.\n")
 
     def check_validity(self, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
@@ -269,28 +276,29 @@ class VectorData(object):
         vectorfilepath: str
             Path to either the original vectorfile or a filtered one, from which features with empty or invalid geometries have been removed.
         """
-        # Read shapefile into a geopandas data frame
-        vectorfile = gpd.read_file(self.geometries)
+
+        geodataframe = self.geometries
         # Check empty geometries
-        self.check_empty(vectorfile)
+        self.check_empty(geodataframe)
+        logging.info(" Checking geometry validity...")
         # Check validity of geometries
-        vectorfile["validity"] = vectorfile["geometry"].is_valid
+        geodataframe["validity"] = geodataframe["geometry"].is_valid
         # Extract only rows with existing geometries
-        vectorfile_with_geom = vectorfile.loc[vectorfile["geometry"] != None].copy()
+        with_geom = geodataframe.loc[geodataframe["geometry"] != None].copy()
         # Filter rows where geometries were invalid
-        vectorfile_with_invalid_geom = vectorfile_with_geom.loc[
-            vectorfile_with_geom["validity"] == False
+        invalid_geom = with_geom.loc[
+            with_geom["validity"] == False
         ].copy()
         # If invalid geometries exist, run explain_validity for them
-        if len(vectorfile_with_invalid_geom) > 0:
-            vectorfile_with_invalid_geom[
+        if len(invalid_geom) > 0:
+            invalid_geom[
                 "explanation"
-            ] = vectorfile_with_invalid_geom.apply(
+            ] = invalid_geom.apply(
                 lambda row: explain_validity(row.geometry), axis=1
             )
             logging.info(
                 " Following features have invalid geometries:\n\n {}".format(
-                    vectorfile_with_invalid_geom
+                    invalid_geom
                 )
             )
         else:
@@ -298,20 +306,11 @@ class VectorData(object):
 
         # If --delete_invalid_geometries was defined, rewrite a new file without invalid geometries.
         if drop:
-            # Extract filepath
-            head, _, root, ext = self._split_path()
-            # Build output filename and path
-            outputfilename = root + "_valid" + ext
-            outputpath = os.path.join(head, outputfilename)
-
             # Filter only valid geometries
-            vectorfile_with_valid_geom = vectorfile_with_geom.loc[
-                vectorfile_with_geom["validity"] == True
+            valid_geom = with_geom.loc[
+                with_geom["validity"] == True
             ].copy()
-            # Write a file from the geodataframe
-            vectorfile_with_valid_geom.to_file(outputpath, index=False)
-
-            return outputpath
+            return valid_geom
 
         else:
             return self.geometries      
@@ -433,3 +432,31 @@ class VectorData(object):
     clipped_vectorfile.to_file(outputpath)
     print("Clipped vectorfile was written to {}".format(outputpath))
     """
+
+    def read_tiles(self):
+        tilepath = os.path.join(os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp")
+        tileframe = gpd.read_file(tilepath)
+        return tileframe
+
+    def reproject_geodataframe(self, geodataframe, crs):
+        logging.info(" Reprojecting geodataframe...")
+        reprojected = geodataframe.to_crs(crs)
+        logging.info(" Reprojectiong completed.\n")
+        return reprojected
+    
+    def filter_geodataframe(self, vectorframe, tileframe, tile, idname):
+        # Select only one tile based on colum Name
+        tileframe_tile = tileframe[tileframe['Name'] == tile]
+        # Run overlay analysis for vectorframe and one tile
+        overlay_result = vectorframe.overlay(tileframe_tile, how = 'intersection')
+        # List IDs in the overlay_result based on userinput --id
+        ids = list(overlay_result[idname])
+        # Filter original vectorframe to only contain listed IDs
+        vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)]
+        # Compare geometries between geodataframes to exclude features that were cut during intersection
+        overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
+        # Exclude features with changed geometries
+        overlay_result = overlay_result[overlay_result['equal_geom'] == True]
+        # Drop the equal_geom column as it is not needed anymore
+        overlay_result = overlay_result.drop(columns = 'equal_geom')
+        return overlay_result
