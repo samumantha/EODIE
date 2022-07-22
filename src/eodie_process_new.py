@@ -24,21 +24,10 @@ from dask import delayed
 from dask import compute
 import geopandas as gpd
 
-def validate_userinput():
-    # Read userinput class
-    userinput = UserInput()
-    #print("Userinput has been read.")
-    # Validate the userinput with validator
+def read_userinput():
+    userinput = UserInput()      
     Validator(userinput)
-    #print("Userinput has been validated.")
-    # VALIDATION OF USERINPUT INTO USERINPUT?
-
     return userinput
-
-def init_logs(userinput):
-    userinput.create_logfile(userinput.outpath, userinput.input, userinput.verbose)    
-    userinput.list_inputs(userinput)
-    # THESE COULD BE PUT AS INITIALIZING FUNCIONS OF USERINPUT?????
 
 def validate_safedir(safedir, cloudcover, convex_hull):    
     # Initialize RasterValidatorS2
@@ -68,25 +57,6 @@ def cloudmask_creation(safedir, config):
     # Return both pathfinderobject and the cloudmask as a tuple
     return pathfinderobject, cloudmask
 
-
-# MOVE THIS TO VECTORDATA!!!!
-def filter_vectordataframe(vectorframe, tileframe, tile, idname):
-    # Select only one tile based on colum Name
-    tileframe_tile = tileframe[tileframe['Name'] == tile]
-    # Run overlay analysis for vectorframe and one tile
-    overlay_result = vectorframe.overlay(tileframe_tile, how = 'intersection')
-    # List IDs in the overlay_result based on userinput --id
-    ids = list(overlay_result[idname])
-    # Filter original vectorframe to only contain listed IDs
-    vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)]
-    # Compare geometries between geodataframes to exclude features that were cut during intersection
-    overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
-    # Exclude features with changed geometries
-    overlay_result = overlay_result[overlay_result['equal_geom'] == True]
-    # Drop the equal_geom column as it is not needed anymore
-    overlay_result = overlay_result.drop(columns = 'equal_geom')
-    
-    return overlay_result
 
 def extract_index(vegindex, cloudmask, index, geodataframe, userinput, pathfinderobject):
     # Calculate index for the whole tile
@@ -131,38 +101,19 @@ def execute_delayed(input_list):
     results = compute(input_list, scheduler = 'processes')
     toc = timeit.default_timer()
     logging.info(" Delayed processing took {} seconds.\n".format(math.ceil(toc-tic)))
-
     return results
 
-def main():    
-   
-    # VALIDATION OF VECTORFILE? INITIALIZATION FUNCTION OF CLASS VECTORDATA?
-
-    userinput = validate_userinput()
-    init_logs(userinput)
-    
-    ##################
-    ### VALIDATION ###
-    ##################
-
+def s2_workflow(userinput):
     validation = []
-    # Read input vectorfile into a VectorData object
     geoobject = VectorData(userinput.vectorbase)
-    s2tiles = gpd.read_file("/users/akivimak/EODIE/src/sentinel2_tiles_world/sentinel2_tiles_world.shp")      
-    #print("Geoobject has been initialized.")         
-    clipped_geodataframe = geoobject.clip_vector(userinput.input, s2tiles)       
-    # Get convex hull of features     
-    convex_hull = geoobject.get_convex_hull(clipped_geodataframe)         
-    # Loop through userinput paths
+    s2tiles = geoobject.read_tiles()
+    clipped_geodataframe = geoobject.clip_vector(userinput.input, s2tiles)
+    convex_hull = geoobject.get_convex_hull(clipped_geodataframe)
     for path in userinput.input:
-        # Add delayed functions to the list to be computed
-        validation.append(delayed(validate_safedir)(path, 95, convex_hull))
-          
+            validation.append(delayed(validate_safedir)(path, 95, convex_hull))
     logging.info(" Validating safedirs...")
-    # Run delayed computation with dask
-    valid = execute_delayed(validation)    
-    # Filter out None values from list of valid safedirs
-    valid_filtered = list(filter(None, valid[0]))       
+    valid = execute_delayed(validation)
+    valid_filtered = list(filter(None, valid[0]))
     logging.info(" From original {} safedirs, {} are valid for processing.\n".format(len(userinput.input), len(valid_filtered)))
     
     ####################
@@ -186,15 +137,13 @@ def main():
 
     # Create empty list for indices to be calculated
     index_calculations = []    
-    # Read sentinel2_tiles_world.shp into a geodataframe (PATH NEEDS TO BE FIXED)
-    s2tiles = gpd.read_file("/users/akivimak/EODIE/src/sentinel2_tiles_world/sentinel2_tiles_world.shp")
     # Reproject geodataframe to EPSG:4326
-    clipped_geodataframe.to_crs(s2tiles.crs, inplace = True)
+    geodataframe = geoobject.reproject_geodataframe(clipped_geodataframe, s2tiles.crs)    
     # Loop through tuples of (safedir, cloudmask):
     for pathfinderobject, cloudmask in cloudmask_results[0]:
         # Initialize class Vegindex
         vegindex = Index(pathfinderobject.imgpath, userinput.config)         
-        filtered_geodataframe = filter_vectordataframe(clipped_geodataframe, s2tiles, pathfinderobject.tile, userinput.idname)     
+        filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, s2tiles, pathfinderobject.tile, userinput.idname)     
         if not filtered_geodataframe.empty:   
             # Loop through indices:
             for index in userinput.indexlist:
@@ -209,6 +158,11 @@ def main():
     # Done.
 
 
-
+def main():    
+    
+    userinput = read_userinput()  
+    if userinput.platform == "s2":
+        s2_workflow(userinput)
+    
 if __name__ == '__main__':
     main()
