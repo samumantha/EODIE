@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from eodie.userinput import UserInput
+from eodie.validator import Validator
 from eodie.workflow import Workflow
 
 def read_userinput():
