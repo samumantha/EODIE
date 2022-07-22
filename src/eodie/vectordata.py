@@ -80,59 +80,18 @@ class VectorData(object):
         return projectionfile
 
     def get_epsg(self):
-        """Extract epsg code from prj file.
+        """Extract epsg code from geodataframe.
 
         Returns
         --------
         vectorepsg: str
             EPSG code of the vectorfile
         """
-        # Open shapefile
-        with fiona.open(self.geometries, "r") as proj:
-            # Read spatial reference
-            spatialRef = proj.crs
-            # Extract epsgcode from the reference
-            epsgcode = spatialRef["init"].split(":")[1]
+        epsgcode = self.geometries.crs.to_epsg()
 
-        return epsgcode
+        return str(epsgcode)
 
-    def reproject_to_epsg(self, rasterepsg):
-        """Reproject shapefile to given EPSG code, save as new shapefile file.
-
-        Parameters
-        -----------
-        rasterepsg: str
-            EPSG code to reproject the vectorfile to
-        """
-        # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now...')
-        vectorepsg = self.get_epsg()
-        head,_,root,ext = self._split_path()
-
-        # check if the shapefile is already in right projection
-        if vectorepsg == rasterepsg:
-            logging.info(' Input shapefile has EPSG {} that works!'.format(vectorepsg))
-        else:
-            root = re.sub(r'_reprojected_\d*', '', root)
-            reprojectedshape = os.path.join(head, root + '_reprojected_' + rasterepsg +  ext)
-            if not os.path.exists(reprojectedshape):             
-
-                # Determine the spatial reference systems for input and output
-                input_epsg = 'EPSG:' + vectorepsg
-                output_epsg = 'EPSG:' + rasterepsg
-
-                # Define options for gdal.VectorTranslate
-                gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
-
-                # Run gdal.VectorTranslate
-                gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
-
-                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(self.geometries, rasterepsg))
-                
-            #update the objects shapefile
-            self.geometries = reprojectedshape
-
-    def get_properties(self):
+        def get_properties(self):
         """ extract driver, schema and crs from vectorfile
         
         Returns
