@@ -33,8 +33,8 @@ class Validator(object):
         self.vector_exists(args.vectorbase)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
-        #self.csv_check(args.input_type, args.epsg_for_csv)
-        #self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
+        self.csv_check(args.vectorbase, args.epsg_for_csv)
+        self.gpkg_check(args.vectorbase, args.gpkg_layer)
         self.list_inputs(args)
 
     def input_amount_check(self, dir, file):
@@ -153,7 +153,7 @@ class Validator(object):
         else:
             return True     
 
-    def csv_check(self, extension, epsg):
+    def csv_check(self, vectorpath, epsg):
         """ Check that the EPSG has been determined for input CSV, exits if not true
         Parameters
         ----------
@@ -167,14 +167,14 @@ class Validator(object):
         csv_ok: boolean
             if extension is .csv and epsg is not None
         """
-
-        if extension == "csv":
+        extension = os.path.splitext(vectorpath)[1]
+        if extension == ".csv":
             if epsg == None:
                 exit('If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
         else:
             return True
     
-    def gpkg_check(self, extension, basename, layername):
+    def gpkg_check(self, vectorpath, layername):
         """ Check if there are more than one layer in .gpkg input and the layer to be used has been named
         Parameters
         ----------
@@ -189,11 +189,10 @@ class Validator(object):
         gpkg_ok: boolean
             if extension is gpkg with only one layer or if the layer to be used has been determined
         """
+        extension = os.path.splitext(vectorpath)[1]
+        if extension == ".gpkg":
 
-        if extension == "gpkg":
-
-            file = basename + ".gpkg"
-            gpkg = gdal.OpenEx(file)
+            gpkg = gdal.OpenEx(vectorpath)
 
             if gpkg.GetLayerCount() > 1:
                 if layername == None:
@@ -222,6 +221,13 @@ class Validator(object):
             )
 
     def list_inputs(self, userinput):
+        """List all inputs into log file.
+        
+        Parameters:
+        -----------
+        userinput: class UserInput()
+            Userinputs
+        """
         logging.info(" ALL INPUTS FOR THIS PROCESS:")
         for key in vars(userinput).keys():
             logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
