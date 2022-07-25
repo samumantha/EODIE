@@ -72,6 +72,8 @@ class Extractor(object):
 
         """
         default = "Unavailable format"
+        if format == "database":
+            format = "statistics"
         return getattr(self, "extract_" + format, lambda: default)()
 
     def extract_statistics(self):
