@@ -99,12 +99,7 @@ class UserInput(object):
             default=datetime.now().strftime("%Y%m%d"),
             help="give enddate of timerange of interest",
         )
-        parser.add_argument(
-            "--keep_splitted",
-            dest="keep_splitted",
-            action="store_true",
-            help="flag to indicate that newly created shapefiles should be stored",
-        )
+
         parser.add_argument(
             "--tiles",
             dest="tiles",
@@ -117,7 +112,7 @@ class UserInput(object):
             dest="tifbands",
             default=[1],
             nargs="*",
-            help="Bands of tif to be processed. Defaults to 1.",
+            help="Bands of tif to be processed. Defaults to [1].",
         )
 
         parser.add_argument(
@@ -264,7 +259,7 @@ class UserInput(object):
             self.format.append("array")
         if self.database_out:
             self.format.append("database")
-            
+
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append("statistics")
