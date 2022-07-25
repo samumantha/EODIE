@@ -213,7 +213,7 @@ class VectorData(object):
         toc = timeit.default_timer()
         logging.info(" Clipping took {} seconds.\n".format(math.ceil(toc-tic)))
 
-        return clipped_geodataframe 
+        return clipped_geodataframe, tiles
 
     def read_tiles(self):
         """Read Sentinel-2 tiles into a Geodataframe.
