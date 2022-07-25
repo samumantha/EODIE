@@ -33,9 +33,8 @@ class Validator(object):
         self.vector_exists(args.vectorbase)
         if not args.indexlist is None and not args.indexlist == []:
             self.index_check(args.config,args.indexlist)
-        self.vector_check(args.input_type)
-        self.csv_check(args.input_type, args.epsg_for_csv)
-        self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
+        #self.csv_check(args.input_type, args.epsg_for_csv)
+        #self.gpkg_check(args.input_type, args.vectorbase, args.gpkg_layer)
         self.list_inputs(args)
 
     def input_amount_check(self, dir, file):
