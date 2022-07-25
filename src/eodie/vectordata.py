@@ -29,7 +29,7 @@ class VectorData(object):
         location and name of a vectorfile
     """
 
-    def __init__(self, geometries, drop=True):
+    def __init__(self, geometries, drop=False, epsg_for_csv=None):
         """Initialize vectordata object.
 
         Parameters
@@ -40,6 +40,8 @@ class VectorData(object):
             whether missing or invalid geometries should be excluded from further processing
         """
         self.geometries = self.read_geodataframe(geometries)
+        if epsg_for_csv is not None:            
+            self.geometries.crs = "EPSG:" + epsg_for_csv
         self.geometries = self.check_validity(drop)
         
 
