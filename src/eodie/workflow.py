@@ -103,13 +103,13 @@ class Workflow(object):
             else:
                 return None
 
-    def cloudmask_creation(self, safedir, config):
+    def cloudmask_creation(self, pathfinderobject, config):
         """Create cloudmask from S2 SCL.
         
         Parameters:
         -----------
-        safedir: str
-            path to SAFE directory 
+        pathfinderobject: Pathfinder()
+            class Pathfinder
         config: dict
             configuration parameters 
         
@@ -120,16 +120,18 @@ class Workflow(object):
         cloudmask: array
             Cloudmask array for safedir
         """
-        # Define pathfinderobject based on safedir and configuration file
-        pathfinderobject = Pathfinder(safedir, config)
-        # Initialize class Mask 
-        mask = Mask(pathfinderobject.imgpath, config)
-        # Create cloudmask 
-        cloudmask = mask.create_cloudmask()
-        # Return both pathfinderobject and the cloudmask as a tuple
-        return pathfinderobject, cloudmask
+        if not self.inputs.nomask:
+            # Initialize class Mask 
+            mask = Mask(pathfinderobject.imgpath, config)
+            # Create cloudmask 
+            cloudmask = mask.create_cloudmask()
+            # Return both pathfinderobject and the cloudmask as a tuple
+            return pathfinderobject, cloudmask
+        else:
+            logging.info(" Based on userinput, no cloudmasks were created.")
+            return pathfinderobject, None
     
-    def extract_index(self, vegindex, cloudmask, index, geodataframe, userinput, pathfinderobject):
+    def extract_index(self, vegindex, cloudmask, index, geodataframe, pathfinderobject):
         """Calculate given index, extract zonal statistics and write results.
 
         Parameters:
@@ -142,8 +144,6 @@ class Workflow(object):
             index or band name to calculate zonal statistics from
         geodataframe: GeoDataframe
             Polygon features to calculate zonal statistics from
-        userinput: class Userinput
-            Class containing all userinputs
         pathfinderobject: class Pathfinder
             object containing information of S2 directory
         
@@ -153,35 +153,36 @@ class Workflow(object):
         """
         # Calculate index for the whole tile
         array = vegindex.calculate_index(index)
-        # Apply cloudmask to the index array
-        masked_array = vegindex.mask_array(array, cloudmask)
+        if not self.inputs.nomask:
+            # Apply cloudmask to the index array
+            array = vegindex.mask_array(array, cloudmask)
         # Extract affine (could be put directly to the extractor call...)
         affine = vegindex.affine
         # Reproject input geodataframe to the same CRS with vegindex
         geodataframe_reprojected = geodataframe.to_crs(vegindex.crs)
         # Initialize class Extractor
         extractorobject = Extractor(
-            masked_array,
+            array,
             geodataframe_reprojected,
-            userinput.idname,
+            self.inputs.idname,
             affine,
-            userinput.statistics,
+            self.inputs.statistics,
             pathfinderobject.orbit,
-            userinput.exclude_border,
+            self.inputs.exclude_border,
         )
         # Initialize class Writer
         writerobject = Writer(
-            userinput.outpath,
+            self.inputs.outpath,
             pathfinderobject.date,
             pathfinderobject.tile,            
             index,
-            userinput.platform,
+            self.inputs.platform,
             pathfinderobject.orbit,
-            userinput.statistics,
+            self.inputs.statistics,
             vegindex.crs,
         )
         # Loop through given output formats
-        for format in userinput.format:
+        for format in self.inputs.format:
             # Extract arrays in given format
             extractedarray = extractorobject.extract_format(format)
             # Write results in given format
@@ -212,14 +213,16 @@ class Workflow(object):
         convex_hull = geoobject.get_convex_hull(clipped_geodataframe)
         # Loop through paths in input directory
         for path in userinput.input:
-            # Append the list of delayed functions
-            validation.append(delayed(self.validate_safedir)(path, 95, convex_hull))
+            pathfinderobject = Pathfinder(path, userinput.config)
+            if pathfinderobject.tile in userinput.tiles:
+                # Append the list of delayed functions
+                validation.append(delayed(self.validate_safedir)(path, 95, convex_hull))
         logging.info(" Validating safedirs...")
         # Launch delayed computation
         valid = self.execute_delayed(validation)
         # Filter out None returns
         valid_filtered = list(filter(None, valid[0]))
-        logging.info(" From original {} safedirs, {} are valid for processing.\n".format(len(userinput.input), len(valid_filtered)))
+        logging.info(" From original {} safedirs, {} will be processed based on userinput.\n".format(len(userinput.input), len(valid_filtered)))
     
         ####################
         ### CLOUDMASKING ###
@@ -228,9 +231,10 @@ class Workflow(object):
         # Create empty list for cloudmasks
         cloudmasks = []
         # Loop through valid safedirs
-        for validdir in valid_filtered:
+        for validdir in valid_filtered:            
+            pathfinderobject = Pathfinder(validdir, userinput.config)
             # Add delayed functions to the list to be computed
-            cloudmasks.append(delayed(self.cloudmask_creation)(validdir, userinput.config))
+            cloudmasks.append(delayed(self.cloudmask_creation)(pathfinderobject, userinput.config))
 
         logging.info(" Creating cloudmasks...") 
         # Run delayed computation with dask
@@ -253,7 +257,7 @@ class Workflow(object):
                 # Loop through indices:
                 for index in userinput.indexlist:
                     # Add delayed function calls to the list of index_calculations
-                    index_calculations.append(delayed(self.extract_index)(vegindex, cloudmask, index, filtered_geodataframe, userinput, pathfinderobject))
+                    index_calculations.append(delayed(self.extract_index)(vegindex, cloudmask, index, filtered_geodataframe, pathfinderobject))
     
         logging.info(" Calculating indices and extracting results...")
         # Process index calculations with Dask
@@ -278,11 +282,11 @@ class Workflow(object):
             # Loop through tifbands
             for band in userinput.tifbands:
                 # Append the list of delayed functions
-                tif_extraction.append(delayed(self.extract_from_tif)(path, gdf, raster, userinput, band, pathfinderobject))
+                tif_extraction.append(delayed(self.extract_from_tif)(path, gdf, raster, band, pathfinderobject))
         logging.info(" Extracting results...")
         self.execute_delayed(tif_extraction)        
         
-    def extract_from_tif(self, path, gdf, raster, userinput, band, pathfinderobject):
+    def extract_from_tif(self, path, gdf, raster, band, pathfinderobject):
         """Extract zonal statistics from a GeoTIFF and write results accordingly.
         
         Parameters:
@@ -308,26 +312,26 @@ class Workflow(object):
         extractorobject = Extractor(
             path,
             gdf,
-            userinput.idname,
+            self.inputs.idname,
             raster.affine,
-            userinput.statistics,
+            self.inputs.statistics,
             None,
             band,
-            userinput.exclude_border
+            self.inputs.exclude_border
         )
         # Initialize Writer
         writerobject = Writer(
-            userinput.outpath,
+            self.inputs.outpath,
             pathfinderobject.date,
             pathfinderobject.tile,
-            userinput.config["name"] + "_band_" + str(band),
-            userinput.platform,
+            self.inputs.config["name"] + "_band_" + str(band),
+            self.inputs.platform,
             "",
-            userinput.statistics,
+            self.inputs.statistics,
             raster.crs
         )
         # Loop through output formats
-        for format in userinput.format:
+        for format in self.inputs.format:
             # Extract given format
             extractedarray = extractorobject.extract_format(format)
             # Write results in given format
