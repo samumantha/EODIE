@@ -187,6 +187,9 @@ class Workflow(object):
             extractedarray = extractorobject.extract_format(format)
             # Write results in given format
             writerobject.write_format(format, extractedarray)
+            if format == "statistics" and "database" in self.inputs.format:
+                writerobject.write_format("database", extractedarray) 
+                self.inputs.format.remove("database")                
         return None
 
     def launch_workflow(self, platform):
@@ -208,13 +211,15 @@ class Workflow(object):
         # Read s2tiles into a geodataframe
         s2tiles = geoobject.read_tiles()
         # Clip vectorfile based on data in input directory 
-        clipped_geodataframe = geoobject.clip_vector(userinput.input, s2tiles)
+        clipped_geodataframe, tiles = geoobject.clip_vector(userinput.input, s2tiles)
+        if userinput.tiles is not None:
+            tiles = userinput.tiles
         # Create convex hull of all vector features
         convex_hull = geoobject.get_convex_hull(clipped_geodataframe)
         # Loop through paths in input directory
         for path in userinput.input:
             pathfinderobject = Pathfinder(path, userinput.config)
-            if pathfinderobject.tile in userinput.tiles:
+            if pathfinderobject.tile in tiles:
                 # Append the list of delayed functions
                 validation.append(delayed(self.validate_safedir)(path, 95, convex_hull))
         logging.info(" Validating safedirs...")
