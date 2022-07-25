@@ -47,31 +47,24 @@ class UserInput(object):
         parser.add_argument(
             "--vector",
             dest="vectorbase",
-            help="name of the vectorfile (without extension)",
+            help="Full path to the vectorfile.",
             required=True,
         )
         parser.add_argument(
             "--out",
             dest="outpath",
             default=os.path.join(os.getcwd(), "results"),
-            help="directory where results shall be saved",
+            help="Directory where results shall be saved.",
         )
         parser.add_argument(
-            "--id", dest="idname", help="name of ID field in shapefile", required=True
-        )
-
-        parser.add_argument(
-            "--input_type",
-            dest = 'input_type', 
-            default = 'shp',
-            help = 'Determine the input file type, supported formats: shp (default), gpkg, geojson, csv, fgb'
+            "--id", dest="idname", help="Name of ID field in vectorfile.", required=True
         )
 
         parser.add_argument(
             "--gpkg_layer",
             dest = 'gpkg_layer',
             default = None,
-            help = 'Determine the layer in geopackage to be used'
+            help = 'Determine the layer in geopackage to be used.'
         )
 
         parser.add_argument(
@@ -116,7 +109,7 @@ class UserInput(object):
             "--tiles",
             dest="tiles",
             default=None,
-            help="Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters",
+            help="Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters. Defaults to None and processes all SAFE directories in the rasterdir.",
             nargs="*",
         )
         parser.add_argument(
@@ -124,7 +117,7 @@ class UserInput(object):
             dest="tifbands",
             default=[1],
             nargs="*",
-            help="Bands of tif to be processed. Defaults to 1.",
+            help="Bands of tif to be processed. Defaults to [1].",
         )
 
         parser.add_argument(
@@ -158,12 +151,6 @@ class UserInput(object):
             help="Flag to indicate if invalid geometries should be removed from the processing.",
         )
         parser.add_argument(
-            "--exclude_splitbytile",
-            dest="exclude_splitbytile",
-            action="store_true",
-            help="if this flag is set, it is assumed that splitbytile has been run manually beforehand",
-        )
-        parser.add_argument(
             "--verbose",
             "-v",
             dest="verbose",
@@ -180,7 +167,7 @@ class UserInput(object):
         parser.add_argument(
             "--statistics_out",
             dest="statistics_out",
-            action="store_true",
+            action="store_true",]
             help="flag to indicate that statistics shall be calculated",
         )
         parser.add_argument(
