@@ -14,7 +14,7 @@ Command line arguments
 
 The following parameters and flags can be used in the commandline (more information on each parameter and flag below):
 
-``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <> --input_type <> --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotif_out --array_out --statistics <> --index <> --start <> --end <> --keep_splitted --exclude_border --external_cloudmask <> --exclude_split_by_tile --verbose --test``
+``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <>  --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotif_out --array_out --statistics <> --index <> --start <> --end <> --exclude_border --external_cloudmask <> --no_cloudmask --verbose --test``
 
 Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given.
 
@@ -35,10 +35,9 @@ Note that some parameters have options, some have defaults and some are optional
 | Either `--rasterdir` or `--rasterfile` needs to be given by user.
 
 | ``--vector``
-| Absolute path to the vector file to be used for processing, without extension and tilename.
+| Absolute path to the vector file to be used for processing.
 | **type:** String
-| **example:** Vector file name is test_polygons.shp in location /home/my/path, then it is given as --vector /home/my/path/test_polygons
-| The given vector defines the area of interest. Internally, EODIE converts the vector input into a shapefile if needed, splits the shapefile based on tiles (`tileshp` in config) and uses that part of the shapefile that has the same tilename as the file to be processed.
+|| The given vector defines the area of interest. Internally, EODIE reads the vector file into a geopandas GeoDataFrame.
 
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
@@ -50,20 +49,14 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** String
 | **example:** ``--id id``
 | Not all vector files use `id` as the fieldname for the ID field, it can be `ID`, `PlotID`,`FieldID`,`plotnumber`, etc. The possibilities are endless. Therefore EODIE cannot find the right field automatically and it has to be given by the user. If your vector file is not a GeoPackage, you may examine available fieldnames with the auxiliary script `examine_vectorfile.py`. With GeoPackage, you may use `examine_geopackage.py` (see also :ref:`auxfiles`).
-| **ALERT**: Field names longer than 10 characters will be shortened to first 10 characters during shapefile conversion. You need to use the shortened name of the ID field as --id for EODIE to work! 
-
-| ``--input_type``
-| The file extension of the input file provided in --vector. Supported extensions are shp, gpkg, geojson, csv and fgb. If you are using GeoPackage with more than one layer, you need to determine the name of the layer with --gpkg_layer.  Csv files need a column for well-known text (WKT) to determine the spatial extent of each feature and the EPSG code determined with --epsg_for_csv
-| **type:** String
-| **default:** shp
 
 | ``--gpkg_layer``
-| The name of the layer in GeoPackage, if there are more than one of layers. With one layer only this parameter is not needed.
+| If the input vectorfile is a GeoPackage (.gpkg), insert the name of the layer in GeoPackage to be processed if there are more than one layer. With one layer only this parameter is not needed.
 | **type:** String
 | **default:** None
 
 | ``--epsg_for_csv``
-| If --input_type is .csv, a spatial reference system needs to be defined separately for a successful conversion to a shapefile, as it is not a part of the file structure. 
+| If the input vectorfile is a Comma-Separated Value (.csv), a spatial reference system needs to be defined separately for a successful reading into a GeoDataframe.
 | **type:** String
 | **default:** None
 
@@ -107,10 +100,6 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** integer YYYYMMDD
 | **default:** todays date
 
-| ``--keep_splitted``
-| Flag to indicate all necessary splitted files created when running EODIE should be stored for further usage
-| **type:** flag 
-
 | ``--exclude_border``
 | Flag to indicate that border pixels (within the polygon) should be excluded from statistics calculations / array extraction
 | **type:** flag
@@ -118,10 +107,6 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--external_cloudmask``
 | [optional] Absolute path and name of external cloudmask (without tile and date and extension) if available
 | **type:** String
-
-| ``--exclude_splitbytile``
-| Flag to indicate that split_by_tile.py has been run manually beforehand
-| **type:** flag
 
 | ``--verbose``
 | For getting information and warnings in the terminal as well as the log file
