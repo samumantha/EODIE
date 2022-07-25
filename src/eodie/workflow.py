@@ -2,7 +2,7 @@
 
 Class to run the actual processing based on given data platform.
 
-Author: Arttu Kivimäki (FGI) - July 2022
+Author: Arttu Kivimäki (FGI) - July 2022 based on old eodie_process.py by Samantha Wittke et al.
 
 """
 
@@ -151,13 +151,14 @@ class Workflow(object):
         --------
         None, but writes the results to given output directory in given output formats.
         """
-        # Calculate index for the whole tile
-        array = vegindex.calculate_index(index)
-        if not self.inputs.nomask:
-            # Apply cloudmask to the index array
+        # Calculate index or extract band values for the whole tile
+        if re.match(self.inputs.config["band_designation"], index):
+            array = vegindex.get_array(index)
+        else:      
+            array = vegindex.calculate_index(index)
+        # Apply cloudmask to the index array unless decided against by user
+        if not self.inputs.nomask:            
             array = vegindex.mask_array(array, cloudmask)
-        # Extract affine (could be put directly to the extractor call...)
-        affine = vegindex.affine
         # Reproject input geodataframe to the same CRS with vegindex
         geodataframe_reprojected = geodataframe.to_crs(vegindex.crs)
         # Initialize class Extractor
@@ -165,7 +166,7 @@ class Workflow(object):
             array,
             geodataframe_reprojected,
             self.inputs.idname,
-            affine,
+            vegindex.affine,
             self.inputs.statistics,
             pathfinderobject.orbit,
             self.inputs.exclude_border,
@@ -207,7 +208,7 @@ class Workflow(object):
 
         validation = []
         # Read vectorfile into a geoobject
-        geoobject = VectorData(userinput.vectorbase)
+        geoobject = VectorData(userinput.vectorbase, userinput.drop_geom, userinput.epsg_for_csv)
         # Read s2tiles into a geodataframe
         s2tiles = geoobject.read_tiles()
         # Clip vectorfile based on data in input directory 
@@ -256,8 +257,9 @@ class Workflow(object):
         # Loop through tuples of (safedir, cloudmask):
         for pathfinderobject, cloudmask in cloudmask_results[0]:
             # Initialize class Vegindex
-            vegindex = Index(pathfinderobject.imgpath, userinput.config)         
-            filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, s2tiles, pathfinderobject.tile, userinput.idname)     
+            vegindex = Index(pathfinderobject.imgpath, userinput.config)   
+            # Filter geodataframe to only contain features from the area of the Sentinel-2 tile      
+            filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, s2tiles, pathfinderobject.tile, userinput.idname)    
             if not filtered_geodataframe.empty:   
                 # Loop through indices:
                 for index in userinput.indexlist:
