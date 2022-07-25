@@ -35,7 +35,7 @@ Case 1: growing season mean NDVI timeseries of agricultural fieldparcels of area
         fieldname: Name
         resampling_method: 'bilinear'
 
-2. Call EODIE ``python eodie_process.py --rasterdir S2files/dir --vector name/of/shapefile --out ./results --id PlotID --statistics_out --index ndvi`` this results in a number of single csv files, one for each tile and date
+2. Call EODIE ``python eodie_process.py --rasterdir S2files/dir --vector full/path/to/shapefile.shp --out ./results --id PlotID --statistics_out --index ndvi`` this results in a number of single csv files, one for each tile and date
 
 3. (optional) Use any of the combine_X.py scripts in postprocesses to combine the csv files
 4. (optional) Plot timeseries with plot_timeseries.py in postprocesses.
@@ -59,7 +59,7 @@ Case 2: As Case 1 but field parcel array timeseries are the desired output
 | Workflow:
 
 1. Same as Case 1
-2. Call EODIE: ``python eodie_process.py --rasterdir S2files/dir --vector name/of/shapefile --out ./results --id PlotID --array_out --index ndvi`` this results in a number of single pickle files, one for each tile and date with all ids 
+2. Call EODIE: ``python eodie_process.py --rasterdir S2files/dir --vector full/path/to/shapefile.shp --out ./results --id PlotID --array_out --index ndvi`` this results in a number of single pickle files, one for each tile and date with all ids 
 3. (optional) Use arrayplot.py in postprocesses to show/save timeseries plots from wished ids.
 
 Case 3: As Case 1 but processing done on HPC environment with SLURM
