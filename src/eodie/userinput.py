@@ -47,24 +47,24 @@ class UserInput(object):
         parser.add_argument(
             "--vector",
             dest="vectorbase",
-            help="Full path to the vectorfile.",
+            help="name of the vectorfile (without extension)",
             required=True,
         )
         parser.add_argument(
             "--out",
             dest="outpath",
             default=os.path.join(os.getcwd(), "results"),
-            help="Directory where results shall be saved.",
+            help="directory where results shall be saved",
         )
         parser.add_argument(
-            "--id", dest="idname", help="Name of ID field in vectorfile.", required=True
+            "--id", dest="idname", help="name of ID field in shapefile", required=True
         )
 
         parser.add_argument(
             "--gpkg_layer",
             dest = 'gpkg_layer',
             default = None,
-            help = 'Determine the layer in geopackage to be used.'
+            help = 'Determine the layer in geopackage to be used'
         )
 
         parser.add_argument(
@@ -109,7 +109,7 @@ class UserInput(object):
             "--tiles",
             dest="tiles",
             default=None,
-            help="Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters. Defaults to None and processes all SAFE directories in the rasterdir.",
+            help="Sentinel-2 Tile or tiles to be processed in format XX*** where X are numbers and * are letters",
             nargs="*",
         )
         parser.add_argument(
@@ -117,7 +117,7 @@ class UserInput(object):
             dest="tifbands",
             default=[1],
             nargs="*",
-            help="Bands of tif to be processed. Defaults to [1].",
+            help="Bands of tif to be processed. Defaults to 1.",
         )
 
         parser.add_argument(
@@ -167,7 +167,7 @@ class UserInput(object):
         parser.add_argument(
             "--statistics_out",
             dest="statistics_out",
-            action="store_true",]
+            action="store_true",
             help="flag to indicate that statistics shall be calculated",
         )
         parser.add_argument(
@@ -210,9 +210,8 @@ class UserInput(object):
             # this searches for exact right files fitting a given pattern
             self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
             if self.rasterdir[-1] == "/":
-                self.rasterdir = self.rasterdir[:-1]
+                self.rasterdir = self.rasterdir[:-1]        
         
-        self.input_type = args.input_type
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
@@ -235,8 +234,7 @@ class UserInput(object):
         else:
             self.statistics = args.statistics
         self.startdate = args.startdate
-        self.enddate = args.enddate
-        self.keep_splitted = args.keep_splitted
+        self.enddate = args.enddate        
         self.database_out = args.database_out
 
         self.drop_geom = args.drop_geom
@@ -251,8 +249,7 @@ class UserInput(object):
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
-        self.nomask = args.nomask
-        self.exclude_splitbytile = args.exclude_splitbytile
+        self.nomask = args.nomask        
         if self.platform == "tif":
             self.exclude_splitbytile = True
         self.verbose = args.verbose
@@ -265,7 +262,9 @@ class UserInput(object):
             self.format.append("geotiff")
         if self.array_out:
             self.format.append("array")
-
+        if self.database_out:
+            self.format.append("database")
+            
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append("statistics")
