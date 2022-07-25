@@ -17,7 +17,7 @@ Earth Observation data are available to the users via for example earth explorer
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
 agricultural field parcels, forest plots, or areas of a certain land cover type.
 
-EODIE takes the objects in as polygons in a vector file as well as the timeframe of interest and the features (eg vegetation indices) 
+EODIE takes the objects in as polygons in a vector file as well as the timeframe of interest and the features (eg. vegetation indices) 
 to be extracted. The output is a per polygon timeseries of the selected features over the timeframe of interest.
 
 Is EODIE suitable for me?
@@ -27,7 +27,7 @@ To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
 
 * Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
-* A geospatial vector file with polygons of your objects of interests - supported formats are ESRI shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf
+* A geospatial vector file with polygons of your objects of interests - supported formats are, for instance, ESRI Shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf.
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
 EODIE produces human and machine readable csv files containing all information needed to start working with the data.
@@ -67,7 +67,7 @@ Contributors
 Citation 
 ---------
 
-EODIE- Earth Observation Data Information Extractor (2022) S. Wittke [online] , DOI: https://doi.org/10.5281/zenodo.4762323
+EODIE - Earth Observation Data Information Extractor (2022) S. Wittke [online] , DOI: https://doi.org/10.5281/zenodo.4762323
 
 Projects
 ---------
