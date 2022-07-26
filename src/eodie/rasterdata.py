@@ -159,7 +159,8 @@ class RasterData(object):
         reflectance: numpy array
             array with values representing the reflectance
         """
-        reflectance = np.divide(array, self.cfg["quantification_value"])
+        reflectance = np.divide(array, self.cfg["quantification_value"])  
+        reflectance = self.clip_to_valid_range(reflectance)      
         return reflectance
 
     def get_array(self, band, resampling_method=None):
@@ -232,3 +233,23 @@ class RasterData(object):
             if self.test:
                 data = data.astype(dtype)
         return data
+
+    def clip_to_valid_range(self, array):
+        """Clips the values to valid range ([0,1] in case of Sentinel-2), other values are NoData.
+
+        Parameters:
+        -----------
+        array: array
+            array to be clipped
+        
+        Returns:
+        --------
+        array: array
+            result of clipping
+        """      
+
+        # Set values above 1 to np.NaN
+        array[array > 1] = np.NaN
+        # Set values below or equal to 0 to np.NaN
+        array[array <= 0] = np.NaN        
+        return array
