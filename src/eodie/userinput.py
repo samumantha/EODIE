@@ -47,7 +47,7 @@ class UserInput(object):
         parser.add_argument(
             "--vector",
             dest="vectorbase",
-            help="name of the vectorfile (without extension)",
+            help="name of the vectorfile",
             required=True,
         )
         parser.add_argument(
@@ -57,7 +57,7 @@ class UserInput(object):
             help="directory where results shall be saved",
         )
         parser.add_argument(
-            "--id", dest="idname", help="name of ID field in shapefile", required=True
+            "--id", dest="idname", help="name of ID field in vectorfile", required=True
         )
 
         parser.add_argument(
