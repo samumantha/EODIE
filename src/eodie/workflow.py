@@ -229,7 +229,11 @@ class Workflow(object):
         valid = self.execute_delayed(validation)
         # Filter out None returns
         valid_filtered = list(filter(None, valid[0]))
-        logging.info(" From original {} safedirs, {} will be processed based on userinput.\n".format(len(userinput.input), len(valid_filtered)))
+        if len(valid_filtered) == 0:
+            logging.info(" There are no valid safedirs to process. Please check your inputs.")
+            quit()
+        else:
+            logging.info(" From original {} safedirs, {} will be processed based on userinput.\n".format(len(userinput.input), len(valid_filtered)))
     
         ####################
         ### CLOUDMASKING ###
