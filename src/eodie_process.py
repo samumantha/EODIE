@@ -18,13 +18,13 @@ def read_userinput():
     userinput: class Userinput
         validated Userinputs
     """
-    userinput = UserInput()      
+    userinput = UserInput()
     Validator(userinput)
     return userinput   
 
 def main():    
     """Fetch userinput and launch workflow."""
-    userinput = read_userinput()      
+    userinput = read_userinput()
     Workflow(userinput)   
     
 if __name__ == '__main__':
