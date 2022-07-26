@@ -91,17 +91,18 @@ class Workflow(object):
         # Initialize RasterValidatorS2
         rastervalidatorobject = RasterValidatorS2(safedir, cloudcover)
         # First check if the safedir is complete with no missing files:
-        if not rastervalidatorobject.check_integrity():
-            return None
-        else:
-            # Check cloudcoverage and datacoverage 
-            not_cloudcovered = rastervalidatorobject.check_cloudcover()
-            datacovered = rastervalidatorobject.check_datacover(convex_hull)
-            # If requirements are met, return safedir, else return None
-            if not_cloudcovered and datacovered:
-                return safedir
-            else:
+        if not self.inputs.test:
+            if not rastervalidatorobject.check_integrity():
                 return None
+            else:
+                # Check cloudcoverage and datacoverage 
+                not_cloudcovered = rastervalidatorobject.check_cloudcover()
+                datacovered = rastervalidatorobject.check_datacover(convex_hull)
+                # If requirements are met, return safedir, else return None
+                if not_cloudcovered and datacovered:
+                    return safedir
+                else:
+                    return None
 
     def cloudmask_creation(self, pathfinderobject, config):
         """Create cloudmask from S2 SCL.
@@ -291,7 +292,9 @@ class Workflow(object):
                 # Append the list of delayed functions
                 tif_extraction.append(delayed(self.extract_from_tif)(path, gdf, raster, band, pathfinderobject))
         logging.info(" Extracting results...")
-        self.execute_delayed(tif_extraction)        
+        self.execute_delayed(tif_extraction)
+        logging.info(" TIF WORKFLOW COMPLETED!")   
+        logging.info(" Results can be found in {}".format(userinput.outpath))  
         
     def extract_from_tif(self, path, gdf, raster, band, pathfinderobject):
         """Extract zonal statistics from a GeoTIFF and write results accordingly.
