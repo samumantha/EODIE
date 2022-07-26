@@ -273,13 +273,13 @@ class UserInput(object):
             os.mkdir(logdir)
 
         # Extract filename or directory name based on the length of userinput
-        if len(rasterinput) == 1:
+        if self.rasterfile is not None:
             inputname = os.path.split(self.rasterfile)[1].split(".")[0]
         else:
             dirname = os.path.split(self.rasterdir)[1] 
 
         if verbose:
-            if len(rasterinput) == 1:
+            if self.rasterfile is not None:
                 handlers = [logging.FileHandler(os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
             else:
                 handlers = [logging.FileHandler(os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]
@@ -287,7 +287,8 @@ class UserInput(object):
             logging.basicConfig(level = logging.INFO, handlers = handlers)
         
         else:
-            if len(rasterinput) == 1:
+            if self.rasterfile is not None:
                 logging.basicConfig(filename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
             else:
                 logging.basicConfig(filename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)       
+        
