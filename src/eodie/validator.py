@@ -231,4 +231,4 @@ class Validator(object):
         logging.info(" ALL INPUTS FOR THIS PROCESS:")
         for key in vars(userinput).keys():
             logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
-        logging.info("")
+        logging.info("\n")

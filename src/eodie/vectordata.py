@@ -94,12 +94,12 @@ class VectorData(object):
         # Create envelopes for all features
         gdf_envelope = geodataframe.envelope
         toc = timeit.default_timer()
-        logging.info(" Creating envelopes took {} seconds".format(math.ceil(toc-tic)))
+        logging.info(" Creating envelopes took {} seconds.".format(math.ceil(toc-tic)))
         tic = timeit.default_timer()
         # Execute unary_union for envelopes
         gdf_unary_union = gdf_envelope.unary_union    
         toc = timeit.default_timer()
-        logging.info(" Creating unary union from envelopes took {} seconds".format(math.ceil(toc-tic)))
+        logging.info(" Creating unary union from envelopes took {} seconds.".format(math.ceil(toc-tic)))
         tic = timeit.default_timer() 
         # Extract convex_hull based on results of unary_union
         ch = gdf_unary_union.convex_hull
@@ -128,7 +128,7 @@ class VectorData(object):
                 " Following features have no geometry:\n\n {}".format(vectorfile_nogeom)
             )
         else:
-            logging.info(" All features have geometries.\n")
+            logging.info(" All features have geometries!\n")
 
     def check_validity(self, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
@@ -168,7 +168,7 @@ class VectorData(object):
                 )
             )
         else:
-            logging.info(" All features have valid geometries.")
+            logging.info(" All features have valid geometries!\n")
 
         # If --delete_invalid_geometries was defined, rewrite a new file without invalid geometries.
         if drop:
@@ -196,7 +196,7 @@ class VectorData(object):
         clipped_geodataframe: GeoDataframe
             original geodataframe clipped by tiles found in raster input directory
         """
-        logging.info(" Clipping input vector based on data in raster directory...")
+        logging.info(" Clipping input vector based on data in raster directory...\n")
         tic = timeit.default_timer()
         tiles = []
         # Loop through safes
@@ -248,7 +248,7 @@ class VectorData(object):
         """
         logging.info(" Reprojecting geodataframe...")
         reprojected = geodataframe.to_crs(crs)
-        logging.info(" Reprojectiong completed.\n")
+        logging.info(" Reprojection completed.\n")
         return reprojected
     
     def filter_geodataframe(self, vectorframe, tileframe, tile, idname):
