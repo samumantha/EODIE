@@ -280,15 +280,21 @@ class UserInput(object):
 
         if verbose:
             if self.rasterfile is not None:
-                handlers = [logging.FileHandler(os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')), logging.StreamHandler()]
+                logfilename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')
+                handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
             else:
-                handlers = [logging.FileHandler(os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')), logging.StreamHandler()]
+                logfilename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')
+                handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
 
             logging.basicConfig(level = logging.INFO, handlers = handlers)
         
         else:
             if self.rasterfile is not None:
-                logging.basicConfig(filename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log'), level = logging.INFO)
+                logfilename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')
+                logging.basicConfig(filename = logfilename, level = logging.INFO)
             else:
-                logging.basicConfig(filename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log'), level = logging.INFO)       
+                logfilename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')
+                logging.basicConfig(filename = logfilename, level = logging.INFO)       
+
+        self.logfile = logfilename
         
