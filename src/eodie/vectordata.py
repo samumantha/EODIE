@@ -179,10 +179,9 @@ class VectorData(object):
             valid_geom = with_geom.loc[
                 with_geom["validity"] == True
             ].copy()
-            return valid_geom
+            self.geometries = valid_geom
 
-        else:
-            return self.geometries            
+        return self.geometries            
 
     def clip_vector(self, safes, tileframe, idname):
         """Clip vector based on data in input directory.
@@ -285,14 +284,17 @@ class VectorData(object):
         # Run overlay analysis for vectorframe and one tile
         overlay_result = vectorframe.overlay(tileframe_tile, how = 'intersection')
         # List IDs in the overlay_result based on userinput --id
-        ids = list(overlay_result[idname])
+        #ids = list(overlay_result[idname])
         # Filter original vectorframe to only contain listed IDs
-        vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)] 
+        #vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)] 
+
+        #print(overlay_result)
         # Compare geometries between geodataframes to exclude features that were cut during intersection
-        overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
+        #overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
         # Exclude features with changed geometries
-        overlay_result = overlay_result[overlay_result['equal_geom'] == True]
+        #overlay_result = overlay_result[overlay_result['equal_geom'] == True]
         # Drop the equal_geom column as it is not needed anymore
-        overlay_result = overlay_result.drop(columns = 'equal_geom')
-                
+        #overlay_result = overlay_result.drop(columns = 'equal_geom')
+        #print(overlay_result)
+        #quit()
         return overlay_result
