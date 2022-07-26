@@ -10,6 +10,7 @@ The script should work with all vector data formats supported by EODIE (.shp, .g
 import geopandas as gpd 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 import argparse
 import os
 from shapely.validation import explain_validity
@@ -23,7 +24,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--vector", dest = 'vector', required = True, help = 'Full path to vector file to process, extension included. Please be aware that even if completing multiple tasks at one run, each task uses only the original vectorfile as input.')
 parser.add_argument("--epsg_for_csv", dest = 'epsg', help = "EPSG code if the input vectorfile is CSV. Not needed for other vector formats.")
 
-parser.add_argument("--add_unique_field", dest = 'unique', default = None, help = 'The field name in vectorfile to base the unique id field on.')
+parser.add_argument("--add_unique_field", dest = 'unique', action = 'store_true', default = False, help = 'Flag to indicate if a unique field should be added.')
 parser.add_argument("--check_validity", dest = 'validity', action = 'store_true', help = "Flag to indicate if geometry validity within vectorfile should be checked.")
 parser.add_argument("--drop_invalid", dest = 'drop', action = 'store_true', default = False, help = "Flag to indicate if a vectorfile with only valid geometries shall be written. The original vectorfile will not be deleted. Requires --check_validity.")
 parser.add_argument("--remove_fields", dest = 'fields', default = [],  nargs = "*", help = "Names or index numbers of the fields that should be removed from the vectorfile. A new vectorfile without given fields will be written.")
@@ -35,21 +36,19 @@ parser.add_argument("--simplify_topology", dest = 'topology', type = bool, defau
 args = parser.parse_args()
 
 
-def add_unique_field(vectorfile, fieldname):
-    """ Add unique id field to the vectorfile based on another column.
+def add_unique_field(vectorfile):
+    """ Add unique id field to the vectorfile (unique to each row).
 
     Parameters:
     -----------
         vectorfile: geodataframe of the user-defined vectorfile
-    fieldname:
-        fieldname to base the unique ID's on
     
     Returns:
     --------
         None but writes a vectorfile with unique ID field to the same folder with original vectorfile. 
     """
     print("Adding an unique ID...")
-    vectorfile['unique_id'] = pd.factorize(vectorfile[fieldname])[0]           
+    vectorfile['unique_id'] = np.arange(1, len(vectorfile) + 1)        
     # Extract path, filename and extension from the filename
     head, tail = os.path.split(args.vector)
     filename, extension = tail.split(".")     
@@ -274,14 +273,14 @@ def check_csv_epsg(vectorfile, EPSG):
 
 def main():
     # Read user-defined vectorfile into a geopandas geodataframe
-
+    print("Reading input vector into a geodataframe...")
     vectorfile = gpd.read_file(args.vector)
     print("{} has been read to a geodataframe!".format(args.vector))
     if args.vector.lower().endswith('.csv'):
         vectorfile = check_csv_epsg(vectorfile, args.epsg)
     # Go through inputs and proceed accordingly
-    if args.unique is not None:
-        add_unique_field(vectorfile, args.unique)
+    if args.unique:
+        add_unique_field(vectorfile)
     if args.validity:
         check_validity(vectorfile)
     if len(args.fields) > 0:
