@@ -28,6 +28,7 @@ import timeit
 from dask import delayed
 from dask import compute
 import geopandas as gpd
+from dask.diagnostics import ProgressBar
 
 
 class Workflow(object):
@@ -66,7 +67,13 @@ class Workflow(object):
             outputs of executed functions
         """
         tic = timeit.default_timer()
-        results = compute(input_list, scheduler = 'processes')
+        if not self.inputs.verbose:
+            with open(self.inputs.logfile, "a") as logfile:
+                with ProgressBar(minimum = 60, dt = 60, out = logfile):
+                    results = compute(input_list, scheduler = 'processes')
+        else:
+            with ProgressBar(minimum = 60, dt = 60):
+                results = compute(input_list, scheduler = 'processes')
         toc = timeit.default_timer()
         logging.info(" Delayed processing took {} seconds.\n".format(math.ceil(toc-tic)))
         return results
