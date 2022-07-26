@@ -213,7 +213,7 @@ class Workflow(object):
         # Read s2tiles into a geodataframe
         s2tiles = geoobject.read_tiles()
         # Clip vectorfile based on data in input directory 
-        clipped_geodataframe, tiles = geoobject.clip_vector(userinput.input, s2tiles)
+        clipped_geodataframe, tiles = geoobject.clip_vector(userinput.input, s2tiles, userinput.idname)
         if userinput.tiles is not None:
             tiles = userinput.tiles
         # Create convex hull of all vector features
