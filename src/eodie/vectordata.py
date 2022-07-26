@@ -19,6 +19,9 @@ from shutil import copyfile
 import re
 import glob
 import timeit
+import warnings
+
+warnings.simplefilter(action = 'ignore', category=UserWarning)
 
 class VectorData(object):
     """Vector data related information and transformations.
@@ -181,7 +184,7 @@ class VectorData(object):
         else:
             return self.geometries            
 
-    def clip_vector(self, safes, tileframe):
+    def clip_vector(self, safes, tileframe, idname):
         """Clip vector based on data in input directory.
 
         Parameters:
@@ -209,9 +212,16 @@ class VectorData(object):
         # Select only tiles that are found in input directory
         tileframe = tileframe[tileframe['Name'].isin(tiles)]
         # Reproject vector geodataframe to EPSG:4326
-        gdf = self.reproject_geodataframe(self.geometries, tileframe.crs)
+        gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
         # Clip
-        clipped_geodataframe = gpd.clip(gdf, tileframe) 
+        clipped_geodataframe = gpd.clip(gdf, tileframe)         
+        ids = list(clipped_geodataframe[idname])
+        gdf = gdf[gdf[idname].isin(ids)] 
+        clipped_geodataframe['equal_geom'] = clipped_geodataframe.sort_values(by=idname)['geometry'].geom_equals(gdf.sort_values(by=idname)['geometry'], align = False)            
+        # Exclude features with changed geometries
+        clipped_geodataframe = clipped_geodataframe[clipped_geodataframe['equal_geom'] == True]       
+        # Drop the equal_geom column as it is not needed anymore
+        clipped_geodataframe = clipped_geodataframe.drop(columns = 'equal_geom')
         toc = timeit.default_timer()
         logging.info(" Clipping took {} seconds.\n".format(math.ceil(toc-tic)))
 
@@ -277,12 +287,12 @@ class VectorData(object):
         # List IDs in the overlay_result based on userinput --id
         ids = list(overlay_result[idname])
         # Filter original vectorframe to only contain listed IDs
-        vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)]
+        vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)] 
         # Compare geometries between geodataframes to exclude features that were cut during intersection
         overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
         # Exclude features with changed geometries
         overlay_result = overlay_result[overlay_result['equal_geom'] == True]
         # Drop the equal_geom column as it is not needed anymore
         overlay_result = overlay_result.drop(columns = 'equal_geom')
-
+                
         return overlay_result
