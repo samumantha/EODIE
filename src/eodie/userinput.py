@@ -207,6 +207,8 @@ class UserInput(object):
             if self.rasterdir[-1] == "/":
                 self.rasterdir = self.rasterdir[:-1]        
         
+        if not self.input:            
+            quit("No imagery for given platform was found. Please check your inputs.")
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
