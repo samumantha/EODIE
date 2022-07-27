@@ -69,10 +69,10 @@ class Workflow(object):
         tic = timeit.default_timer()
         if not self.inputs.verbose:
             with open(self.inputs.logfile, "a") as logfile:
-                with ProgressBar(minimum = 60, dt = 60, out = logfile):
+                with ProgressBar(minimum = 900, dt = 900, out = logfile):
                     results = compute(input_list, scheduler = 'processes')
         else:
-            with ProgressBar(minimum = 60, dt = 60):
+            with ProgressBar(minimum = 900, dt = 900):
                 results = compute(input_list, scheduler = 'processes')
         toc = timeit.default_timer()
         logging.info(" Delayed processing took {} seconds.\n".format(math.ceil(toc-tic)))
@@ -267,6 +267,7 @@ class Workflow(object):
         # Reproject geodataframe to EPSG:4326
         geodataframe = geoobject.reproject_geodataframe(clipped_geodataframe, s2tiles.crs)    
         # Loop through tuples of (safedir, cloudmask):
+        logging.info(" Preparing computations...")
         for pathfinderobject, cloudmask in cloudmask_results[0]:
             # Initialize class Vegindex
             vegindex = Index(pathfinderobject.imgpath, userinput.config)   
