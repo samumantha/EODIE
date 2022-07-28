@@ -93,23 +93,26 @@ class VectorData(object):
             GeoDataframe consisting of one feature, the convex hull
         """          
         logging.info(" Extracting convex hull...")
-        tic = timeit.default_timer()
+
         # Create envelopes for all features
+        tic = timeit.default_timer()        
         gdf_envelope = geodataframe.envelope
         toc = timeit.default_timer()
         logging.info(" Creating envelopes took {} seconds.".format(math.ceil(toc-tic)))
-        tic = timeit.default_timer()
+        
         # Execute unary_union for envelopes
+        tic = timeit.default_timer()        
         gdf_unary_union = gdf_envelope.unary_union    
-        toc = timeit.default_timer()
+        toc = timeit.default_timer()        
         logging.info(" Creating unary union from envelopes took {} seconds.".format(math.ceil(toc-tic)))
-        tic = timeit.default_timer() 
-        # Extract convex_hull based on results of unary_union
-        ch = gdf_unary_union.convex_hull
-        # Turn convexhull into a geodataframe
+
+        # Extract convex_hull based on results of unary_union and turn convex_hull into a GeoDataframe
+        tic = timeit.default_timer()         
+        ch = gdf_unary_union.convex_hull       
         convexhull = gpd.GeoDataFrame(crs = geodataframe.crs, geometry=[ch])
-        toc = timeit.default_timer()
-        logging.info(" Creating convex hull from unary union took {} seconds.\n".format(math.ceil(toc-tic)))        
+        toc = timeit.default_timer()        
+        logging.info(" Creating convex hull from unary union took {} seconds.\n".format(math.ceil(toc-tic)))
+
         return convexhull
 
     def check_empty(self, vectorfile):
@@ -123,6 +126,7 @@ class VectorData(object):
             None; prints the rows with non-existent geometries.
         """
         logging.info(" Checking for empty geometries...")
+
         # Filter rows where geometry is None
         vectorfile_nogeom = vectorfile[vectorfile["geometry"] == None]
         # Log accordingly
@@ -149,15 +153,19 @@ class VectorData(object):
         geodataframe = self.geometries
         # Check empty geometries
         self.check_empty(geodataframe)
-        logging.info(" Checking geometry validity...")
+
         # Check validity of geometries
+        logging.info(" Checking geometry validity...")        
         geodataframe["validity"] = geodataframe["geometry"].is_valid
+
         # Extract only rows with existing geometries
         with_geom = geodataframe.loc[geodataframe["geometry"] != None].copy()
+
         # Filter rows where geometries were invalid
         invalid_geom = with_geom.loc[
             with_geom["validity"] == False
         ].copy()
+        
         # If invalid geometries exist, run explain_validity for them
         if len(invalid_geom) > 0:
             invalid_geom[
@@ -213,18 +221,13 @@ class VectorData(object):
         # Reproject vector geodataframe to EPSG:4326
         gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
         # Clip
-        clipped_geodataframe = gpd.clip(gdf, tileframe)         
-        ids = list(clipped_geodataframe[idname])
-        gdf = gdf[gdf[idname].isin(ids)] 
-        clipped_geodataframe['equal_geom'] = clipped_geodataframe.sort_values(by=idname)['geometry'].geom_equals(gdf.sort_values(by=idname)['geometry'], align = False)            
-        # Exclude features with changed geometries
-        clipped_geodataframe = clipped_geodataframe[clipped_geodataframe['equal_geom'] == True]       
-        # Drop the equal_geom column as it is not needed anymore
-        clipped_geodataframe = clipped_geodataframe.drop(columns = 'equal_geom')
+        self.geometries = gpd.clip(gdf, tileframe)
+        # Compare geometries
+        self.geometries = self.compare_geometries(self.geometries, gdf, idname)
         toc = timeit.default_timer()
         logging.info(" Clipping took {} seconds.\n".format(math.ceil(toc-tic)))
 
-        return clipped_geodataframe, tiles
+        return self.geometries, tiles
 
     def read_tiles(self):
         """Read Sentinel-2 tiles into a Geodataframe.
@@ -238,6 +241,7 @@ class VectorData(object):
         tilepath = os.path.join(os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp")
         # Read into a geodataframe
         tileframe = gpd.read_file(tilepath)
+
         return tileframe
 
     def reproject_geodataframe(self, geodataframe, crs):
@@ -258,6 +262,7 @@ class VectorData(object):
         logging.info(" Reprojecting geodataframe...")
         reprojected = geodataframe.to_crs(crs)
         logging.info(" Reprojection completed.\n")
+
         return reprojected
     
     def filter_geodataframe(self, vectorframe, tileframe, tile, idname):
@@ -283,18 +288,63 @@ class VectorData(object):
         tileframe_tile = tileframe[tileframe['Name'] == tile]
         # Run overlay analysis for vectorframe and one tile
         overlay_result = vectorframe.overlay(tileframe_tile, how = 'intersection')
-        # List IDs in the overlay_result based on userinput --id
-        #ids = list(overlay_result[idname])
-        # Filter original vectorframe to only contain listed IDs
-        #vectorframe_filtered = vectorframe[vectorframe[idname].isin(ids)] 
+        # Compare geometries
+        overlay_result = self.compare_geometries(overlay_result, self.geometries, idname)    
 
-        #print(overlay_result)
-        # Compare geometries between geodataframes to exclude features that were cut during intersection
-        #overlay_result['equal_geom'] = overlay_result['geometry'].geom_equals(vectorframe_filtered['geometry'], align = False)
-        # Exclude features with changed geometries
-        #overlay_result = overlay_result[overlay_result['equal_geom'] == True]
-        # Drop the equal_geom column as it is not needed anymore
-        #overlay_result = overlay_result.drop(columns = 'equal_geom')
-        #print(overlay_result)
-        #quit()
         return overlay_result
+
+    def gdf_from_bbox(self, bbox, crs, idname):
+        """Build a Polygon from Raster boundingbox. Used with TIFs.
+        
+        Parameters:
+        -----------
+        bbox: BoundingBox
+            the bounding box of raster
+        crs: crs
+            the crs of raster
+        idname: string
+            the identifier field name in self.geometries
+        
+        """
+        # Build a Polygon from bounding box coordinates.
+        polygon = Polygon([(bbox[0], bbox[1]), (bbox[2], bbox[1]), (bbox[2], bbox[3]), (bbox[0], bbox[3])])
+        # Turn Polygon into a GeoDataframe
+        polyframe = gpd.GeoDataFrame(crs = crs, geometry=[polygon]) 
+        # Reproject self.geometries        
+        reprojected = self.geometries.to_crs(crs)
+        # Clip 
+        clipped_geodataframe = gpd.clip(reprojected, polyframe)
+        # Compare geometries 
+        clipped_geodataframe = self.compare_geometries(clipped_geodataframe, reprojected, idname, align = True)
+
+        return clipped_geodataframe
+
+    def compare_geometries(self, manipulated_geodataframe, original_geodataframe, idname, align = False):
+        """Compare geometries between geodataframes and exclude ones not matching (ie. that have been changed during clipping or intersection).
+
+        Parameters:
+        -----------
+        manipulated_geodataframe: GeoDataframe
+            geodataframe that has been clipped/overlaid from the original geodataframe
+        original_geodataframe: GeoDataframe
+            the geodataframe from which the manipulated_geodataframe was processed
+        idname: string
+            Name of idenfifier field in geodataframes
+
+        Returns:
+        --------
+        manipulated_geodataframe: GeoDataframe
+            manipulated_geodataframe from which the altered geometries have been removed
+        """        
+        # List IDs in manipulated_geodataframe
+        ids = list(manipulated_geodataframe[idname])
+        # Filter original geodataframe to contain only same IDs
+        gdf = original_geodataframe[original_geodataframe[idname].isin(ids)]
+        # Create boolean column 'equal_geom' and compare geometries of matching IDs between manipulated and original geodataframes
+        manipulated_geodataframe['equal_geom'] = manipulated_geodataframe.sort_values(by=idname)['geometry'].geom_equals(gdf.sort_values(by=idname)['geometry'], align = align)
+        # Filter out rows where 'equal_geom' is False
+        manipulated_geodataframe = manipulated_geodataframe[manipulated_geodataframe['equal_geom'] == True]
+        # Drop the column after it's no longer needed. 
+        manipulated_geodataframe = manipulated_geodataframe.drop(columns = 'equal_geom')    
+
+        return manipulated_geodataframe
