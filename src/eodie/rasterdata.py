@@ -124,6 +124,7 @@ class RasterData(object):
             self.crs = src.crs
             self.epsg = str(src.crs).split(":")[-1]
             self.affine = src.transform
+            self.bbox = src.bounds
 
     def read_array(self, bandfile, dtype="f4"):
         """Get array in given datatype according to bandname.
@@ -159,10 +160,14 @@ class RasterData(object):
         reflectance: numpy array
             array with values representing the reflectance
         """
-        reflectance = np.divide(array, self.cfg["quantification_value"])  
-        reflectance = self.clip_to_valid_range(reflectance)      
-        return reflectance
+        if self.cfg["platform"] == "s2":
+            reflectance = np.divide(array, self.cfg["quantification_value"])  
+            reflectance = self.clip_to_valid_range(reflectance)      
+            
+        if self.cfg["platform"] == "ls8":
+            reflectance = np.multiply(array, self.cfg["quantification_value"]) - 0.2
 
+        return reflectance
     def get_array(self, band, resampling_method=None):
         """Retrieve an array based on band request.
 
