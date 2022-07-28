@@ -22,10 +22,11 @@ tobemaskedlist:
 
 
 #pattern to find all data files
-filepattern: 'LC08_L\d.._\d{6}_\d{8}_\d{8}_02_[TR][12T]$'  
+#filepattern: 'LC08_L\d.._\d{6}_\d{8}_\d{8}_02_[TR][12T]$'  
+filepattern: 'LC08_L2SP_\d{6}_\d{8}_\d{8}_02_T1$'
 
 #all bands are located in parent directory directly
-bandlocation: ['.']
+bandlocation: ['']
 
 #indicator for cloudfile
 cloudfilename: 'QA_PIXEL'
@@ -39,7 +40,7 @@ nir: 'B5'
 swir1: 'B6'
 swir2: 'B7'
 
-tilepattern: '[0-9]{6}'
+tilepattern: '[0-9]{6}_'
 
 # the first that is found is used
 datepattern: '20[1-2][0-9][0-1][0-9][0-3][0-9]'
@@ -49,7 +50,7 @@ band_designation: 'B\d?\d'
 #???????????
 # Quantification value used to multiple the reflectance to get DN
 # This could be read from metadata but for now at least is here
-quantification_value: 65535
+quantification_value: 0.0000275
 
 # available resolutions per band
 B1: [30]
