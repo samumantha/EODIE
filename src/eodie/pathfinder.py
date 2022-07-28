@@ -43,15 +43,20 @@ class Pathfinder(object):
         self.cfg = cfg
         self.rasterdir = rasterdir
 
-        if not self.cfg["platform"] == "tif":
+        if self.cfg["platform"] == "s2":
             self.get_imgpath()
             self.get_tileinfo()
             self.get_dateinfo()
             self.get_orbit()
-        else:
+        elif self.cfg["platform"] == "tif":
             self.tile = ""
             self.imgpath = self.rasterdir
             self.date = ""
+            self.orbit = ""
+        elif self.cfg["platform"] == "ls8":
+            self.get_imgpath()
+            self.get_tileinfo()
+            self.get_dateinfo()
             self.orbit = ""
 
     def get_imgpath(self):
@@ -59,18 +64,23 @@ class Pathfinder(object):
         bandlocation = os.path.join(*self.cfg["bandlocation"])
         patternimg = os.path.join(self.rasterdir, bandlocation)
         self.imgpath = glob.glob(patternimg)[0]
-
+        
     def get_tileinfo(self):
-        """Extract tilename from filename according to pattern from from config."""
-        tilepattern = r"%s" % self.cfg["tilepattern"]
+        """Extract tilename from filename according to pattern from config."""
+        tilepattern = r"%s" % self.cfg["tilepattern"]        
         self.tile = re.search(tilepattern, self.imgpath).group(0)
+        if self.tile.endswith("_"):
+            self.tile = self.tile[0:6]
 
     def get_dateinfo(self):
-        """Extract date from filename according to pattern from from config."""
+        """Extract date from filename according to pattern from config."""        
         datepattern = r"%s" % self.cfg["datepattern"]
-        splitted_imgpath = self.imgpath.split(os.sep)[-5]
-        self.date = re.search(datepattern, splitted_imgpath).group(0)
-
+        if self.cfg["platform"] == "s2":
+            splitted_imgpath = self.imgpath.split(os.sep)[-5]   
+            self.date = re.search(datepattern, splitted_imgpath).group(0)    
+        if self.cfg["platform"] == "ls8": 
+            self.date = re.search(datepattern, self.imgpath).group(0)
+        
     def get_orbit(self):
         xmlname = "MTD_MSIL2A.xml"
         xmlpath = os.path.join(self.rasterdir, xmlname)
