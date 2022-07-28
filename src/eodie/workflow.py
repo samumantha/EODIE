@@ -67,13 +67,13 @@ class Workflow(object):
             outputs of executed functions
         """
         tic = timeit.default_timer()
-        if not self.inputs.verbose:
-            with open(self.inputs.logfile, "a") as logfile:
-                with ProgressBar(minimum = 900, dt = 900, out = logfile):
-                    results = compute(input_list, scheduler = 'processes')
-        else:
-            with ProgressBar(minimum = 900, dt = 900):
-                results = compute(input_list, scheduler = 'processes')
+        #if not self.inputs.verbose:
+            #with open(self.inputs.logfile, "a") as logfile:
+                #with ProgressBar(minimum = 300, out = logfile):
+                    #results = compute(input_list, scheduler = 'processes')
+        #else:
+            #with ProgressBar(minimum = 300):
+        results = compute(input_list, scheduler = 'processes')       
         toc = timeit.default_timer()
         logging.info(" Delayed processing took {} seconds.\n".format(math.ceil(toc-tic)))
         return results
@@ -132,7 +132,7 @@ class Workflow(object):
             # Initialize class Mask 
             mask = Mask(pathfinderobject.imgpath, config)
             # Create cloudmask 
-            cloudmask = mask.create_cloudmask()
+            cloudmask = mask.create_cloudmask()            
             # Return both pathfinderobject and the cloudmask as a tuple
             return pathfinderobject, cloudmask
         else:
@@ -163,12 +163,13 @@ class Workflow(object):
         if re.match(self.inputs.config["band_designation"], index):
             array = vegindex.get_array(index)
         else:      
-            array = vegindex.calculate_index(index)
+            array = vegindex.calculate_index(index)            
         # Apply cloudmask to the index array unless decided against by user
         if not self.inputs.nomask:            
             array = vegindex.mask_array(array, cloudmask)
         # Reproject input geodataframe to the same CRS with vegindex
-        geodataframe_reprojected = geodataframe.to_crs(vegindex.crs)
+        geodataframe_reprojected = geodataframe.to_crs(vegindex.crs)        
+        
         # Initialize class Extractor
         extractorobject = Extractor(
             array,
@@ -189,12 +190,14 @@ class Workflow(object):
             pathfinderobject.orbit,
             self.inputs.statistics,
             vegindex.crs,
-        )
+        )        
         # Loop through given output formats
         for format in self.inputs.format:
             # Extract arrays in given format
+            logging.info("Extracting...")
             extractedarray = extractorobject.extract_format(format)
             # Write results in given format
+            logging.info("Writing...")
             writerobject.write_format(format, extractedarray)
             if format == "statistics" and "database" in self.inputs.format:
                 writerobject.write_format("database", extractedarray) 
@@ -209,16 +212,16 @@ class Workflow(object):
     def workflow_s2(self):
         """Run workflow for Sentinel-2 imagery."""
         userinput = self.inputs
-
-        ##################
-        ### VALIDATION ###
-        ##################
-
-        validation = []
         # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase, userinput.drop_geom, userinput.epsg_for_csv)
         # Read s2tiles into a geodataframe
         s2tiles = geoobject.read_tiles()
+        
+        ##################
+        ### VALIDATION ###
+        ##################
+
+        validation = []        
         # Clip vectorfile based on data in input directory 
         clipped_geodataframe, tiles = geoobject.clip_vector(userinput.input, s2tiles, userinput.idname)
         if userinput.tiles is not None:
@@ -228,7 +231,7 @@ class Workflow(object):
         # Loop through paths in input directory
         for path in userinput.input:
             pathfinderobject = Pathfinder(path, userinput.config)
-            if pathfinderobject.tile in tiles:
+            if int(pathfinderobject.date) <= int(userinput.enddate) and int(pathfinderobject.date) >= int(userinput.startdate) and pathfinderobject.tile in tiles:
                 # Append the list of delayed functions
                 validation.append(delayed(self.validate_safedir)(path, 95, convex_hull))
         logging.info(" Validating safedirs...")
@@ -296,9 +299,9 @@ class Workflow(object):
         for path in userinput.input:
             # Initialize classes Pathfinder and RasterData
             pathfinderobject = Pathfinder(path, userinput.config)
-            raster = RasterData(path, userinput.config)   
-            # Reproject vector data to match raster          
-            gdf = geoobject.reproject_geodataframe(geoobject.geometries, raster.crs)
+            raster = RasterData(path, userinput.config)  
+            # Clip features that can only be found within bounding box of TIF
+            gdf = geoobject.gdf_from_bbox(raster.bbox, raster.crs)           
             # Loop through tifbands
             for band in userinput.tifbands:
                 # Append the list of delayed functions
@@ -362,6 +365,45 @@ class Workflow(object):
         return None
 
     def workflow_ls8(self):
-        userinput = self.inputs
-        logging.info(" LANDSAT8 IS CURRENTLY NOT SUPPORTED.")
-        quit("LANDSAT8 IS CURRENTLY NOT SUPPORTED.")
+        userinput = self.inputs 
+        # Read vectorfile into a geoobject
+        geoobject = VectorData(userinput.vectorbase, userinput.drop_geom, userinput.epsg_for_csv)
+        """
+        ####################
+        ### CLOUDMASKING ###
+        ####################
+        
+        cloudmasks = []
+        # Loop through paths in userinput:
+        for path in userinput.input:
+            pathfinderobject = Pathfinder(path, userinput.config)
+            # Add delayed functions to the list to be computed
+            cloudmasks.append(delayed(self.cloudmask_creation)(pathfinderobject, userinput.config))
+        
+        logging.info(" Creating cloudmasks...")
+        
+        # Run delayed computation with dask
+        cloudmask_results = self.execute_delayed(cloudmasks)
+        """
+        #########################
+        ### INDEX CALCULATION ###
+        #########################
+
+        index_calculations = []
+
+        logging.info(" Preparing computations...")
+
+        #for pathfinderobject, cloudmask in cloudmask_results[0]:
+        for path in userinput.input:
+            pathfinderobject = Pathfinder(path, userinput.config)
+            vegindex = Index(pathfinderobject.imgpath, userinput.config)
+            gdf = geoobject.gdf_from_bbox(vegindex.bbox, vegindex.crs, userinput.idname)
+            for index in userinput.indexlist:
+                # Add delayed function calls to the list of index calculations
+                index_calculations.append(delayed(self.extract_index)(vegindex, None, index, gdf, pathfinderobject))
+
+        logging.info(" Calculating indices and extracting results...")
+        # Process index calculations with dask
+        self.execute_delayed(index_calculations)        
+        logging.info(" LANDSAT8 WORKFLOW COMPLETED!")
+        logging.info(" Results can be found in {}".format(userinput.outpath))
