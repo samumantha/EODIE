@@ -2,7 +2,7 @@
 
 """
 New version of EODIE_process.
-Written by Arttu Kivimäki (FGI) in July 2022 based on old eodie_process.py.
+Written by Arttu Kivimaki (FGI) in July 2022 based on old eodie_process.py by Samantha Wittke.
 Processing workflows for different platforms can be found in eodie/workflow.py.
 """
 
@@ -18,7 +18,7 @@ def read_userinput():
     userinput: class Userinput
         validated Userinputs
     """
-    userinput = UserInput()
+    userinput = UserInput()    
     Validator(userinput)
     return userinput   
 
