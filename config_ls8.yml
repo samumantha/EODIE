@@ -71,5 +71,6 @@ resampling_method: 'bilinear'
 
 
 # path building set *after inpath* to get the bandfile
+pixelsize: 30
 
 pathbuildinglist: ['*', 'bandname', '*' , '.TIF']
