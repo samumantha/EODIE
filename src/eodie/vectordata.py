@@ -165,7 +165,7 @@ class VectorData(object):
         invalid_geom = with_geom.loc[
             with_geom["validity"] == False
         ].copy()
-        
+
         # If invalid geometries exist, run explain_validity for them
         if len(invalid_geom) > 0:
             invalid_geom[
@@ -191,45 +191,63 @@ class VectorData(object):
 
         return self.geometries            
 
-    def clip_vector(self, safes, tileframe, idname):
+    def clip_vector(self, rasters, tileframe, idname, platform):
         """Clip vector based on data in input directory.
 
         Parameters:
         -----------
-        safes: list
+        rasters: list
             list of input files
         tileframe: GeoDataframe
-            a geodataframe containing the Sentinel-2 tiles
+            a geodataframe containing tile grid (for either Landsat8 or Sentinel-2)
 
         Returns:
         --------
-        clipped_geodataframe: GeoDataframe
-            original geodataframe clipped by tiles found in raster input directory
+        tiles: list
+            Sentinel-2 or Landsat8 tiles that were found in input raster directory
+
+        Updates:
+        --------
+        self.geometries: GeoDataframe
+            replaces original geodataframe with the clipped one
         """
         logging.info(" Clipping input vector based on data in raster directory...\n")
         tic = timeit.default_timer()
-        tiles = []
-        # Loop through safes
-        for safedir in safes:
-            head, tail = os.path.split(safedir)
-            tile = tail.split("_")[5][1:6]
-            # If tilename noet yet in list of tiles, add it
-            if tile not in tiles:
-                tiles.append(tile)
-        # Select only tiles that are found in input directory
-        tileframe = tileframe[tileframe['Name'].isin(tiles)]
+        tiles = []        
+        if platform == "s2":
+            # Loop through safes
+            for raster in rasters:
+                head, tail = os.path.split(raster)
+                tile = tail.split("_")[5][1:6]
+                # If tilename noet yet in list of tiles, add it
+                if tile not in tiles:
+                    tiles.append(tile)
+            # Select only tiles that are found in input directory
+            tileframe = tileframe[tileframe['Name'].isin(tiles)]
+        elif platform == "ls8":
+            paths = []
+            rows = []
+            for raster in rasters:
+                head, tail = os.path.split(raster)
+                path = int(tail.split("_")[2][0:3])
+                if path not in paths:
+                    paths.append(path)
+                row = int(tail.split("_")[2][3:6])
+                if row not in rows:
+                    rows.append(row)
+            tileframe = tileframe[(tileframe['PATH'].isin(paths)) & (tileframe['ROW'].isin(rows))]
         # Reproject vector geodataframe to EPSG:4326
         gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
         # Clip
-        self.geometries = gpd.clip(gdf, tileframe)
+        self.geometries = gpd.clip(gdf, tileframe)            
         # Compare geometries
         self.geometries = self.compare_geometries(self.geometries, gdf, idname)
         toc = timeit.default_timer()
         logging.info(" Clipping took {} seconds.\n".format(math.ceil(toc-tic)))
 
-        return self.geometries, tiles
+        return tiles
 
-    def read_tiles(self):
+    def read_tiles(self, platform):
         """Read Sentinel-2 tiles into a Geodataframe.
 
         Returns:
@@ -238,7 +256,10 @@ class VectorData(object):
             geodataframe containing the Sentinel-2 tiles
         """
         # Build tilepath
-        tilepath = os.path.join(os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp")
+        if platform == "s2":
+            tilepath = os.path.join(os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp")
+        elif platform == "ls8":
+            tilepath = os.path.join(os.getcwd(), "landsat8_tiles_world", "WRS2_descending.shp")
         # Read into a geodataframe
         tileframe = gpd.read_file(tilepath)
 
@@ -265,7 +286,7 @@ class VectorData(object):
 
         return reprojected
     
-    def filter_geodataframe(self, vectorframe, tileframe, tile, idname):
+    def filter_geodataframe(self, vectorframe, tileframe, tile, idname, platform):
         """ Filter features of geodataframe that can be found in the area of one Sentinel-2 tile.
 
         Parameters:
@@ -285,7 +306,12 @@ class VectorData(object):
             geodataframe containing the features that are completely in area of given tile - features crossing the tile edges are excluded
         """
         # Select only one tile based on colum Name
-        tileframe_tile = tileframe[tileframe['Name'] == tile]
+        if platform == "s2":
+            tileframe_tile = tileframe[tileframe['Name'] == tile]
+        elif platform == "ls8":
+            path = int(tile[0:3])
+            row = int(tile[3:6])
+            tileframe_tile = tileframe[(tileframe['PATH'] == path) & (tileframe['ROW'] == row)]
         # Run overlay analysis for vectorframe and one tile
         overlay_result = vectorframe.overlay(tileframe_tile, how = 'intersection')
         # Compare geometries
