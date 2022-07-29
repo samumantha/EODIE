@@ -67,13 +67,7 @@ class Workflow(object):
             outputs of executed functions
         """
         tic = timeit.default_timer()
-        #if not self.inputs.verbose:
-            #with open(self.inputs.logfile, "a") as logfile:
-                #with ProgressBar(minimum = 300, out = logfile):
-                    #results = compute(input_list, scheduler = 'processes')
-        #else:
-            #with ProgressBar(minimum = 300):
-        results = compute(input_list, scheduler = 'processes')       
+        results = compute(input_list, scheduler = 'processes')         
         toc = timeit.default_timer()
         logging.info(" Delayed processing took {} seconds.\n".format(math.ceil(toc-tic)))
         return results
@@ -183,8 +177,8 @@ class Workflow(object):
         # Initialize class Writer
         writerobject = Writer(
             self.inputs.outpath,
-            pathfinderobject.date,
-            pathfinderobject.tile,            
+            str(pathfinderobject.date),
+            str(pathfinderobject.tile),            
             index,
             self.inputs.platform,
             pathfinderobject.orbit,
@@ -215,7 +209,7 @@ class Workflow(object):
         # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase, userinput.drop_geom, userinput.epsg_for_csv)
         # Read s2tiles into a geodataframe
-        s2tiles = geoobject.read_tiles()
+        s2tiles = geoobject.read_tiles(userinput.platform)
         
         ##################
         ### VALIDATION ###
@@ -223,11 +217,11 @@ class Workflow(object):
 
         validation = []        
         # Clip vectorfile based on data in input directory 
-        clipped_geodataframe, tiles = geoobject.clip_vector(userinput.input, s2tiles, userinput.idname)
+        tiles = geoobject.clip_vector(userinput.input, s2tiles, userinput.idname, userinput.platform)
         if userinput.tiles is not None:
             tiles = userinput.tiles
         # Create convex hull of all vector features
-        convex_hull = geoobject.get_convex_hull(clipped_geodataframe)
+        convex_hull = geoobject.get_convex_hull(geoobject.geometries)
         # Loop through paths in input directory
         for path in userinput.input:
             pathfinderobject = Pathfinder(path, userinput.config)
@@ -268,14 +262,14 @@ class Workflow(object):
         # Create empty list for indices to be calculated
         index_calculations = []    
         # Reproject geodataframe to EPSG:4326
-        geodataframe = geoobject.reproject_geodataframe(clipped_geodataframe, s2tiles.crs)    
+        geodataframe = geoobject.reproject_geodataframe(geoobject.geometries, s2tiles.crs)    
         # Loop through tuples of (safedir, cloudmask):
         logging.info(" Preparing computations...")
         for pathfinderobject, cloudmask in cloudmask_results[0]:
             # Initialize class Vegindex
             vegindex = Index(pathfinderobject.imgpath, userinput.config)   
             # Filter geodataframe to only contain features from the area of the Sentinel-2 tile      
-            filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, s2tiles, pathfinderobject.tile, userinput.idname)    
+            filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, s2tiles, pathfinderobject.tile, userinput.idname, userinput.platform)    
             if not filtered_geodataframe.empty:   
                 # Loop through indices:
                 for index in userinput.indexlist:
@@ -368,23 +362,30 @@ class Workflow(object):
         userinput = self.inputs 
         # Read vectorfile into a geoobject
         geoobject = VectorData(userinput.vectorbase, userinput.drop_geom, userinput.epsg_for_csv)
-        """
+    
+        ##################
+        ### VALIDATION ###
+        ##################
+
+        ls8tiles = geoobject.read_tiles(userinput.platform)        
+        tiles = geoobject.clip_vector(userinput.input, ls8tiles, userinput.idname, userinput.platform)
+        
         ####################
         ### CLOUDMASKING ###
-        ####################
-        
-        cloudmasks = []
+        ####################    
+
+        cloudmasks = []   
+
         # Loop through paths in userinput:
-        for path in userinput.input:
-            pathfinderobject = Pathfinder(path, userinput.config)
+        for path in userinput.input:             
+            pathfinderobject = Pathfinder(path, userinput.config)                     
             # Add delayed functions to the list to be computed
             cloudmasks.append(delayed(self.cloudmask_creation)(pathfinderobject, userinput.config))
-        
         logging.info(" Creating cloudmasks...")
         
         # Run delayed computation with dask
-        cloudmask_results = self.execute_delayed(cloudmasks)
-        """
+        cloudmask_results = self.execute_delayed(cloudmasks)      
+        
         #########################
         ### INDEX CALCULATION ###
         #########################
@@ -392,16 +393,17 @@ class Workflow(object):
         index_calculations = []
 
         logging.info(" Preparing computations...")
-
+        
+        geodataframe = geoobject.reproject_geodataframe(geoobject.geometries, ls8tiles.crs)
         #for pathfinderobject, cloudmask in cloudmask_results[0]:
         for path in userinput.input:
             pathfinderobject = Pathfinder(path, userinput.config)
             vegindex = Index(pathfinderobject.imgpath, userinput.config)
-            gdf = geoobject.gdf_from_bbox(vegindex.bbox, vegindex.crs, userinput.idname)
+            filtered_geodataframe = geoobject.filter_geodataframe(geodataframe, ls8tiles, pathfinderobject.tile, userinput.idname, userinput.platform)
             for index in userinput.indexlist:
                 # Add delayed function calls to the list of index calculations
-                index_calculations.append(delayed(self.extract_index)(vegindex, None, index, gdf, pathfinderobject))
-
+                index_calculations.append(delayed(self.extract_index)(vegindex, None, index, filtered_geodataframe, pathfinderobject))
+        
         logging.info(" Calculating indices and extracting results...")
         # Process index calculations with dask
         self.execute_delayed(index_calculations)        
