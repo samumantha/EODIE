@@ -7,7 +7,7 @@ maxcloudcover: 10
 # Mask conditions are not stored as values, but as individual 0/1 flags in bits
 bitmask: 1
 # Bits to be to be included in cloudmask
-# https://prd-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/atoms/files/LSDS-1328_Landsat8-9-OLI-TIRS-C2-L2-DFCB-v6.pdf
+# https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/atoms/files/LSDS-1328_Landsat8-9-OLI-TIRS-C2-L2-DFCB-v6.pdf
 tobemaskedlist: 
   - 0 # Fill data
   - 1 # Dilated cloud
