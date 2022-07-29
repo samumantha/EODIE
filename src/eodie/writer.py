@@ -152,16 +152,15 @@ class Writer(object):
     def write_array(self, extractedarray):
         """Write extracted arrays to pickle."""
         self.outpath = self.outpath + "_array.pickle"
-        logging.info("arrays to pickle in: " + self.outpath)
+        logging.info(" Arrays to pickle in: " + self.outpath)
         with open(self.outpath, mode="wb") as pkl_file:
             pickle.dump(extractedarray, pkl_file)
 
     def write_geotiff(self, extractedarray):
         """Write extracted arrays to geotiff file."""
         self.outpath = self.outpath + "_array"
-        logging.info("arrays to geotiff in: " + self.outpath)
-        for key in extractedarray.keys():
-            logging.info("arrays to geotiff in: " + self.outpath)
+        logging.info(" Arrays to geotiff in: " + self.outpath)
+        for key in extractedarray.keys():            
             data = extractedarray[key]
             nrows, ncols = data["array"].shape
             # this may happen with external tif file, int64 is not supported
