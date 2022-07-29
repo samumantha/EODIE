@@ -75,7 +75,7 @@ class Mask(RasterData):
         if not bitmask:
             mask = np.isin(sclarray, tobemaskedlist)
         else:
-            mask = self.createbitmask(sclarray, tobemaskedlist)
+            mask = self.createbitmask(sclarray, tobemaskedlist)                 
         return mask
 
     def create_cloudmask(self):
@@ -87,7 +87,7 @@ class Mask(RasterData):
             array with invalid pixels marked as True/1 and correct 'pixelsize'
 
         """
-        cloudarray = self.get_array("cloudfilename", "nearest")
+        cloudarray = self.get_array("cloudfilename", "nearest")        
         cloudmask = self.binarize_cloudmask(cloudarray)
 
         return cloudmask
