@@ -18,7 +18,7 @@ def read_userinput():
     userinput: class Userinput
         validated Userinputs
     """
-    userinput = UserInput()    
+    userinput = UserInput()
     Validator(userinput)
     return userinput   
 
