@@ -69,6 +69,10 @@ class Writer(object):
             self.outpath = os.path.join(
                 outdir, index + "_" + date + "_" + tile + "_orbit_" + str(orbit)
             )
+        if platform == "ls8":
+            self.outpath = os.path.join(
+                outdir, index + "_" + date + "_" + tile
+            )
         else:
             self.outpath = os.path.join(outdir, index)        
         self.tile = tile
