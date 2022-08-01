@@ -12,6 +12,9 @@ import argparse
 import re
 import sys
 import os
+import logging
+import timeit
+import geopandas as gpd
 from eodie.extractor import Extractor
 from eodie.mask import Mask
 from eodie.index import Index
@@ -20,12 +23,9 @@ from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
 from eodie.rasterdata import RasterData
-import logging
 from datetime import datetime
-import timeit
 from dask import delayed
 from dask import compute
-import geopandas as gpd
 
 class Workflow(object):
     """ Class responsible for EODIE processing workflow.
