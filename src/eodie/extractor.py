@@ -15,7 +15,7 @@ from rasterstats import zonal_stats
 
 class Extractor(object):
     """Extracting object based information from an array with affine information and a geodataframe."""
-    
+
     def __init__(
         self,
         maskedarray,

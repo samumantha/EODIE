@@ -26,7 +26,7 @@ class UserInput(object):
     def __init__(self):
         """Initialize UserInput object."""
         self.get_userinput()
-        self.create_logfile(self.outpath, self.verbose)        
+        self.create_logfile(self.outpath, self.verbose)
 
     def get_userinput(self):
         """Get all userinput from commandline call to run the tool and stores them as userinput attributes."""
@@ -42,7 +42,9 @@ class UserInput(object):
         inputrastergroupparser.add_argument(
             "--rasterdir", dest="rasterdir", help="directory where data is stored"
         )
-        inputrastergroupparser.add_argument("--rasterfile", dest="rasterfile", help="one file")
+        inputrastergroupparser.add_argument(
+            "--rasterfile", dest="rasterfile", help="one file"
+        )
 
         parser.add_argument(
             "--vector",
@@ -62,16 +64,16 @@ class UserInput(object):
 
         parser.add_argument(
             "--gpkg_layer",
-            dest = 'gpkg_layer',
-            default = None,
-            help = 'Determine the layer in geopackage to be used'
+            dest="gpkg_layer",
+            default=None,
+            help="Determine the layer in geopackage to be used",
         )
 
         parser.add_argument(
             "--epsg_for_csv",
-            dest = 'epsg_for_csv',
-            default = None,
-            help = 'Determine the EPSG code if vector input is csv file'
+            dest="epsg_for_csv",
+            default=None,
+            help="Determine the EPSG code if vector input is csv file",
         )
 
         parser.add_argument(
@@ -188,7 +190,7 @@ class UserInput(object):
             platform_cfg = yaml.safe_load(ymlfile)
 
         # starting python 3.9: platform_cfg | user_cfg also works
-        self.config = {**platform_cfg}       
+        self.config = {**platform_cfg}
 
         self.rasterdir = args.rasterdir
         self.rasterfile = args.rasterfile
@@ -196,22 +198,26 @@ class UserInput(object):
             if self.rasterfile[-1] == "/":
                 self.rasterfile = self.rasterfile[:-1]
             self.input = [self.rasterfile]
-        
+
         else:
-            #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
+            # self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
-            self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
+            self.input = [
+                os.path.join(self.rasterdir, file)
+                for file in os.listdir(self.rasterdir)
+                if re.search(self.config["filepattern"], file)
+            ]
             if self.rasterdir[-1] == "/":
-                self.rasterdir = self.rasterdir[:-1]        
-        
-        if not self.input:            
+                self.rasterdir = self.rasterdir[:-1]
+
+        if not self.input:
             quit("No imagery for given platform was found. Please check your inputs.")
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
-        #if '.' in args.vectorbase:
-            #self.vectorbase = os.path.splitext(args.vectorbase)[0]
-        #else:
+        # if '.' in args.vectorbase:
+        # self.vectorbase = os.path.splitext(args.vectorbase)[0]
+        # else:
         self.vectorbase = args.vectorbase
         self.outpath = args.outpath
         if not os.path.exists(self.outpath):
@@ -228,7 +234,7 @@ class UserInput(object):
         else:
             self.statistics = args.statistics
         self.startdate = args.startdate
-        self.enddate = args.enddate        
+        self.enddate = args.enddate
         self.database_out = args.database_out
 
         self.drop_geom = args.drop_geom
@@ -236,15 +242,12 @@ class UserInput(object):
         self.tiles = args.tiles
         self.tifbands = args.tifbands
 
-        
-
-
         self.geotiff_out = args.geotiff_out
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
-        self.nomask = args.nomask       
-           
+        self.nomask = args.nomask
+
         self.verbose = args.verbose
 
         # Determine output formats
@@ -274,23 +277,38 @@ class UserInput(object):
         if self.rasterfile is not None:
             inputname = os.path.split(self.rasterfile)[1].split(".")[0]
         else:
-            dirname = os.path.split(self.rasterdir)[1] 
+            dirname = os.path.split(self.rasterdir)[1]
 
         if verbose:
             if self.rasterfile is not None:
-                logfilename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')
+                logfilename = os.path.join(
+                    logdir,
+                    inputname
+                    + "_"
+                    + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    + ".log",
+                )
                 handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
             else:
-                logfilename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')
+                logfilename = os.path.join(
+                    logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + ".log"
+                )
                 handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
 
-            logging.basicConfig(level = logging.INFO, handlers = handlers)
-        
+            logging.basicConfig(level=logging.INFO, handlers=handlers)
+
         else:
             if self.rasterfile is not None:
-                logfilename = os.path.join(logdir, inputname + "_" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')
-                logging.basicConfig(filename = logfilename, level = logging.INFO)
+                logfilename = os.path.join(
+                    logdir,
+                    inputname
+                    + "_"
+                    + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    + ".log",
+                )
+                logging.basicConfig(filename=logfilename, level=logging.INFO)
             else:
-                logfilename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')
-                logging.basicConfig(filename = logfilename, level = logging.INFO)            
-        
+                logfilename = os.path.join(
+                    logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + ".log"
+                )
+                logging.basicConfig(filename=logfilename, level=logging.INFO)

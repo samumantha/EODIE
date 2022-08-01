@@ -10,6 +10,7 @@ from eodie.userinput import UserInput
 from eodie.validator import Validator
 from eodie.workflow import Workflow
 
+
 def read_userinput():
     """Read and validate userinputs.
 
@@ -20,12 +21,14 @@ def read_userinput():
     """
     userinput = UserInput()
     Validator(userinput)
-    return userinput   
+    return userinput
 
-def main():    
+
+def main():
     """Fetch userinput and launch workflow."""
     userinput = read_userinput()
-    Workflow(userinput)   
-    
-if __name__ == '__main__':
+    Workflow(userinput)
+
+
+if __name__ == "__main__":
     main()

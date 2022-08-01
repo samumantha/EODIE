@@ -42,28 +42,26 @@ class RasterValidatorS2(object):
             maximum cloudcover allowed for processing
         """
         self.SAFEpath = SAFEpath
-        self.maxcloudcover = maxcloudcover        
+        self.maxcloudcover = maxcloudcover
 
     def check_integrity(self):
         """Check the integrity of the SAFE directory. Images for all bands and metadata XML file should be found.
-        
-        Returns: 
+
+        Returns:
         --------
         Integrity: boolean
             integrity of the file, true if all necessary files can be found
         """
-        
+
         # Check that metadata file exists
         xmlname = "MTD_MSIL2A.xml"
-        xmlpath = os.path.join(
-            self.SAFEpath, xmlname
-            )
+        xmlpath = os.path.join(self.SAFEpath, xmlname)
         # Default integrity to True
         integrity = True
 
         # If xml file exists, check for individual band directories.
         if os.path.isfile(xmlpath):
-            
+
             # In a complete SAFE directory, there are 35 .jp2 files.
             granulepath = os.path.join(
                 self.SAFEpath, "GRANULE", "*", "IMG_DATA", "*", "*.jp2"
@@ -71,20 +69,16 @@ class RasterValidatorS2(object):
             # With less than 35 .jp2 files, log an error message and set integrity to False
             if len(glob.glob(granulepath)) < 35:
                 logging.error(
-                    " At least one image band from {} is missing.".format(
-                        self.SAFEpath
-                    )
+                    " At least one image band from {} is missing.".format(self.SAFEpath)
                 )
                 integrity = False
         # If xml file does not exist, log an error message and set integrity to False
         else:
             logging.error(
-                " Metadata .XML file for {} was not found.".format(
-                self.SAFEpath
-                )
+                " Metadata .XML file for {} was not found.".format(self.SAFEpath)
             )
             integrity = False
-        
+
         return integrity
 
     def get_xml(self):
@@ -155,16 +149,20 @@ class RasterValidatorS2(object):
         Returns:
         --------
         boolean
-            whether there is raster data on the area(s) of interest 
+            whether there is raster data on the area(s) of interest
         """
-        #convex_hull = geometryobject.get_convex_hull()
+        # convex_hull = geometryobject.get_convex_hull()
         tile = str(self.SAFEpath[-26:-24])
-        epsgcode = "EPSG:326" + tile         
+        epsgcode = "EPSG:326" + tile
         convex_hull_reprojected = convex_hull.to_crs(epsgcode)
 
         zonal_statistics = zonal_stats(
-            convex_hull_reprojected, self.get_bandpath(), stats="mean", band=1, nodata=-99999
-        )       
+            convex_hull_reprojected,
+            self.get_bandpath(),
+            stats="mean",
+            band=1,
+            nodata=-99999,
+        )
         if (
             zonal_statistics[0]["mean"] == 0.0
             or type(zonal_statistics[0]["mean"]) is not float

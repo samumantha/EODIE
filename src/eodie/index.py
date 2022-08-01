@@ -36,8 +36,6 @@ class Index(RasterData):
         "ndwi",
     ]
 
-    
-
     def __init__(self, inpath=".", cfg="test_config.yml", test=False):
         """Initialize the index object.
 

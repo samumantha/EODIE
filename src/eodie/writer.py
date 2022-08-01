@@ -34,7 +34,7 @@ class Writer(object):
         self,
         outdir,
         date,
-        tile,       
+        tile,
         index,
         platform,
         orbit,
@@ -42,7 +42,7 @@ class Writer(object):
         crs=None,
     ):
         """Initialize writer object.
-        
+
         Parameters
         -----------
         outdir: str
@@ -70,11 +70,9 @@ class Writer(object):
                 outdir, index + "_" + date + "_" + tile + "_orbit_" + str(orbit)
             )
         elif platform == "ls8":
-            self.outpath = os.path.join(
-                outdir, index + "_" + date + "_" + tile
-            )
+            self.outpath = os.path.join(outdir, index + "_" + date + "_" + tile)
         else:
-            self.outpath = os.path.join(outdir, index)        
+            self.outpath = os.path.join(outdir, index)
         self.tile = tile
         self.statistics = statistics
         self.crs = crs
@@ -164,7 +162,7 @@ class Writer(object):
         """Write extracted arrays to geotiff file."""
         self.outpath = self.outpath + "_array"
         logging.info(" Arrays to geotiff in: " + self.outpath)
-        for key in extractedarray.keys():            
+        for key in extractedarray.keys():
             data = extractedarray[key]
             nrows, ncols = data["array"].shape
             # this may happen with external tif file, int64 is not supported
@@ -210,10 +208,7 @@ class Writer(object):
             IDs = []
             with fiona.open(shapefile) as shp:
                 for polygon in shp:
-                    IDs.append(polygon['properties'][idname])
-            with open(lookup, 'a') as f:
-                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
-            logging.info(' Appended tile ' + self.tile + ' to lookup table')
-
-
-
+                    IDs.append(polygon["properties"][idname])
+            with open(lookup, "a") as f:
+                f.write(self.tile + ":" + ",".join(str(id) for id in IDs) + "\n")
+            logging.info(" Appended tile " + self.tile + " to lookup table")

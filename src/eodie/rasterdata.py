@@ -161,13 +161,14 @@ class RasterData(object):
             array with values representing the reflectance
         """
         if self.cfg["platform"] == "s2":
-            reflectance = np.divide(array, self.cfg["quantification_value"])  
-            reflectance = self.clip_to_valid_range(reflectance)      
-            
+            reflectance = np.divide(array, self.cfg["quantification_value"])
+            reflectance = self.clip_to_valid_range(reflectance)
+
         if self.cfg["platform"] == "ls8":
             reflectance = np.multiply(array, self.cfg["quantification_value"]) - 0.2
 
         return reflectance
+
     def get_array(self, band, resampling_method=None):
         """Retrieve an array based on band request.
 
@@ -246,15 +247,15 @@ class RasterData(object):
         -----------
         array: array
             array to be clipped
-        
+
         Returns:
         --------
         array: array
             result of clipping
-        """      
+        """
 
         # Set values above 1 to np.NaN
         array[array > 1] = np.NaN
         # Set values below or equal to 0 to np.NaN
-        array[array <= 0] = np.NaN        
+        array[array <= 0] = np.NaN
         return array

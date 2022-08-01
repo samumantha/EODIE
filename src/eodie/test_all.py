@@ -218,7 +218,7 @@ class TestAll(object):
         del maskedarray
 
         del writerobject
-        
+
     """
     def test_tilesplitter(self):
         tmpdir = 'testfiles/temp'
@@ -246,4 +246,6 @@ class TestAll(object):
         del shapesplitter
 
     """
+
+
 TestAll()

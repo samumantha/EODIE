@@ -25,14 +25,14 @@ class Validator(object):
         args: object
             arguments of the userinput
         """
-        
+
         self.input_amount_check(args.rasterdir, args.rasterfile)
         self.input_exists_check(args.rasterdir, args.rasterfile)
         self.date_check(args.startdate)
         self.date_check(args.enddate)
         self.vector_exists(args.vectorbase)
         if not args.indexlist is None and not args.indexlist == []:
-            self.index_check(args.config,args.indexlist)
+            self.index_check(args.config, args.indexlist)
         self.csv_check(args.vectorbase, args.epsg_for_csv)
         self.gpkg_check(args.vectorbase, args.gpkg_layer)
         self.list_inputs(args)
@@ -52,7 +52,7 @@ class Validator(object):
         elif dir is not None and file is not None:
             exit("Please give only one of filename and path to directory of files")
 
-    def input_exists_check(self, dir, file):        
+    def input_exists_check(self, dir, file):
         """Check that file or directory that are given exist (typo check).
 
         Parameters
@@ -136,14 +136,14 @@ class Validator(object):
             return True
 
     def csv_check(self, vectorpath, epsg):
-        """ Check that the EPSG has been determined for input CSV, exits if not true
+        """Check that the EPSG has been determined for input CSV, exits if not true
         Parameters
         ----------
         extension:
             the file extension of the object
         epsg:
             EPSG code provided by user
-            
+
         Returns
         -------
         csv_ok: boolean
@@ -152,12 +152,14 @@ class Validator(object):
         extension = os.path.splitext(vectorpath)[1]
         if extension == ".csv":
             if epsg == None:
-                exit('If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv.')
+                exit(
+                    "If using csv as a vector input, please provide EPSG code for the csv with parameter --epsg_for_csv."
+                )
         else:
             return True
-    
+
     def gpkg_check(self, vectorpath, layername):
-        """ Check if there are more than one layer in .gpkg input and the layer to be used has been named
+        """Check if there are more than one layer in .gpkg input and the layer to be used has been named
         Parameters
         ----------
         extension:
@@ -178,19 +180,18 @@ class Validator(object):
 
             if gpkg.GetLayerCount() > 1:
                 if layername == None:
-                    exit('If using gpkg with more than one layer as a vector input, please provide the layer name with parameter --gpkg_layer')            
-            else: 
+                    exit(
+                        "If using gpkg with more than one layer as a vector input, please provide the layer name with parameter --gpkg_layer"
+                    )
+            else:
                 gpkg = None
-                return True                
+                return True
         else:
             return True
 
-    
-
-
     def vector_exists(self, vectorfile):
         """Check that given vectorfile exists.
-        
+
         Parameters:
         -----------
         vectorfile:
@@ -204,7 +205,7 @@ class Validator(object):
 
     def list_inputs(self, userinput):
         """List all inputs into log file.
-        
+
         Parameters:
         -----------
         userinput: class UserInput()
