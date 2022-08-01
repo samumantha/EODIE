@@ -53,14 +53,14 @@ with:
 Examples on using different vector input formats
 ================================================
 
-EODIE can read vector file formats supported by fiona. With GeoPackage and Comma-Separated Value files there are some extra steps.
+EODIE can directly read vector file formats supported by `fiona <https://fiona.readthedocs.io/en/latest/manual.html>`_. With GeoPackage and Comma-Separated Value files there are some extra steps. 
 
 GeoPackage
 ----------
 
 GeoPackages can contain one or several vector layers, which complicates things a bit.
 
-If there is only one layer in the input GeoPackage, no extra inputs are needed.
+If there is only one layer in the input GeoPackage, no extra inputs are needed. 
 
 ``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons.gpkg--id id --statistics_out --statistics mean std median``
 
