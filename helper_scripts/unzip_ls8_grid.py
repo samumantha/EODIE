@@ -24,8 +24,7 @@ parent_dir = os.path.abspath(os.path.join(cwd, os.pardir))
 output_path = os.path.join(parent_dir, "src", "landsat8_tiles_world")
 
 # Extract files to EODIE directory
-with zipfile.ZipFile(zippath, 'r') as zip_ref:
+with zipfile.ZipFile(zippath, "r") as zip_ref:
     zip_ref.extractall(output_path)
 
 print("Extraction completed.")
-
