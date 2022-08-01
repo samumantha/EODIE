@@ -57,7 +57,7 @@ class Pathfinder(object):
             self.get_imgpath()
             self.get_tileinfo()
             self.get_dateinfo()
-            self.orbit = ""
+            self.orbit = self.tile
 
     def get_imgpath(self):
         """Create the path to the raster data band files based on path given in bandlocation."""
@@ -81,11 +81,10 @@ class Pathfinder(object):
         if self.cfg["platform"] == "ls8": 
             self.date = re.search(datepattern, self.imgpath).group(0)
         
-    def get_orbit(self):
+    def get_orbit(self):        
         xmlname = "MTD_MSIL2A.xml"
         xmlpath = os.path.join(self.rasterdir, xmlname)
         doc = minidom.parse(xmlpath)
         orbit_number = int(
             doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
         )
-        self.orbit = orbit_number
