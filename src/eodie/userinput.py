@@ -187,11 +187,8 @@ class UserInput(object):
         with open(configfile, "r") as ymlfile:
             platform_cfg = yaml.safe_load(ymlfile)
 
-        with open("../user_config.yml", "r") as ymlfile:
-            user_cfg = yaml.safe_load(ymlfile)
-
         # starting python 3.9: platform_cfg | user_cfg also works
-        self.config = {**platform_cfg, **user_cfg}
+        self.config = {**platform_cfg}       
 
         self.rasterdir = args.rasterdir
         self.rasterfile = args.rasterfile
