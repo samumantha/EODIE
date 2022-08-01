@@ -225,17 +225,13 @@ class VectorData(object):
             # Select only tiles that are found in input directory
             tileframe = tileframe[tileframe['Name'].isin(tiles)]
         elif platform == "ls8":
-            paths = []
-            rows = []
+            prs = []
             for raster in rasters:
                 head, tail = os.path.split(raster)
-                path = int(tail.split("_")[2][0:3])
-                if path not in paths:
-                    paths.append(path)
-                row = int(tail.split("_")[2][3:6])
-                if row not in rows:
-                    rows.append(row)
-            tileframe = tileframe[(tileframe['PATH'].isin(paths)) & (tileframe['ROW'].isin(rows))]
+                pr = tail.split("_")[2][0:6]      
+                if pr not in prs:
+                    prs.append(pr)            
+            tileframe = tileframe[(tileframe['PR'].isin(prs))]
         # Reproject vector geodataframe to EPSG:4326
         gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
         # Clip
