@@ -84,3 +84,6 @@ WVP: [10,20,60]
 # Lookup table for storing the tiles and the IDs they include for every tile processed by EODIE with --array_out
 # Table needed for array plotting
 lookup: '../postprocesses/lookuptable.txt'
+
+# Enter resampling method
+resampling_method: 'bilinear'
