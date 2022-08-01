@@ -118,8 +118,18 @@ class RasterData(object):
         """Get affine from red band file as representation for all."""
         if self.cfg["platform"] == "tif":
             bandfile = self.inpath
-        else:
-            bandfile, _ = self.get_bandfile(self.cfg["red"])
+        elif self.cfg["platform"] == "s2":
+            pixelsize = self.cfg["pixelsize"]
+            if pixelsize == 10:
+                bandfile, _ = self.get_bandfile(self.cfg["red"])
+            elif pixelsize == 20:
+                bandfile, _ = self.get_bandfile(self.cfg["8A"])
+            elif pixelsize == 60:
+                bandfile, _ = self.get_bandfile(self.cfg["coastal"])
+        elif self.cfg["platform"] == "ls8":
+            pixelsize = self.cfg["pixelsize"]
+            if pixelsize == 30:
+                bandfile, _ = self.get_bandfile(self.cfg["red"])
         with rasterio.open(bandfile) as src:
             self.crs = src.crs
             self.epsg = str(src.crs).split(":")[-1]
