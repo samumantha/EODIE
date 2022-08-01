@@ -88,3 +88,4 @@ class Pathfinder(object):
         orbit_number = int(
             doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
         )
+        self.orbit = orbit_number
