@@ -26,7 +26,7 @@ class UserInput(object):
     def __init__(self):
         """Initialize UserInput object."""
         self.get_userinput()
-        self.create_logfile(self.outpath, self.input, self.verbose)        
+        self.create_logfile(self.outpath, self.verbose)        
 
     def get_userinput(self):
         """Get all userinput from commandline call to run the tool and stores them as userinput attributes."""
