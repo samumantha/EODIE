@@ -100,5 +100,6 @@ A few auxiliary files are available in the helper_scripts directory.
 | ``manipulate_vector.py``
 | ``clip_vector.py``
 | ``tilegrid_to_shp.py``
+| ``unzip_ls8_grid.py``
 
 Please refer to the scripts top for more information and how to use them.
