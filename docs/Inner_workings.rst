@@ -4,7 +4,7 @@ Internals
 
 The following gives an overview over what is happening in the background when the user calls:
 
-``python eodie_process.py --rasterdir ./testfiles/S2 --vector ./testfiles/shp/test_parcels_32635 --out ./results --id ID --index ndvi --platform s2  --statistics_out``
+``python eodie_process.py --rasterdir ./testfiles/S2 --vector ./testfiles/shp/test_parcels_32635 --out ./results --id ID --index ndvi --platform s2 --statistics_out``
 
 Step 1: Validation
 ------------------
@@ -22,12 +22,16 @@ Step 3: Validation of remote sensing rasters
 The actual the workflow begins by reading the vectorfile into a geopandas GeoDataframe. After reading, the GeoDataframe is clipped to match the extent of remote sensing data, ie. features outside Sentinel-2 tiles in ``--rasterdir`` will be excluded from processing.
 Then, the raster data is validated based on coverage on vectorfile features and cloudcover. Rasterdata with too high cloud cover percentage or NoData over areas of interest will be excluded from further processing.
 
-With tif platform, this step is skipped.
+With Landsat 8, the validation step only clips the vector data based on data coverage but does not check individual scenes for cloudcover or NoData.
+
+With tif platform, this step is skipped. 
 
 Step 4: Cloudmask creation
 -------------------------
 
 For each Sentinel-2 .SAFE directory that was declared valid in the previous step, a binary cloudmask is created based on Scene Classification Layer. 
+
+Cloudmask creation works similarly with Landsat 8 but takes longer due to different file structure of cloudmask file.
 
 Step 5: Calculating and extracting indices
 --------------------------
@@ -43,4 +47,4 @@ After extracting the zonal statistics, they will be written in given output form
 Step parallelization
 --------------------
 Steps 3-5 are individually parallelized with `dask.delayed <https://docs.dask.org/en/stable/delayed.html>_`. In brief, validation for all .SAFE directories is parallelized, cloudmask creation is parallelized and index extraction is parallelized. The workflow moves from one parallelized step to another.
-In steps 3 and 4, number of processes consists of numbers of original rasterdata and valid rasterdata, respectively. In step 5, each index or band to be extracted forms their own process, making the total number of processes (number of valid .SAFEs) * (number of indices). For instance, with 3 indices from 5 valid safedirs, the number of processes in step 5 would be 15. 
+In steps 3 and 4, number of processes consists of numbers of original rasterdata and valid rasterdata, respectively. In step 5, each index or band to be extracted forms their own process, making the total number of processes (number of valid .SAFEs) * (number of indices). For instance, with 3 indices from 5 valid safedirs, the total number of processes in step 5 would be 15. 
