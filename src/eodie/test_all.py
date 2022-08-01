@@ -10,7 +10,6 @@ authors: Samantha Wittke
 
 
 import os
-from collections import OrderedDict
 from affine import Affine
 import glob
 import sys

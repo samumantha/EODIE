@@ -7,15 +7,12 @@ Authors: Samantha Wittke
 """
 import os
 import math
-from osgeo import osr, ogr, gdal
+from osgeo import ogr, gdal
 import fiona
-from copy import deepcopy
 from shapely.geometry import Polygon
 from shapely.validation import explain_validity
-import shapely
 import geopandas as gpd
 import logging
-from shutil import copyfile
 import re
 import glob
 import timeit

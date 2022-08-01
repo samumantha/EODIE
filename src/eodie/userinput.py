@@ -243,9 +243,8 @@ class UserInput(object):
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
-        self.nomask = args.nomask        
-        if self.platform == "tif":
-            self.exclude_splitbytile = True
+        self.nomask = args.nomask       
+           
         self.verbose = args.verbose
 
         # Determine output formats
@@ -263,7 +262,7 @@ class UserInput(object):
         if len(self.format) == 0:
             self.format.append("statistics")
 
-    def create_logfile(self, output_directory, rasterinput, verbose):
+    def create_logfile(self, output_directory, verbose):
 
         # Build logfolder name
         logdir = os.path.join(output_directory, "logs")
@@ -293,7 +292,5 @@ class UserInput(object):
                 logging.basicConfig(filename = logfilename, level = logging.INFO)
             else:
                 logfilename = os.path.join(logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + '.log')
-                logging.basicConfig(filename = logfilename, level = logging.INFO)       
-
-        self.logfile = logfilename
+                logging.basicConfig(filename = logfilename, level = logging.INFO)            
         
