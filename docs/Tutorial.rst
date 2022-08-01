@@ -3,6 +3,9 @@
 Tutorial 
 =========
 
+Sentinel-2 tutorials
+=====================
+
 
 Case 1: growing season mean NDVI timeseries of agricultural fieldparcels of area x (larger than one Sentinel-2 tile)
 ---------------------------------------------------------------------------------------------------------------------
