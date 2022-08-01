@@ -19,9 +19,7 @@ from eodie.vectordata import VectorData
 from eodie.pathfinder import Pathfinder
 from eodie.rastervalidator_s2 import RasterValidatorS2
 from eodie.writer import Writer
-from eodie.userinput import UserInput
 from eodie.rasterdata import RasterData
-from eodie.validator import Validator
 import logging
 from datetime import datetime
 import timeit
