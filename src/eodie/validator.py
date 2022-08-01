@@ -135,24 +135,6 @@ class Validator(object):
         else:
             return True
 
-    def vector_check(self, extension):
-        """ Check that given object input is of a supported file format, exits if not true
-        Parameters
-        ----------
-        extension:
-            the file extension of the object, supported formats are .shp, .gpkg and .geojson
-        Returns
-        -------
-        extension_ok: boolean
-            if object given by the user is in a supported format 
-        """
-
-        supported_formats = ['shp', 'gpkg', 'geojson', 'csv', 'fgb'] 
-        if extension not in supported_formats:
-            exit('Input format is not supported, please use a supported format (shp, gpkg, geojson, csv or fgb)')
-        else:
-            return True     
-
     def csv_check(self, vectorpath, epsg):
         """ Check that the EPSG has been determined for input CSV, exits if not true
         Parameters
