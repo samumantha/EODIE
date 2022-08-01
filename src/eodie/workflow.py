@@ -28,8 +28,6 @@ import timeit
 from dask import delayed
 from dask import compute
 import geopandas as gpd
-from dask.diagnostics import ProgressBar
-
 
 class Workflow(object):
     """ Class responsible for EODIE processing workflow.
