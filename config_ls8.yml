@@ -1,11 +1,16 @@
+# Enter platform name
 platform: 'ls8'
 
 # Process only files with less than xx % cloudcover
-maxcloudcover: 10
+maxcloudcover: 99
+
+# Enter pixelsize (30 meters for Landsat-8)
+pixelsize: 30
 
 
 # Mask conditions are not stored as values, but as individual 0/1 flags in bits
 bitmask: 1
+
 # Bits to be to be included in cloudmask
 # https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/atoms/files/LSDS-1328_Landsat8-9-OLI-TIRS-C2-L2-DFCB-v6.pdf
 tobemaskedlist: 
@@ -22,7 +27,6 @@ tobemaskedlist:
 
 
 #pattern to find all data files
-#filepattern: 'LC08_L\d.._\d{6}_\d{8}_\d{8}_02_[TR][12T]$'  
 filepattern: 'LC08_L2SP_\d{6}_\d{8}_\d{8}_02_T1$'
 
 #all bands are located in parent directory directly
@@ -69,8 +73,6 @@ QA_PIXEL: [30]
 
 resampling_method: 'bilinear'
 
-
-# path building set *after inpath* to get the bandfile
-pixelsize: 30
-
 pathbuildinglist: ['*', 'bandname', '*' , '.TIF']
+
+lookup: '../postprocesses/lookuptable.txt'
