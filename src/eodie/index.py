@@ -36,7 +36,7 @@ class Index(RasterData):
         "ndwi",
     ]
 
-    def __init__(self, inpath=".", cfg="test_config.yml", test=False):
+    def __init__(self, inpath=".", resampling_method=None, cfg="test_config.yml", test=False):
         """Initialize the index object.
 
         Parameters
@@ -49,7 +49,7 @@ class Index(RasterData):
             If testing is performed
 
         """
-        super().__init__(inpath, cfg, test)
+        super().__init__(inpath, resampling_method, cfg, test)
         self.resolution = self.cfg["pixelsize"]
 
     def mask_array(self, array, maskarray):

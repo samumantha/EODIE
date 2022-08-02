@@ -123,7 +123,7 @@ class Workflow(object):
         """
         if not self.inputs.nomask:
             # Initialize class Mask
-            mask = Mask(pathfinderobject.imgpath, config)
+            mask = Mask(pathfinderobject.imgpath, self.inputs.resampling_method, config)
             # Create cloudmask
             cloudmask = mask.create_cloudmask()
             # Return both pathfinderobject and the cloudmask as a tuple
@@ -284,7 +284,7 @@ class Workflow(object):
         logging.info(" Preparing computations...")
         for pathfinderobject, cloudmask in cloudmask_results[0]:
             # Initialize class Vegindex
-            vegindex = Index(pathfinderobject.imgpath, userinput.config)
+            vegindex = Index(pathfinderobject.imgpath, userinput.resampling_method, userinput.config)
             # Filter geodataframe to only contain features from the area of the Sentinel-2 tile
             filtered_geodataframe = geoobject.filter_geodataframe(
                 geodataframe,
@@ -324,7 +324,7 @@ class Workflow(object):
         for path in userinput.input:
             # Initialize classes Pathfinder and RasterData
             pathfinderobject = Pathfinder(path, userinput.config)
-            raster = RasterData(path, userinput.config)
+            raster = RasterData(path, userinput.resampling_method, userinput.config)
             # Clip features that can only be found within bounding box of TIF
             gdf = geoobject.gdf_from_bbox(raster.bbox, raster.crs)
             # Loop through tifbands
@@ -438,10 +438,8 @@ class Workflow(object):
         geodataframe = geoobject.reproject_geodataframe(
             geoobject.geometries, ls8tiles.crs
         )
-        # for pathfinderobject, cloudmask in cloudmask_results[0]:
-        for path in userinput.input:
-            pathfinderobject = Pathfinder(path, userinput.config)
-            vegindex = Index(pathfinderobject.imgpath, userinput.config)
+        for pathfinderobject, cloudmask in cloudmask_results[0]:
+            vegindex = Index(pathfinderobject.imgpath, userinput.resampling_method, userinput.config)
             filtered_geodataframe = geoobject.filter_geodataframe(
                 geodataframe,
                 ls8tiles,
@@ -453,7 +451,7 @@ class Workflow(object):
                 # Add delayed function calls to the list of index calculations
                 index_calculations.append(
                     delayed(self.extract_index)(
-                        vegindex, None, index, filtered_geodataframe, pathfinderobject
+                        vegindex, cloudmask, index, filtered_geodataframe, pathfinderobject
                     )
                 )
 

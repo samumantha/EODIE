@@ -36,7 +36,7 @@ class RasterData(object):
         affine transformation of the raster product
     """
 
-    def __init__(self, inpath, cfg="test_config.yml", test=False):
+    def __init__(self, inpath, resampling_method, cfg="test_config.yml", test=False):
         """Initialize the raster object.
 
         Parameters
@@ -63,6 +63,7 @@ class RasterData(object):
             "gauss": Resampling.gauss,
         }
         self.test = test
+        self.resampling_method = resampling_method
 
     def get_bandfile(self, bandname):
         """Get bandfile given a band name.
@@ -197,7 +198,7 @@ class RasterData(object):
         resampling_method = (
             resampling_method
             if resampling_method is not None
-            else self.cfg["resampling_method"]
+            else self.resampling_method
         )
 
         if re.match(r"%s" % self.cfg["band_designation"], band):

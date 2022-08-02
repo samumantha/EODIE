@@ -22,7 +22,7 @@ class Mask(RasterData):
     """
 
     def __init__(
-        self, inpath: str, cfg: dict = "test_config.yml", test=False, external=None
+        self, inpath: str, resampling_method: str, cfg: dict = "test_config.yml", test=False, external=None
     ):
         """Initialize the mask object.
 
@@ -38,7 +38,7 @@ class Mask(RasterData):
             location and name of the external cloudmask to be used
 
         """
-        super().__init__(inpath, cfg, test)
+        super().__init__(inpath, resampling_method, cfg, test)
         if external is not None:
             self.cloudmask = self.load_binary_mask(external)
         self.cfg = cfg
