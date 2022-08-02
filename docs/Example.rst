@@ -10,7 +10,7 @@ To test if the script runs as intended in your machine and to get familiar with 
 1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/EODIE_Galaxy_testfiles.zip`` and unzip ``unzip EODIE_Galaxy_testfiles.zip`` to a place of your choice.
 2. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons --id id --statistics_out --statistics mean std median ``
+``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons.shp --id id --statistics_out --statistics mean std median ``
 
 with:
 
@@ -34,7 +34,7 @@ Larger example using Sentinel-2 data
 
 3. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
-``python eodie_process.py --rasterdir /path/to/testfiles/S2 --vector /path/to/testfiles/shp/test_parcels_32635.shp --out ./results --id ID --statistics_out --platform s2 --index ndvi --statistics mean median std``
+``python eodie_process.py --platform s2 --rasterdir /path/to/testfiles/S2 --vector /path/to/testfiles/shp/test_parcels_32635.shp --out ./results --id ID --statistics_out --index ndvi --statistics mean median std``
 
 with:
 
