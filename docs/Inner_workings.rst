@@ -4,7 +4,7 @@ Internals
 
 The following gives an overview over what is happening in the background when the user calls:
 
-``python eodie_process.py --rasterdir ./testfiles/S2 --vector ./testfiles/shp/test_parcels_32635 --out ./results --id ID --index ndvi --platform s2 --statistics_out``
+``python eodie_process.py --rasterdir ./testfiles/S2 --vector ./testfiles/shp/test_parcels_32635.shp --out ./results --id ID --index ndvi --platform s2 --statistics_out``
 
 Step 1: Validation
 ------------------
