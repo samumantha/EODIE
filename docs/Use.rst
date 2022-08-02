@@ -126,49 +126,32 @@ Note that some parameters have options, some have defaults and some are optional
 | **Options:** Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 | **Example:** ``resampling_method: 'bilinear'`` will use bilinear resampling for all necessary resampling of the rasterdata
 
-Configuration file
+Configuration files
 +++++++++++++++++++
-
-Some adjustments only need to be set once by the user. These are available in `user_config.yml`.
-The most important setting in the userconfig is the path to the tile shapefile (`tileshp`) and the fieldname where the tilename is stored (`fieldname`).
-The tileshapefile is a shapefile containing the units, also called tiles, that data is provided for each platform. 
 
 [TODO: image of Sentinel-2 tiles over Finland]
 
-When processing data that is not tiled, or no tile shapefile is provided, this parameter can be left empty.
-
-Other settings that can be adjusted in the configuration file are:
-
-| ``maxcloudcover``
-| Enter the maximum cloudcover of a file that is still processed in percentage
-| **Type:** Integer
-| **Example:** ``maxcloudcover: 99`` excludes all files in the directory that have > 99 % cloudcover over the whole tile according to metadata.
+EODIE includes platform-specific configuration files called config_x.yml with x being some platform name or tif. Generally, these configuration files do not need to be touched or changed. One exception to this is for example a 'red edge' band should be used in indices instead of the nir band, that could be changed in the platform specific configuration files. See more about this and about the possibility of extending EODIE to work with other platforms in ref:`platform_spec`.
+However, if you wish to change the pixelsize for the outputs (for geotiffs and arrays), the value can be changed in these configuration files. 
 
 | ``pixelsize`` 
 | Enter the pixelsize that you want your results to be in. Bands are then resampled to match the given pixelsize. This has most influence on geotiff or array outputs.
 | **Type:** Integer
 | **Example:** ``pixelsize : 10`` will use bands that are available in 10 m as is and resample bands that are only available in larger pixelsizes to 10m before extracting statistics/array/geotiff
 
-| ``resampling method``
-| If bands are not available directly in the given pixelsize, they need to be resampled. Here the resampling method for up- and downsampling can be changed.
-| **Options:** Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
-| **Example:** ``resampling_method: 'bilinear'`` will use bilinear resampling for all necessary resampling of the rasterdata
-
-EODIE also includes other configuration files called config_x.yml with x being some platform name or tif. These configuration files do not need to be touched or changed in general. One exception to this is for example a 'red edge' band should be used in indices instead of the nir band, that could be changed in the platform specific configuration files. See more about this and about the possibility of extending EODIE to work with other platforms in ref:`platform_spec`.
-
 .. _nec_input:
 
 Necessary inputs
 ^^^^^^^^^^^^^^^^^
 
-| ``--platform --rasterdir/--rasterfile --vector --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out``
+| ``--platform --rasterdir/--rasterfile --vector --out --id`` and at least one of  ``--statistics_out/--geotiff_out/--array_out/--database_out``
 | ``--index`` also needs to be given, unless ``--platform tif``
 
 
 Outputs
 ^^^^^^^^
 
-* A logfile: YYYYMMDD-hhmmss.log 
+* A logfile: rasterdir_YYYY-MM-DD.log if --rasterdir was given; rasterfile_YYYY-MM-DD_HH-mm-ss if --rasterfile was given.
 
 | ``--statistics_out``
 
@@ -181,6 +164,10 @@ Outputs
 | ``--geotiff_out``
 
 * One geotiff with georeferenced raster per tile, band/vegetation index and polygon
+
+| ``--database_out``
+
+* One SQLite3 database file (.db) that contains results for given indices or bands in tables. Structurally content is similar to statistics.
 
 
 Usage of external cloudmask
