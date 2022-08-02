@@ -114,8 +114,7 @@ Case 4: As Case 3 but with data on objectstorage
 
 | Workflow:
 
-1. Get files from object storage (for instance, one tile at a time):
-2. Similar as Case 3 but this needs another script, called download_and_eodie.sh, for downloading the input files from object storage:
+1. Similar as Case 3 but this needs another script, called download_and_eodie.sh, for downloading the input files from object storage and launching EODIE after download is completed:
 
 .. code-block:: bash
 
@@ -143,7 +142,7 @@ Case 4: As Case 3 but with data on objectstorage
         done
     done
 
-The main batch job script is similar to the one in Case 3, called sbatch_smart.sh:
+2. The main batch job script is similar to the one in Case 3, called sbatch_smart.sh:
 
 .. code-block:: bash
 
@@ -171,4 +170,4 @@ The main batch job script is similar to the one in Case 3, called sbatch_smart.s
     # When ready, the contents of variable $path can be removed as the files are in object storage. Please make sure you have reserved enough time and computational resources for finishing the computations to avoid unnecessary deletion of raster files (or comment the rm off).
     rm -r $path/
 
-3. call ``bash download_and_eodie.sh startdate enddate tile1 tile2 tile3`` with dates in YYYYMMDD format and tilenames in XX000 format. In this case the tilenames need to be identified beforehand. 
+3. Call ``bash download_and_eodie.sh startdate enddate tile1 tile2 tile3`` with dates in YYYYMMDD format and tilenames in XX000 format. In this case the tilenames need to be identified beforehand. This will launch the script in step 1 that will proceed to launch EODIE for each tile and year requested. 
