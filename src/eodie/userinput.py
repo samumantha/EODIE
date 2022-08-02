@@ -187,6 +187,13 @@ class UserInput(object):
             help="A value restricting the processing of imagery with too high cloud coverage. Defaults to 99. Currently only operational with Sentinel-2 imagery."
         )
 
+        parser.add_argument(
+            "--resampling_method",
+            dest="resampling_method",
+            default="bilinear",
+            help="If bands are not available directly in the given pixelsize, they need to be resampled. Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling"
+        )
+
         args = parser.parse_args()
 
         self.platform = args.platform
@@ -255,6 +262,7 @@ class UserInput(object):
         self.extmask = args.extmask
         self.nomask = args.nomask
         self.maxcloudcover = args.maxcloudcover
+        self.resampling_method = args.resampling_method
         self.verbose = args.verbose
 
         # Determine output formats
