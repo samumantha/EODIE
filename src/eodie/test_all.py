@@ -31,7 +31,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -56,7 +56,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         supportedindices = Index.supportedindices
         # testing capacity is limited on gitlab, so all tasseled cap indices are excluded from testing (too much memory used)
         testingindices = [
@@ -88,7 +88,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
 
         bandfile, _ = rasterdata.get_bandfile("B04")
         rightbandfile = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2"
@@ -131,12 +131,12 @@ class TestAll(object):
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
         idname = "ID"
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray, cloudmask)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
         affine = rasterdata.affine
         extractorobject = Extractor(
             maskedarray, geometries, idname, affine, ["mean", "median", "std"]
@@ -170,12 +170,12 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         inpath = inpath.replace("/", os.sep)
         idname = "ID"
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray, cloudmask)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
         affine = rasterdata.affine
         extractorobject = Extractor(
             maskedarray, geometries, idname, affine, ["mean", "median", "std"]
