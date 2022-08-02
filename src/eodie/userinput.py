@@ -180,6 +180,13 @@ class UserInput(object):
             help="flag to indicate that statistics shall be saved to a database",
         )
 
+        parser.add_argument(
+            "--maxcloudcover",
+            dest="maxcloudcover",
+            default=99,
+            help="A value restricting the processing of imagery with too high cloud coverage. Defaults to 99. Currently only operational with Sentinel-2 imagery."
+        )
+
         args = parser.parse_args()
 
         self.platform = args.platform
@@ -247,7 +254,7 @@ class UserInput(object):
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
         self.nomask = args.nomask
-
+        self.maxcloudcover = args.maxcloudcover
         self.verbose = args.verbose
 
         # Determine output formats
