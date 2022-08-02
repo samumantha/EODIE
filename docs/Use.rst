@@ -14,7 +14,7 @@ Command line arguments
 
 The following parameters and flags can be used in the commandline (more information on each parameter and flag below):
 
-``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <>  --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotiff_out --array_out --database_out --statistics <> --index <> --start <> --end <> --exclude_border --external_cloudmask <> --no_cloudmask --verbose --test``
+``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <>  --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotiff_out --array_out --database_out --statistics <> --index <> --start <> --end <> --exclude_border --external_cloudmask <> --no_cloudmask --maxcloudcover <> --resampling_method <> --verbose --test``
 
 Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given.
 
@@ -87,7 +87,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--index``
 | Which vegetation index or band shall be extracted per polygon separated by a space
 | **type:** list of Strings
-| **options:** one or more of ndvi, rvi,savi,nbr,kndvi, ndmi, mndwi, evi, evi2, dvi, cvi, mcari, ndi45, tctb, tctg, tctw, ndwi, plus bands as named in platform filenames (e.g. for Sentinel-2: B02, B03, B04, B05, B06, B07, B08, B8A, B11, B12)
+| **options:** one or more of ndvi, rvi, savi, nbr, kndvi, ndmi, mndwi, evi, evi2, dvi, cvi, mcari, ndi45, tctb, tctg, tctw, ndwi, plus bands as named in platform filenames (e.g. for Sentinel-2: B02, B03, B04, B05, B06, B07, B08, B8A, B11, B12)
 | **example:** ``--index ndvi evi2 B04 B8A``
 
 | ``--start``
@@ -105,7 +105,7 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** flag
 
 | ``--external_cloudmask``
-| [optional] Absolute path and name of external cloudmask (without tile and date and extension) if available
+| [optional] Absolute path and name of external cloudmask (without tile and date and extension), if available
 | **type:** String
 
 | ``--verbose``
@@ -116,6 +116,15 @@ Note that some parameters have options, some have defaults and some are optional
 | For testing some datatypes are set to smaller, in general not needed by user 
 | **type:** flag
 
+| ``--maxcloudcover``
+| A value restricting the processing of imagery with too high cloud coverage. Currently only working with Sentinel-2 imagery.
+| **type:** integer
+| **default**: 99
+
+| ``--resampling_method``
+|  If bands are not available directly in the given pixelsize, they need to be resampled. Here the resampling method for up- and downsampling can be changed.
+| **Options:** Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+| **Example:** ``resampling_method: 'bilinear'`` will use bilinear resampling for all necessary resampling of the rasterdata
 
 Configuration file
 +++++++++++++++++++
@@ -142,7 +151,7 @@ Other settings that can be adjusted in the configuration file are:
 
 | ``resampling method``
 | If bands are not available directly in the given pixelsize, they need to be resampled. Here the resampling method for up- and downsampling can be changed.
-| **Options:** available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
+| **Options:** Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling
 | **Example:** ``resampling_method: 'bilinear'`` will use bilinear resampling for all necessary resampling of the rasterdata
 
 EODIE also includes other configuration files called config_x.yml with x being some platform name or tif. These configuration files do not need to be touched or changed in general. One exception to this is for example a 'red edge' band should be used in indices instead of the nir band, that could be changed in the platform specific configuration files. See more about this and about the possibility of extending EODIE to work with other platforms in ref:`platform_spec`.
