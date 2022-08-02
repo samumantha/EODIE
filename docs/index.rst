@@ -2,7 +2,7 @@
    sphinx-quickstart on Fri Mar 12 19:57:28 2021.
 
 
-EODIE 1.1.0 Documentation
+EODIE 2.0.0 Documentation
 ==========================
 
 Purpose 
@@ -13,9 +13,9 @@ EODIE is a toolkit to extract object based timeseries information from Earth Obs
 The EODIE code can be found `on Gitlab <https://gitlab.com/fgi_nls/public/EODIE>`_ .
 
 The goal of EODIE is to ease the extraction of time series information at object level. Today, vast amounts of 
-Earth Observation data are available to the users via for example earth explorer or scihub. Often, not the whole images 
+Earth Observation data are available to the users via, for example, `Earth Explorer <https://earthexplorer.usgs.gov/>`_  or `SciHub <https://scihub.copernicus.eu/>`_. Often, not the whole images 
 are needed for exploitation, but only the timeseries of a certain feature on object level. Objects may be polygons depicting 
-agricultural field parcels, forest plots, or areas of a certain land cover type.
+agricultural field parcels, forest plots, or areas of a certain land cover type, for instance.
 
 EODIE takes the objects in as polygons in a vector file as well as the timeframe of interest and the features (eg. vegetation indices) 
 to be extracted. The output is a per polygon timeseries of the selected features over the timeframe of interest.
@@ -26,11 +26,11 @@ Is EODIE suitable for me?
 To use EODIE a general understanding of geospatial concepts is helpful.
 You will need:
 
-* Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat)
+* Access to remote sensing data over your timeframe and area of interest (e.g. Sentinel-2/Landsat 8)
 * A geospatial vector file with polygons of your objects of interests - supported formats are, for instance, ESRI Shapefile, GeoPackage, GeoJSON, csv and FlatGeoBuf.
 
 EODIE is particularly designed for people wanting to exploit timeseries information of raster remote sensing data without the need for dealing with particularities of the data itself.
-EODIE produces human and machine readable csv files containing all information needed to start working with the data.
+EODIE produces human and machine readable csv files containing all information needed to start working with the data. A database output is also available. 
 
 Gallery
 --------
@@ -93,6 +93,7 @@ This project was initiated under the Academy of Finland research project 295047 
 
 The authors would also like to thank the developers of the following tools:
 
+* EODIE processing workflows have been parallelized with `dask <https://docs.dask.org/en/stable/>`_.
 * The docstring consistency and grammar have been improved with `pydocstyle <https://github.com/PyCQA/pydocstyle>`_.
 * Unused imports have been identified with `Vulture <https://github.com/jendrikseipp/vulture>`_.
 * The overall code formatting has been improved with `Black <https://github.com/psf/black>`_.
@@ -100,6 +101,15 @@ The authors would also like to thank the developers of the following tools:
 
 Changelog
 ----------
+
+2.0.0
+^^^^^^
+
+* Rewrote eodie_process.py 
+* Defined separate workflows for supported platforms (s2, ls8, tif)
+* Implemented process parallelization with dask to replace array jobs in high-performance computing environments
+* Introduced geopandas GeoDataframes to replace tilesplitting
+* Added helper script unzip_ls8_grid.py
 
 1.1.0
 ^^^^^^
