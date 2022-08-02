@@ -58,7 +58,3 @@ for tar in tars:
         tar_out.extractall(extractionpath)
 
 print("All tars extracted!")
-
-
-
-    
