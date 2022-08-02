@@ -234,7 +234,7 @@ class Workflow(object):
                 and pathfinderobject.tile in tiles
             ):
                 # Append the list of delayed functions
-                validation.append(delayed(self.validate_safedir)(path, 95, convex_hull))
+                validation.append(delayed(self.validate_safedir)(path, userinput.maxcloudcover, convex_hull))
         logging.info(" Validating safedirs...")
         # Launch delayed computation
         valid = self.execute_delayed(validation)
