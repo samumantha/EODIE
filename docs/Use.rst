@@ -14,7 +14,7 @@ Command line arguments
 
 The following parameters and flags can be used in the commandline (more information on each parameter and flag below):
 
-``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <>  --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotif_out --array_out --statistics <> --index <> --start <> --end <> --exclude_border --external_cloudmask <> --no_cloudmask --verbose --test``
+``python eodie_process.py --rasterdir/--rasterfile <> --vector <> --out <> --id <>  --gpkg_layer <> --epsg_for_csv <> --platform <> --statistics_out --geotiff_out --array_out --database_out --statistics <> --index <> --start <> --end <> --exclude_border --external_cloudmask <> --no_cloudmask --verbose --test``
 
 Note that some parameters have options, some have defaults and some are optional, all flags are optional. See :ref:`nec_input` for inputs that need to be given.
 
