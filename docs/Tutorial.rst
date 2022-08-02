@@ -104,13 +104,9 @@ Case 4: As Case 3 but with data on objectstorage
 
 - fieldparcel polygons of area x as ESRI shapefile, with unique ID fieldname 'PlotID'
 
-| Additional input:
-
-- timeframe: April 1st - August 31st year 2018 
-
 | Desired output:
 
-- database with NDVI timeseries for each fieldparcel polygon with statistics mean, median, standard deviation and range
+- database with NDVI timeseries for each fieldparcel polygon in the whole country with statistics mean, median, standard deviation and range
 
 | Workflow:
 
