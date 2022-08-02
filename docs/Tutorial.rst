@@ -77,7 +77,7 @@ Case 3: As Case 1 but processing done on HPC environment with SLURM
     #SBATCH --account=project_  # The project number on which the resources will be spent
     #SBATCH --output=/path/to/job/output/array_job_out_%A_%a.txt # Path to where the output text files will be saved
     #SBATCH --error=/path/to/job/output/array_job_err_%A_%a.txt # Path to where the error text files will be saved
-    #SBATCH --time=00:15:00 # Estimation of the time it takes to process the files
+    #SBATCH --time=02:00:00 # Estimation of the time it takes to process the files
     #SBATCH --ntasks=1 # The number of tasks
     #SBATCH --partition=small # The estimated processing power needed limitations (more partitions can be found in https://docs.csc.fi/computing/running/batch-job-partitions/)
     #SBATCH --mem-per-cpu=5000 # Estimation of how much memory is needed per cpu
