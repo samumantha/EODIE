@@ -126,14 +126,17 @@ class Writer(object):
         insert_SQL = "INSERT INTO " + self.index + " VALUES (" + question_marks + ")"
         # Loop through keys in extractedarray
         for key in extractedarray.keys():
-            # Define one row
-            onerow = [key] + extractedarray[key]
-            # Add the date to the 2nd slot of the list
-            onerow.insert(1, self.date)
-            # Add the tile to the 3rd slot of the list
-            onerow.insert(2, self.tile)
-            # Run insert_SQL
-            cursor.execute(insert_SQL, onerow)
+            if None in extractedarray[key]:
+                continue
+            else:
+                # Define one row
+                onerow = [key] + extractedarray[key]
+                # Add the date to the 2nd slot of the list
+                onerow.insert(1, self.date)
+                # Add the tile to the 3rd slot of the list
+                onerow.insert(2, self.tile)
+                # Run insert_SQL
+                cursor.execute(insert_SQL, onerow)
 
         # Commit changes
         connection.commit()
@@ -148,8 +151,12 @@ class Writer(object):
             csv_writer = csv.writer(csv_file, delimiter=",")
             csv_writer.writerow(["id"] + ["orbit"] + self.statistics)
             for key in extractedarray.keys():
-                onerow = [int(key)] + extractedarray[key]
-                csv_writer.writerow(onerow)
+                if None in extractedarray[key]:
+                    continue
+                else:
+                    onerow = [int(key)] + extractedarray[key]
+                    csv_writer.writerow(onerow)
+            
 
     def write_array(self, extractedarray):
         """Write extracted arrays to pickle."""
