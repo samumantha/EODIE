@@ -52,7 +52,7 @@ class Pathfinder(object):
             self.tile = ""
             self.imgpath = self.rasterdir
             self.date = ""
-            self.orbit = ""
+            self.orbit = 0
         elif self.cfg["platform"] == "ls8":
             self.get_imgpath()
             self.get_tileinfo()
