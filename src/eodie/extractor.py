@@ -23,7 +23,7 @@ class Extractor(object):
         idname,
         affine,
         statistics,
-        orbit=None,
+        orbit=0,
         band=1,
         exclude_border=False,
     ):
