@@ -326,7 +326,7 @@ class Workflow(object):
             pathfinderobject = Pathfinder(path, userinput.config)
             raster = RasterData(path, userinput.resampling_method, userinput.config)
             # Clip features that can only be found within bounding box of TIF
-            gdf = geoobject.gdf_from_bbox(raster.bbox, raster.crs)
+            gdf = geoobject.gdf_from_bbox(raster.bbox, raster.crs, userinput.idname)
             # Loop through tifbands
             for band in userinput.tifbands:
                 # Append the list of delayed functions
@@ -369,7 +369,7 @@ class Workflow(object):
             self.inputs.idname,
             raster.affine,
             self.inputs.statistics,
-            None,
+            pathfinderobject.orbit,
             band,
             self.inputs.exclude_border,
         )
@@ -380,7 +380,7 @@ class Workflow(object):
             pathfinderobject.tile,
             self.inputs.config["name"] + "_band_" + str(band),
             self.inputs.platform,
-            "",
+            pathfinderobject.orbit,
             self.inputs.statistics,
             raster.crs,
         )
