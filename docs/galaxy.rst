@@ -26,14 +26,14 @@ This is a tutorial on how to use EODIE Galaxy -tool with Sentinel-2 images.
 
 Workflow:
 
-1. Choose “Upload data” and upload required inputs (Fig. 1). Notice that a parent folder must be included in the .tar or .zip file. For shapefiles, use upload option “Composite” 
+1. Choose “Upload data” on the left and upload required inputs (Fig. 1). Notice that a parent folder must be included in the .tar or .zip file. For shapefiles, use upload option “Composite” 
 and upload the shapefile and all related auxiliary files (.shx, .dbf and .prj in this example).
 Use option “Regular” for satellite data. 
-    
-.. image:: galaxy_fig1.jpg
+
+.. image:: upload_galaxy2.png
   :width: 400
-  :alt: Figure 1. Uploading data to Galaxy.
-    
+  :alt: Figure 1. Uploading data to Galaxy.    
+
 2. Select platform, Sentinel-2 in this example, and input files under corresponding headers in the 
 Tool-window (Fig. 2). “Name of Identifier” parameter refers to the name of the shapefile column 
 that contains polygon ids.
