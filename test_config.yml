@@ -87,3 +87,5 @@ downsampling_method: 'bilinear'
 
 pathbuildinglist: ['R', 'pixelsize' , 'm','*', 'bandname', '_' , 'pixelsize' ,'m.jp2']
 
+# Testing....
+
