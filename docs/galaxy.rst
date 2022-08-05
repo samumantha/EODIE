@@ -66,7 +66,7 @@ means it has succeeded. Red color indicates that the job has failed.
 
 
 
-|pic4a| any text |pic4b|
+|pic4a|  |pic4b|
 
 .. |pic4a| image:: galaxy_fig4.jpg
   :width: 400
