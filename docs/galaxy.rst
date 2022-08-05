@@ -37,7 +37,6 @@ Use option “Regular” for satellite data.
   :alt: Figure 1. Uploading data to Galaxy.    
 
 
-
 2. Select platform, Sentinel-2 in this example, and input files under corresponding headers in the 
 Tool-window (Fig. 2). “Name of Identifier” parameter refers to the name of the shapefile column 
 that contains polygon ids.
@@ -66,9 +65,16 @@ means it has succeeded. Red color indicates that the job has failed.
 
 
 
-.. image:: galaxy_fig4.jpg
+
+|pic4a| any text |pic4b|
+
+.. |pic4a| image:: galaxy_fig4.jpg
   :width: 400
   :alt: Figure 4. Advanced options.
+
+.. |pic4b| image:: galaxy_fig4b.jpg
+  :width: 400
+  :alt: Figure 4. Advanced options. 
 
 
 
