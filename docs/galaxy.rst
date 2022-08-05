@@ -33,7 +33,7 @@ Use option “Regular” for satellite data.
 
 
 .. figure:: galaxy_fig1.png
-  :width: 600
+  :width: 500
   :alt: Figure 1. Uploading data to Galaxy.    
 
 
@@ -44,7 +44,7 @@ that contains polygon ids.
 
 
 .. figure:: Galaxy_fig2.jpg
-  :width: 400
+  :width: 500
   :alt: Figure 2. Define inputs in the Tool-window.
     
 
@@ -54,7 +54,7 @@ that contains polygon ids.
 
 
 .. figure:: galaxy_fig3.jpg
-  :width: 400
+  :width: 500
   :alt: Figure 3. Advanced options.
             
 
@@ -67,11 +67,11 @@ means it has succeeded. Red color indicates that the job has failed.
 
 |pic4a|  |pic4b|
 
-.. |pic4a| figure:: galaxy_fig4.jpg
+.. |pic4a| image:: galaxy_fig4.jpg
   :width: 400
   :alt: Figure 4. Advanced options.
 
-.. |pic4b| figure:: galaxy_fig4b.png
+.. |pic4b| image:: galaxy_fig4b.png
   :width: 400
   :alt: Figure 4. Advanced options. 
 
