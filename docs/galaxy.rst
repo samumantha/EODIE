@@ -31,7 +31,7 @@ and upload the shapefile and all related auxiliary files (.shx, .dbf and .prj in
 Use option “Regular” for satellite data. 
 
 .. image:: upload_galaxy2.png
-  :width: 400
+  :width: 600
   :alt: Figure 1. Uploading data to Galaxy.    
 
 2. Select platform, Sentinel-2 in this example, and input files under corresponding headers in the 
