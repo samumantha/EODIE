@@ -11,6 +11,8 @@ from datetime import datetime
 import glob
 import re
 import yaml
+import logging
+from eodie.validator import Validator
 
 
 class UserInput(object):
@@ -24,6 +26,7 @@ class UserInput(object):
     def __init__(self):
         """Initialize UserInput object."""
         self.get_userinput()
+        self.create_logfile(self.outpath, self.verbose)
 
     def get_userinput(self):
         """Get all userinput from commandline call to run the tool and stores them as userinput attributes."""
@@ -39,12 +42,14 @@ class UserInput(object):
         inputrastergroupparser.add_argument(
             "--rasterdir", dest="rasterdir", help="directory where data is stored"
         )
-        inputrastergroupparser.add_argument("--rasterfile", dest="rasterfile", help="one file")
+        inputrastergroupparser.add_argument(
+            "--rasterfile", dest="rasterfile", help="one file"
+        )
 
         parser.add_argument(
             "--vector",
             dest="vectorbase",
-            help="name of the vectorfile (without extension)",
+            help="name of the vectorfile",
             required=True,
         )
         parser.add_argument(
@@ -54,28 +59,21 @@ class UserInput(object):
             help="directory where results shall be saved",
         )
         parser.add_argument(
-            "--id", dest="idname", help="name of ID field in shapefile", required=True
-        )
-
-        parser.add_argument(
-            "--input_type",
-            dest = 'input_type', 
-            default = 'shp',
-            help = 'Determine the input file type, supported formats: shp (default), gpkg, geojson, csv, fgb'
+            "--id", dest="idname", help="name of ID field in vectorfile", required=True
         )
 
         parser.add_argument(
             "--gpkg_layer",
-            dest = 'gpkg_layer',
-            default = None,
-            help = 'Determine the layer in geopackage to be used'
+            dest="gpkg_layer",
+            default=None,
+            help="Determine the layer in geopackage to be used",
         )
 
         parser.add_argument(
             "--epsg_for_csv",
-            dest = 'epsg_for_csv',
-            default = None,
-            help = 'Determine the EPSG code if vector input is csv file'
+            dest="epsg_for_csv",
+            default=None,
+            help="Determine the EPSG code if vector input is csv file",
         )
 
         parser.add_argument(
@@ -103,12 +101,7 @@ class UserInput(object):
             default=datetime.now().strftime("%Y%m%d"),
             help="give enddate of timerange of interest",
         )
-        parser.add_argument(
-            "--keep_splitted",
-            dest="keep_splitted",
-            action="store_true",
-            help="flag to indicate that newly created shapefiles should be stored",
-        )
+
         parser.add_argument(
             "--tiles",
             dest="tiles",
@@ -121,7 +114,7 @@ class UserInput(object):
             dest="tifbands",
             default=[1],
             nargs="*",
-            help="Bands of tif to be processed. Defaults to 1.",
+            help="Bands of tif to be processed. Defaults to [1].",
         )
 
         parser.add_argument(
@@ -153,12 +146,6 @@ class UserInput(object):
             dest="drop_geom",
             action="store_true",
             help="Flag to indicate if invalid geometries should be removed from the processing.",
-        )
-        parser.add_argument(
-            "--exclude_splitbytile",
-            dest="exclude_splitbytile",
-            action="store_true",
-            help="if this flag is set, it is assumed that splitbytile has been run manually beforehand",
         )
         parser.add_argument(
             "--verbose",
@@ -193,6 +180,20 @@ class UserInput(object):
             help="flag to indicate that statistics shall be saved to a database",
         )
 
+        parser.add_argument(
+            "--maxcloudcover",
+            dest="maxcloudcover",
+            default=99,
+            help="A value restricting the processing of imagery with too high cloud coverage. Defaults to 99. Currently only operational with Sentinel-2 imagery."
+        )
+
+        parser.add_argument(
+            "--resampling_method",
+            dest="resampling_method",
+            default="bilinear",
+            help="If bands are not available directly in the given pixelsize, they need to be resampled. Available resampling methods and a short description can be found here: https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling"
+        )
+
         args = parser.parse_args()
 
         self.platform = args.platform
@@ -202,11 +203,8 @@ class UserInput(object):
         with open(configfile, "r") as ymlfile:
             platform_cfg = yaml.safe_load(ymlfile)
 
-        with open("../user_config.yml", "r") as ymlfile:
-            user_cfg = yaml.safe_load(ymlfile)
-
         # starting python 3.9: platform_cfg | user_cfg also works
-        self.config = {**platform_cfg, **user_cfg}
+        self.config = {**platform_cfg}
 
         self.rasterdir = args.rasterdir
         self.rasterfile = args.rasterfile
@@ -214,23 +212,30 @@ class UserInput(object):
             if self.rasterfile[-1] == "/":
                 self.rasterfile = self.rasterfile[:-1]
             self.input = [self.rasterfile]
-        
+
         else:
-            #self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
+            # self.input = glob.glob(os.path.join(args.rasterdir,self.config['productnameidentifier']))
             # this searches for exact right files fitting a given pattern
-            self.input = [os.path.join(self.rasterdir, file) for file in os.listdir(self.rasterdir) if re.search(self.config['filepattern'], file)]
+            self.input = [
+                os.path.join(self.rasterdir, file)
+                for file in os.listdir(self.rasterdir)
+                if re.search(self.config["filepattern"], file)
+            ]
             if self.rasterdir[-1] == "/":
                 self.rasterdir = self.rasterdir[:-1]
-        
-        self.input_type = args.input_type
+
+        if not self.input:
+            quit("No imagery for given platform was found. Please check your inputs.")
         self.epsg_for_csv = args.epsg_for_csv
         self.gpkg_layer = args.gpkg_layer
         # remove extension if given by mistake (assumption, . is only used to separate filename from extension)
-        if '.' in args.vectorbase:
-            self.vectorbase = os.path.splitext(args.vectorbase)[0]
-        else:
-            self.vectorbase = args.vectorbase
+        # if '.' in args.vectorbase:
+        # self.vectorbase = os.path.splitext(args.vectorbase)[0]
+        # else:
+        self.vectorbase = args.vectorbase
         self.outpath = args.outpath
+        if not os.path.exists(self.outpath):
+            os.mkdir(self.outpath)
         self.idname = args.idname
 
         self.statistics_out = args.statistics_out
@@ -244,7 +249,6 @@ class UserInput(object):
             self.statistics = args.statistics
         self.startdate = args.startdate
         self.enddate = args.enddate
-        self.keep_splitted = args.keep_splitted
         self.database_out = args.database_out
 
         self.drop_geom = args.drop_geom
@@ -252,17 +256,13 @@ class UserInput(object):
         self.tiles = args.tiles
         self.tifbands = args.tifbands
 
-        
-
-
         self.geotiff_out = args.geotiff_out
         self.test = args.test
         self.exclude_border = args.exclude_border
         self.extmask = args.extmask
         self.nomask = args.nomask
-        self.exclude_splitbytile = args.exclude_splitbytile
-        if self.platform == "tif":
-            self.exclude_splitbytile = True
+        self.maxcloudcover = args.maxcloudcover
+        self.resampling_method = args.resampling_method
         self.verbose = args.verbose
 
         # Determine output formats
@@ -273,7 +273,57 @@ class UserInput(object):
             self.format.append("geotiff")
         if self.array_out:
             self.format.append("array")
+        if self.database_out:
+            self.format.append("database")
 
         # If no output formats are specified, only output statistics
         if len(self.format) == 0:
             self.format.append("statistics")
+
+    def create_logfile(self, output_directory, verbose):
+
+        # Build logfolder name
+        logdir = os.path.join(output_directory, "logs")
+        # Check if directory exists; if not, create it
+        if not os.path.exists(logdir):
+            os.mkdir(logdir)
+
+        # Extract filename or directory name based on the length of userinput
+        if self.rasterfile is not None:
+            inputname = os.path.split(self.rasterfile)[1].split(".")[0]
+        else:
+            dirname = os.path.split(self.rasterdir)[1]
+
+        if verbose:
+            if self.rasterfile is not None:
+                logfilename = os.path.join(
+                    logdir,
+                    inputname
+                    + "_"
+                    + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    + ".log",
+                )
+                handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
+            else:
+                logfilename = os.path.join(
+                    logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + ".log"
+                )
+                handlers = [logging.FileHandler(logfilename), logging.StreamHandler()]
+
+            logging.basicConfig(level=logging.INFO, handlers=handlers)
+
+        else:
+            if self.rasterfile is not None:
+                logfilename = os.path.join(
+                    logdir,
+                    inputname
+                    + "_"
+                    + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    + ".log",
+                )
+                logging.basicConfig(filename=logfilename, level=logging.INFO)
+            else:
+                logfilename = os.path.join(
+                    logdir, dirname + "_" + datetime.now().strftime("%Y-%m-%d") + ".log"
+                )
+                logging.basicConfig(filename=logfilename, level=logging.INFO)

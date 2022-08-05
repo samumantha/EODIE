@@ -22,7 +22,7 @@ class Mask(RasterData):
     """
 
     def __init__(
-        self, inpath: str, cfg: dict = "test_config.yml", test=False, external=None
+        self, inpath: str, resampling_method: str, cfg: dict = "test_config.yml", test=False, external=None
     ):
         """Initialize the mask object.
 
@@ -38,14 +38,14 @@ class Mask(RasterData):
             location and name of the external cloudmask to be used
 
         """
-        super().__init__(inpath, cfg, test)
+        super().__init__(inpath, resampling_method, cfg, test)
         if external is not None:
             self.cloudmask = self.load_binary_mask(external)
         self.cfg = cfg
 
     def load_binary_mask(self, external):
         """Load an external mask that needs to be a rasterfile with one/True is cloud, 0/False no cloud, with pixelsize as given in cfg and overlap exactly with the file to be masked.
-        
+
         Parameters
         -----------
         external: str
@@ -60,7 +60,7 @@ class Mask(RasterData):
 
     def binarize_cloudmask(self, sclarray):
         """Take in an array with different cloud classes and binarizes it according to config file to True being the to be masked pixels (eg clouds) and False for pixels that are ok to use.
-        
+
         Parameters
         -----------
         sclarray: numpy array
@@ -111,7 +111,7 @@ class Mask(RasterData):
 
     def checkbits(self, data, tobemaskedlist):
         """Check bits if they should be masked.
-        
+
         Parameters
         ----------
         data: numpy array or int

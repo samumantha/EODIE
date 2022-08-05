@@ -10,7 +10,6 @@ authors: Samantha Wittke
 
 
 import os
-from collections import OrderedDict
 from affine import Affine
 import glob
 import sys
@@ -21,7 +20,6 @@ from eodie.vectordata import VectorData
 from eodie.index import Index
 from eodie.rasterdata import RasterData
 from eodie.writer import Writer
-from eodie.tilesplitter import TileSplitter
 import yaml
 import fiona
 
@@ -33,7 +31,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
         cloudmaskshape = cloudmask.shape
         rightcloudmaskshape = (10980, 10980)
@@ -58,7 +56,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         supportedindices = Index.supportedindices
         # testing capacity is limited on gitlab, so all tasseled cap indices are excluded from testing (too much memory used)
         testingindices = [
@@ -90,7 +88,7 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
 
         bandfile, _ = rasterdata.get_bandfile("B04")
         rightbandfile = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA/R10m/T34VFN_20200626T095029_B04_10m.jp2"
@@ -119,43 +117,9 @@ class TestAll(object):
         geometries = geometries.replace("/", os.sep)
         geometryobject = VectorData(geometries)
 
-        head, tail, root, ext = geometryobject._split_path()
-        splitpathlist = [head, tail, root, ext]
-        rightsplitpathlist = [
-            "testfiles" + os.sep + "shp",
-            "test_parcels_32635.shp",
-            "test_parcels_32635",
-            ".shp",
-        ]
-        assert splitpathlist == rightsplitpathlist, "Splitpath fails"
-
-        projectionfile = geometryobject.get_projectionfile()
-        rightprojectionfile = "testfiles/shp/test_parcels_32635.prj"
-        rightprojectionfile = rightprojectionfile.replace("/", os.sep)
-
-        assert projectionfile == rightprojectionfile, "Projectionfile fails"
-
         epsg = geometryobject.get_epsg()
         rightepsg = "32635"
         assert epsg == rightepsg, "Geometry EPSG fails"
-
-        geometryobject.reproject_to_epsg("4326")
-        reprojectedgeometry = geometryobject.geometries
-        assert os.path.exists(reprojectedgeometry), "Reprojection fails"
-
-        driver, schema, crs = geometryobject.get_properties()
-        propertieslist = [driver, schema, crs]
-        rightpropertieslist = [
-            "ESRI Shapefile",
-            {"properties": OrderedDict([("ID", "str:80")]), "geometry": "Polygon"},
-            {"init": "epsg:4326"},
-        ]
-        assert propertieslist == rightpropertieslist, "Geometry properties fail"
-        """
-        boundingbox = geometryobject.get_boundingbox()
-        rightboundingbox = (348640.62425182585, 6786396.860003678, 349315.8119208717, 6787458.534407418)
-        assert (boundingbox == rightboundingbox), 'Boundingbox fails'
-        """
 
         del geometryobject
 
@@ -167,12 +131,12 @@ class TestAll(object):
         # for os independence in these mixed paths
         inpath = inpath.replace("/", os.sep)
         idname = "ID"
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray, cloudmask)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
         affine = rasterdata.affine
         extractorobject = Extractor(
             maskedarray, geometries, idname, affine, ["mean", "median", "std"]
@@ -206,12 +170,12 @@ class TestAll(object):
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         inpath = inpath.replace("/", os.sep)
         idname = "ID"
-        cloudobject = Mask(inpath, cfg, True)
+        cloudobject = Mask(inpath, cfg['resampling_method'], cfg, True)
         cloudmask = cloudobject.create_cloudmask()
-        indexobject = Index(inpath, cfg, True)
+        indexobject = Index(inpath, cfg['resampling_method'], cfg, True)
         indexarray = indexobject.calculate_ndvi()
         maskedarray = indexobject.mask_array(indexarray, cloudmask)
-        rasterdata = RasterData(inpath, cfg, True)
+        rasterdata = RasterData(inpath, cfg['resampling_method'], cfg, True)
         affine = rasterdata.affine
         extractorobject = Extractor(
             maskedarray, geometries, idname, affine, ["mean", "median", "std"]
@@ -220,21 +184,21 @@ class TestAll(object):
         date = "20200626"
         tile = "34VFN"
         writerobject = Writer(
-            tmpdir, date, tile, statistics, "ndvi", "s2", 79, ["mean", "median", "std"]
+            tmpdir, date, tile, "ndvi", "s2", 79, ["mean", "median", "std"]
         )
-        writerobject.write_statistics()
+        writerobject.write_statistics(statistics)
 
         assert os.path.exists(writerobject.outpath), "Statistics writer fails"
 
         array = extractorobject.extract_array()
-        writerobject = Writer(tmpdir, date, tile, array, "ndvi", "s2", 79, ["count"])
-        writerobject.write_array()
+        writerobject = Writer(tmpdir, date, tile, "ndvi", "s2", 79, ["count"])
+        writerobject.write_array(array)
 
         assert os.path.exists(writerobject.outpath), "Array writer fails"
 
         geoarray = extractorobject.extract_geotiff()
-        writerobject = Writer(tmpdir, date, tile, geoarray, "ndvi", "s2", 79, ["count"])
-        writerobject.write_geotiff()
+        writerobject = Writer(tmpdir, date, tile, "ndvi", "s2", 79, ["count"])
+        writerobject.write_geotiff(geoarray)
 
         assert os.path.exists(
             writerobject.outpath + "_id_0.tif"
@@ -254,31 +218,6 @@ class TestAll(object):
         del maskedarray
 
         del writerobject
-    
-    def test_tilesplitter(self):
-        tmpdir = 'testfiles/temp'
-        tmpdir = tmpdir.replace('/', os.sep)
-        if not os.path.exists(tmpdir):
-            os.mkdir(tmpdir)
-        smallparcels = 'testfiles/shp/test_parcels_32635.shp'
-        largetiles = 'testfiles/shp/sentinel2_tiles_test.shp'
-        smallparcels = smallparcels.replace('/', os.sep)
-        largetiles = largetiles.replace('/', os.sep)
-        shapesplitter = TileSplitter(smallparcels, largetiles, tmpdir, 'Name', True)
-        tmpshpdir = shapesplitter.output_directory
-        assert os.path.exists(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326.shp')), 'Reprojection of shapefile failed'
-        shapesplitter.tilesplit()
-        assert not glob.glob(os.path.join(tmpshpdir,  'sentinel2_tiles_test_test_parcels_32635_reprojected_4326' + '.*')), 'Failed to delete splitted testtiles'
-        assert len(glob.glob(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_*.shp'))) == 2, 'Wrong amount of splitted shapefiles'
-        for tile in ['34VFN', '35VLH']:
-            with fiona.open(os.path.join(tmpshpdir, 'test_parcels_32635_reprojected_4326_' + tile + '.shp' ), 'r' ) as shp:
-                assert len(shp) == 3, 'Wrong amount of polygons in splitted shapefile'
-        shapesplitter.delete_splitted_files()
-        assert not os.path.exists(tmpshpdir)
-
-        del tmpdir
-        del tmpshpdir
-        del shapesplitter
 
 
 TestAll()

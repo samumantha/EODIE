@@ -10,6 +10,7 @@ Authors: Samantha Wittke
 import os
 import glob
 import re
+from xml.dom import minidom
 
 
 class Pathfinder(object):
@@ -42,14 +43,21 @@ class Pathfinder(object):
         self.cfg = cfg
         self.rasterdir = rasterdir
 
-        if not self.cfg["platform"] == "tif":
+        if self.cfg["platform"] == "s2":
             self.get_imgpath()
             self.get_tileinfo()
             self.get_dateinfo()
-        else:
+            self.get_orbit()
+        elif self.cfg["platform"] == "tif":
             self.tile = ""
             self.imgpath = self.rasterdir
             self.date = ""
+            self.orbit = 0
+        elif self.cfg["platform"] == "ls8":
+            self.get_imgpath()
+            self.get_tileinfo()
+            self.get_dateinfo()
+            self.orbit = self.tile
 
     def get_imgpath(self):
         """Create the path to the raster data band files based on path given in bandlocation."""
@@ -58,12 +66,26 @@ class Pathfinder(object):
         self.imgpath = glob.glob(patternimg)[0]
 
     def get_tileinfo(self):
-        """Extract tilename from filename according to pattern from from config."""
+        """Extract tilename from filename according to pattern from config."""
         tilepattern = r"%s" % self.cfg["tilepattern"]
         self.tile = re.search(tilepattern, self.imgpath).group(0)
+        if self.tile.endswith("_"):
+            self.tile = self.tile[0:6]
 
     def get_dateinfo(self):
-        """Extract date from filename according to pattern from from config."""
+        """Extract date from filename according to pattern from config."""
         datepattern = r"%s" % self.cfg["datepattern"]
-        splitted_imgpath = self.imgpath.split("/")[-5]
-        self.date = re.search(datepattern, splitted_imgpath).group(0)
+        if self.cfg["platform"] == "s2":
+            splitted_imgpath = self.imgpath.split(os.sep)[-5]
+            self.date = re.search(datepattern, splitted_imgpath).group(0)
+        if self.cfg["platform"] == "ls8":
+            self.date = re.search(datepattern, self.imgpath).group(0)
+
+    def get_orbit(self):
+        xmlname = "MTD_MSIL2A.xml"
+        xmlpath = os.path.join(self.rasterdir, xmlname)
+        doc = minidom.parse(xmlpath)
+        orbit_number = int(
+            doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
+        )
+        self.orbit = orbit_number

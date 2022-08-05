@@ -14,16 +14,16 @@ from rasterstats import zonal_stats
 
 
 class Extractor(object):
-    """Extracting object based information from an array with affine information and a shapefile."""
-    
+    """Extracting object based information from an array with affine information and a geodataframe."""
+
     def __init__(
         self,
         maskedarray,
-        shapefile,
+        geodataframe,
         idname,
         affine,
         statistics,
-        orbit=None,
+        orbit=0,
         band=1,
         exclude_border=False,
     ):
@@ -33,10 +33,10 @@ class Extractor(object):
         ----------
         maskedarray: array
             the array to extract information from
-        shapefile: str
-            Path to the shapefile containing polygons to extract information for
+        geodataframe: GeoDataframe
+            geodataframe containing the (polygon) features to extract zonal statistics from
         idname: str
-            Fieldname of unique ID field of the shapefile (will be used as polygon identifier for storing statistics)
+            Fieldname of unique ID field of the geodataframe (will be used as polygon identifier for storing statistics)
         affine: Affine object
             containing affine/transform information of the array
         statistics: list of str, optional, default: empty list
@@ -50,7 +50,7 @@ class Extractor(object):
 
         """
         self.affine = affine
-        self.shapefile = shapefile
+        self.geodataframe = geodataframe
         self.idname = idname
         self.all_touched = not exclude_border
         self.maskedarray = maskedarray
@@ -72,6 +72,8 @@ class Extractor(object):
 
         """
         default = "Unavailable format"
+        if format == "database":
+            format = "statistics"
         return getattr(self, "extract_" + format, lambda: default)()
 
     def extract_statistics(self):
@@ -84,7 +86,7 @@ class Extractor(object):
             filledraster = self.maskedarray
 
         a = zonal_stats(
-            self.shapefile,
+            self.geodataframe,
             filledraster,
             stats=self.statistics,
             band=self.band,
@@ -126,7 +128,7 @@ class Extractor(object):
             filledraster = self.maskedarray
 
         a = zonal_stats(
-            self.shapefile,
+            self.geodataframe,
             filledraster,
             stats=self.statistics,
             band=self.band,
@@ -152,7 +154,7 @@ class Extractor(object):
         except AttributeError:
             filledraster = self.maskedarray
         a = zonal_stats(
-            self.shapefile,
+            self.geodataframe,
             filledraster,
             stats=self.statistics,
             band=self.band,

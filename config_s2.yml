@@ -6,10 +6,18 @@
 
 ####
 
+# Enter platform name
 platform: 's2'
+
+# Enter (smallest) pixelsize (10 m for Sentinel-2)
+pixelsize: 10
+
+# Process only files with less than xx % cloudcover
+maxcloudcover: 99
 
 # Mask conditions are stored as values, not as bitflags
 bitmask: 0
+
 # Values to be to be included in cloudmask
 # default [9,8,3,10,0,1]
 tobemaskedlist: 
@@ -31,6 +39,8 @@ nir: 'B08'
 r_edge: 'B05'
 swir1: 'B11'
 swir2: 'B12'
+8A: 'B8A'
+coastal: 'B01'
 
 # some part of the products file name that identifies them as product to be used
 productnameidentifier: 'S2*.SAFE'
@@ -73,5 +83,9 @@ AOT: [10,20,60]
 TCI: [10,20,60]
 WVP: [10,20,60]
 
+# Lookup table for storing the tiles and the IDs they include for every tile processed by EODIE with --array_out
+# Table needed for array plotting
+lookup: '../postprocesses/lookuptable.txt'
 
-
+# Enter resampling method
+resampling_method: 'bilinear'

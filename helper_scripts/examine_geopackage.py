@@ -17,7 +17,7 @@ Written by Arttu Kivimäki, March 2022
 """
 
 import sys
-from osgeo import ogr 
+from osgeo import ogr
 
 # Store path to geopackage from command line argument
 gpkg_path = sys.argv[1]
@@ -38,16 +38,23 @@ fieldlist = []
 for layer in gpkg:
     # Get layer definition
     defn = layer.GetLayerDefn()
-    # List all the fields in a file 
+    # List all the fields in a file
     fields = [defn.GetFieldDefn(i).GetName() for i in range(defn.GetFieldCount())]
     # Add the fields into a nested list
     fieldlist.append(fields)
 
 # Get the geometry types of the layers in geopackage
-geometry_types = [ogr.GeometryTypeToName(gpkg.GetLayerByName(name).GetGeomType()) for name in gpkg_layers]
+geometry_types = [
+    ogr.GeometryTypeToName(gpkg.GetLayerByName(name).GetGeomType())
+    for name in gpkg_layers
+]
 
 # Print the terminal outputs
 print("\nThis GeoPackage contains the following layers:")
 # Loop through layers and print relevant information from each
 for i in range(len(gpkg_layers)):
-    print("\nLayer name: {} | Geometry type: {} | Feature count: {} | Fields: {}".format(gpkg_layers[i], geometry_types[i], layer_features[i], fieldlist[i]))
+    print(
+        "\nLayer name: {} | Geometry type: {} | Feature count: {} | Fields: {}".format(
+            gpkg_layers[i], geometry_types[i], layer_features[i], fieldlist[i]
+        )
+    )

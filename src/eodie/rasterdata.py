@@ -36,7 +36,7 @@ class RasterData(object):
         affine transformation of the raster product
     """
 
-    def __init__(self, inpath, cfg="test_config.yml", test=False):
+    def __init__(self, inpath, resampling_method, cfg="test_config.yml", test=False):
         """Initialize the raster object.
 
         Parameters
@@ -63,6 +63,7 @@ class RasterData(object):
             "gauss": Resampling.gauss,
         }
         self.test = test
+        self.resampling_method = resampling_method
 
     def get_bandfile(self, bandname):
         """Get bandfile given a band name.
@@ -118,12 +119,23 @@ class RasterData(object):
         """Get affine from red band file as representation for all."""
         if self.cfg["platform"] == "tif":
             bandfile = self.inpath
-        else:
-            bandfile, _ = self.get_bandfile(self.cfg["red"])
+        elif self.cfg["platform"] == "s2":
+            pixelsize = self.cfg["pixelsize"]
+            if pixelsize == 10:
+                bandfile, _ = self.get_bandfile(self.cfg["red"])
+            elif pixelsize == 20:
+                bandfile, _ = self.get_bandfile(self.cfg["8A"])
+            elif pixelsize == 60:
+                bandfile, _ = self.get_bandfile(self.cfg["coastal"])
+        elif self.cfg["platform"] == "ls8":
+            pixelsize = self.cfg["pixelsize"]
+            if pixelsize == 30:
+                bandfile, _ = self.get_bandfile(self.cfg["red"])
         with rasterio.open(bandfile) as src:
             self.crs = src.crs
             self.epsg = str(src.crs).split(":")[-1]
             self.affine = src.transform
+            self.bbox = src.bounds
 
     def read_array(self, bandfile, dtype="f4"):
         """Get array in given datatype according to bandname.
@@ -159,7 +171,13 @@ class RasterData(object):
         reflectance: numpy array
             array with values representing the reflectance
         """
-        reflectance = np.divide(array, self.cfg["quantification_value"])
+        if self.cfg["platform"] == "s2":
+            reflectance = np.divide(array, self.cfg["quantification_value"])
+            reflectance = self.clip_to_valid_range(reflectance)
+
+        if self.cfg["platform"] == "ls8":
+            reflectance = np.multiply(array, self.cfg["quantification_value"]) - 0.2
+
         return reflectance
 
     def get_array(self, band, resampling_method=None):
@@ -180,7 +198,7 @@ class RasterData(object):
         resampling_method = (
             resampling_method
             if resampling_method is not None
-            else self.cfg["resampling_method"]
+            else self.resampling_method
         )
 
         if re.match(r"%s" % self.cfg["band_designation"], band):
@@ -232,3 +250,23 @@ class RasterData(object):
             if self.test:
                 data = data.astype(dtype)
         return data
+
+    def clip_to_valid_range(self, array):
+        """Clips the values to valid range ([0,1] in case of Sentinel-2), other values are NoData.
+
+        Parameters:
+        -----------
+        array: array
+            array to be clipped
+
+        Returns:
+        --------
+        array: array
+            result of clipping
+        """
+
+        # Set values above 1 to np.NaN
+        array[array > 1] = np.NaN
+        # Set values below or equal to 0 to np.NaN
+        array[array <= 0] = np.NaN
+        return array

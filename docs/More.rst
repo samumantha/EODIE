@@ -12,17 +12,18 @@ In general, the user will not need to touch these ever.
 The only cases where changes in these files are necessary is:
 
 * If e.g. a red edge band (in case of Sentinel-2) should be used instead of the nir band in index calcualtions with the nir band.
-* If the classes of pixels masked in EODIE need to be changed eg to exclude the masking of cirrus clouds or include the masking of snow (where available)
+* If the classes of pixels masked in EODIE need to be changed eg. to exclude the masking of cirrus clouds or include the masking of snow (where available)
 
 The following parameters need to be included in a config_x.yml file to be used in EODIE:
 
 .. code-block::
 
     platform: 
+    pixelsize:
     tobemaskedlist: 
     bitmask:
 
-    red : 
+    red: 
     green: 
     blue: 
     nir: 
@@ -37,6 +38,7 @@ The following parameters need to be included in a config_x.yml file to be used i
     datepattern: 
     band_designation:
     quantification_value: 
+    resampling_method: 
 
     B01: 
     B02: 
@@ -100,5 +102,6 @@ A few auxiliary files are available in the helper_scripts directory.
 | ``manipulate_vector.py``
 | ``clip_vector.py``
 | ``tilegrid_to_shp.py``
+| ``unzip_ls8_grid.py``
 
 Please refer to the scripts top for more information and how to use them.

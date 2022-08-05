@@ -6,16 +6,19 @@ Authors: Samantha Wittke
 
 """
 import os
-from osgeo import osr, ogr, gdal
+import math
+from osgeo import ogr, gdal
 import fiona
-from copy import deepcopy
 from shapely.geometry import Polygon
 from shapely.validation import explain_validity
-import shapely
 import geopandas as gpd
 import logging
-from shutil import copyfile
 import re
+import glob
+import timeit
+import warnings
+
+warnings.simplefilter(action="ignore", category=UserWarning)
 
 
 class VectorData(object):
@@ -27,181 +30,97 @@ class VectorData(object):
         location and name of a vectorfile
     """
 
-    def __init__(self, geometries):
+    def __init__(self, geometries, drop=False, epsg_for_csv=None):
         """Initialize vectordata object.
 
         Parameters
         -----------
         geometries: str
             location and name of a vectorfile
+        drop: boolean
+            whether missing or invalid geometries should be excluded from further processing
         """
-        self.geometries = geometries
+        self.geometries = self.read_geodataframe(geometries)
+        if epsg_for_csv is not None:
+            self.geometries.crs = "EPSG:" + epsg_for_csv
+        self.geometries = self.check_validity(drop)
 
-    def _split_path(self):
-        """Split shapefile path into parts.
+    def read_geodataframe(self, geometries):
+        """Read input vectorfile into a geopandas GeoDataframe.
 
-        Returns
+        Parameters:
+        -----------
+        geometries: str
+            path to input vectorfile
+
+        Returns:
         --------
-        head: str
-            location (path) of the vectorfile without name
-        tail: str
-            name and extension of the vectorfile
-        root: str
-            name of the vectorfile
-        ext: str
-            exension of the vectorfile
+        geodataframe: GeoDataframe
+            input vector read into a geodataframe
         """
-        head, tail = os.path.split(self.geometries)
-        root, ext = os.path.splitext(tail)
-        return head, tail, root, ext
+        logging.info(" Reading vectorfile into a geodataframe...")
+        geodataframe = gpd.read_file(geometries)
+        logging.info(" Geodataframe read!\n")
 
-    def get_projectionfile(self):
-        """Get path to the projectionfile that is associated with the shapefile.
-
-        Returns
-        --------
-        projectionfile: str
-            the projectionfile belonging to the vectorfile
-        """
-        head, _, root, _ = self._split_path()
-        rootprj = root + ".prj"
-        projectionfile = os.path.join(head, rootprj)
-        return projectionfile
+        return geodataframe
 
     def get_epsg(self):
-        """Extract epsg code from prj file.
+        """Extract epsg code from geodataframe.
 
         Returns
         --------
         vectorepsg: str
             EPSG code of the vectorfile
         """
-        # Open shapefile
-        with fiona.open(self.geometries, "r") as proj:
-            # Read spatial reference
-            spatialRef = proj.crs
-            # Extract epsgcode from the reference
-            epsgcode = spatialRef["init"].split(":")[1]
+        epsgcode = self.geometries.crs.to_epsg()
 
-        return epsgcode
+        return str(epsgcode)
 
-    def reproject_to_epsg(self, rasterepsg):
-        """Reproject shapefile to given EPSG code, save as new shapefile file.
+    def get_convex_hull(self, geodataframe):
+        """Extract convex hull of all features of geodataframe that are located in the area of input data.
 
-        Parameters
+        Parameters:
         -----------
-        rasterepsg: str
-            EPSG code to reproject the vectorfile to
-        """
-        # reproject and save shapefiles to given EPSG code
-        logging.info('Checking the projection of the inputfile now...')
-        vectorepsg = self.get_epsg()
-        head,_,root,ext = self._split_path()
+        geodataframe: GeoDataframe
+            geodataframe for the features to extract convex hull from
 
-        # check if the shapefile is already in right projection
-        if vectorepsg == rasterepsg:
-            logging.info(' Input shapefile has EPSG {} that works!'.format(vectorepsg))
-        else:
-            root = re.sub(r'_reprojected_\d*', '', root)
-            reprojectedshape = os.path.join(head, root + '_reprojected_' + rasterepsg +  ext)
-            if not os.path.exists(reprojectedshape):             
-
-                # Determine the spatial reference systems for input and output
-                input_epsg = 'EPSG:' + vectorepsg
-                output_epsg = 'EPSG:' + rasterepsg
-
-                # Define options for gdal.VectorTranslate
-                gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", reproject = True, dstSRS=output_epsg, srcSRS=input_epsg)
-
-                # Run gdal.VectorTranslate
-                gdal.VectorTranslate(destNameOrDestDS=reprojectedshape, srcDS=self.geometries, options=gdal_options)
-
-                logging.info(' {} had other than EPSG:{} but was reprojected and works now'.format(self.geometries, rasterepsg))
-                
-            #update the objects shapefile
-            self.geometries = reprojectedshape
-
-    def get_properties(self):
-        """ extract driver, schema and crs from vectorfile
-        
-        Returns
+        Returns:
         --------
-        driver: str
-            driver of the vectorfile
-        schema: str
-            schema of the vectorfile
-        crs: str
-            CRS of the vectorfile
+        convexhull: GeoDataframe
+            GeoDataframe consisting of one feature, the convex hull
         """
-        with fiona.open(self.geometries, "r") as opengeom:
-            driver = opengeom.driver
-            schema = deepcopy(opengeom.schema)
-            crs = opengeom.crs
-            return driver, schema, crs
+        logging.info(" Extracting convex hull...")
 
-    def get_boundingbox(self):
-        """Extract bounding box Polygon object from shapefile.
-        
-        Returns
-        --------
-        boundingbox: object
-            polygon object of the boundingbox for the whole vectorfile
-        """
-        with fiona.open(self.geometries,'r') as open_vectordata:
-            bounding_box_coordinates = open_vectordata.bounds
-            logging.info(bounding_box_coordinates)
-        return Polygon.from_bounds(
-            bounding_box_coordinates[0],
-            bounding_box_coordinates[1],
-            bounding_box_coordinates[2],
-            bounding_box_coordinates[3],
+        # Create envelopes for all features
+        tic = timeit.default_timer()
+        gdf_envelope = geodataframe.envelope
+        toc = timeit.default_timer()
+        logging.info(
+            " Creating envelopes took {} seconds.".format(math.ceil(toc - tic))
         )
 
-    def get_convex_hull(self):
-        """Extract convex hull of given shapefile, save to new shapefile; adjusted from https://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html#save-the-convex-hull-of-all-geometry-from-an-input-layer-to-an-output-layer.
-
-        Returns
-        --------
-        convexhull: str
-            location and name of the created convexhull of vectorfile
-        """
-        # Get a Layer
-        inDriver = ogr.GetDriverByName("ESRI Shapefile")
-        inDataSource = inDriver.Open(self.geometries, 0)
-        inLayer = inDataSource.GetLayer()
-        # Collect all Geometry
-        geomcol = ogr.Geometry(ogr.wkbGeometryCollection)
-        for feature in inLayer:
-            geomcol.AddGeometry(feature.GetGeometryRef())
-        # Calculate convex hull
-        convexhull = geomcol.ConvexHull()
-        # Save extent to a new Shapefile
-        convexhullp = os.path.splitext(self.geometries)[0] + "_convexhull.shp"
-        outDriver = ogr.GetDriverByName("ESRI Shapefile")
-        copyfile(
-            os.path.splitext(self.geometries)[0] + ".prj",
-            os.path.splitext(convexhullp)[0] + ".prj",
+        # Execute unary_union for envelopes
+        tic = timeit.default_timer()
+        gdf_unary_union = gdf_envelope.unary_union
+        toc = timeit.default_timer()
+        logging.info(
+            " Creating unary union from envelopes took {} seconds.".format(
+                math.ceil(toc - tic)
+            )
         )
-        # Remove output shapefile if it already exists
-        if os.path.exists(convexhullp):
-            outDriver.DeleteDataSource(convexhullp)
-        # Create the output shapefile
-        outDataSource = outDriver.CreateDataSource(convexhullp)
-        outLayer = outDataSource.CreateLayer("convexhull", geom_type=ogr.wkbPolygon)
-        # Add an ID field
-        idField = ogr.FieldDefn("ID", ogr.OFTInteger)
-        outLayer.CreateField(idField)
-        # Create the feature and set values
-        featureDefn = outLayer.GetLayerDefn()
-        feature = ogr.Feature(featureDefn)
-        feature.SetGeometry(convexhull)
-        feature.SetField("ID", 1)
-        outLayer.CreateFeature(feature)
-        feature = None
-        # Save and close DataSource
-        inDataSource = None
-        outDataSource = None
-        return convexhullp
+
+        # Extract convex_hull based on results of unary_union and turn convex_hull into a GeoDataframe
+        tic = timeit.default_timer()
+        ch = gdf_unary_union.convex_hull
+        convexhull = gpd.GeoDataFrame(crs=geodataframe.crs, geometry=[ch])
+        toc = timeit.default_timer()
+        logging.info(
+            " Creating convex hull from unary union took {} seconds.\n".format(
+                math.ceil(toc - tic)
+            )
+        )
+
+        return convexhull
 
     def check_empty(self, vectorfile):
         """Check for empty geometries in vectorfile.
@@ -214,6 +133,7 @@ class VectorData(object):
             None; prints the rows with non-existent geometries.
         """
         logging.info(" Checking for empty geometries...")
+
         # Filter rows where geometry is None
         vectorfile_nogeom = vectorfile[vectorfile["geometry"] == None]
         # Log accordingly
@@ -222,123 +142,255 @@ class VectorData(object):
                 " Following features have no geometry:\n\n {}".format(vectorfile_nogeom)
             )
         else:
-            logging.info(" All features have geometries.")
+            logging.info(" All features have geometries!\n")
 
     def check_validity(self, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
-        
+
         Parameters:
         -----------
-            drop: Flag to indicate if invalid geometries should be dropped.
+        drop: boolean
+            flag to indicate if invalid geometries should be dropped.
+
         Returns:
         --------
-        vectorfilepath: str
-            Path to either the original vectorfile or a filtered one, from which features with empty or invalid geometries have been removed.
+        valid_geom: GeoDataframe
+            geodataframe with only valid geometries - if all geometries are valid, returns original geodataframe
         """
-        # Read shapefile into a geopandas data frame
-        vectorfile = gpd.read_file(self.geometries)
+        geodataframe = self.geometries
         # Check empty geometries
-        self.check_empty(vectorfile)
+        self.check_empty(geodataframe)
+
         # Check validity of geometries
-        vectorfile["validity"] = vectorfile["geometry"].is_valid
+        logging.info(" Checking geometry validity...")
+        geodataframe["validity"] = geodataframe["geometry"].is_valid
+
         # Extract only rows with existing geometries
-        vectorfile_with_geom = vectorfile.loc[vectorfile["geometry"] != None].copy()
+        with_geom = geodataframe.loc[geodataframe["geometry"] != None].copy()
+
         # Filter rows where geometries were invalid
-        vectorfile_with_invalid_geom = vectorfile_with_geom.loc[
-            vectorfile_with_geom["validity"] == False
-        ].copy()
+        invalid_geom = with_geom.loc[with_geom["validity"] == False].copy()
+
         # If invalid geometries exist, run explain_validity for them
-        if len(vectorfile_with_invalid_geom) > 0:
-            vectorfile_with_invalid_geom[
-                "explanation"
-            ] = vectorfile_with_invalid_geom.apply(
+        if len(invalid_geom) > 0:
+            invalid_geom["explanation"] = invalid_geom.apply(
                 lambda row: explain_validity(row.geometry), axis=1
             )
             logging.info(
                 " Following features have invalid geometries:\n\n {}".format(
-                    vectorfile_with_invalid_geom
+                    invalid_geom
                 )
             )
         else:
-            logging.info(" All features have valid geometries.")
+            logging.info(" All features have valid geometries!\n")
 
         # If --delete_invalid_geometries was defined, rewrite a new file without invalid geometries.
         if drop:
-            # Extract filepath
-            head, _, root, ext = self._split_path()
-            # Build output filename and path
-            outputfilename = root + "_valid" + ext
-            outputpath = os.path.join(head, outputfilename)
-
             # Filter only valid geometries
-            vectorfile_with_valid_geom = vectorfile_with_geom.loc[
-                vectorfile_with_geom["validity"] == True
-            ].copy()
-            # Write a file from the geodataframe
-            vectorfile_with_valid_geom.to_file(outputpath, index=False)
+            valid_geom = with_geom.loc[with_geom["validity"] == True].copy()
+            self.geometries = valid_geom
 
-            return outputpath
+        return self.geometries
 
-        else:
-            return self.geometries      
+    def clip_vector(self, rasters, tileframe, idname, platform):
+        """Clip vector based on data in input directory.
 
+        Parameters:
+        -----------
+        rasters: list
+            list of input files
+        tileframe: GeoDataframe
+            a geodataframe containing tile grid (for either Landsat8 or Sentinel-2)
 
-    def convert_to_shp(self, output):
-        """ converts the input vector file into shapefile for processing. This function is used with geojson, single-layer geopackages and flatgeobufs.
-        Parameters
-        ----------
-        output: str
-            the name of the output file (basename.shp)
+        Returns:
+        --------
+        tiles: list
+            Sentinel-2 or Landsat8 tiles that were found in input raster directory
+
+        Updates:
+        --------
+        self.geometries: GeoDataframe
+            replaces original geodataframe with the clipped one
         """
-        logging.info('Converting vector input to a shapefile...')
-        # Open input file with gdal
-        input_file = gdal.OpenEx(self.geometries)              
-        # Define gdal.VectorTranslateOptions        
-        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile")
-        # Run gdal.VectorTranslate
-        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
-        logging.info('Shapefile conversion completed!')
-        
+        logging.info(" Clipping input vector based on data in raster directory...\n")
+        tic = timeit.default_timer()
+        tiles = []
+        if platform == "s2":
+            # Loop through safes
+            for raster in rasters:
+                head, tail = os.path.split(raster)
+                tile = tail.split("_")[5][1:6]
+                # If tilename noet yet in list of tiles, add it
+                if tile not in tiles:
+                    tiles.append(tile)
+            # Select only tiles that are found in input directory
+            tileframe = tileframe[tileframe["Name"].isin(tiles)]
+        elif platform == "ls8":
+            prs = []
+            for raster in rasters:
+                head, tail = os.path.split(raster)
+                pr = tail.split("_")[2][0:6]
+                if pr not in prs:
+                    prs.append(pr)
+            tileframe = tileframe[(tileframe["PR"].isin(prs))]
+        # Reproject vector geodataframe to EPSG:4326
+        gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
+        # Clip
+        self.geometries = gpd.clip(gdf, tileframe)
+        # Compare geometries
+        self.geometries = self.compare_geometries(self.geometries, gdf, idname)
+        toc = timeit.default_timer()
+        logging.info(" Clipping took {} seconds.\n".format(math.ceil(toc - tic)))
 
-        # Empty the file from memory
-        input_file = None
-        
-    def csv_to_shp(self, output, epsg):
-        """ converts the input csv file into shapefile for processing. 
-        Parameters
-        ----------
-        output: str
-            the name of the output file (basename.shp)
-        epsg: str
-            the EPSG code for the csv file input       
-        """
-        logging.info('Converting csv input to a shapefile...')
-        # Open file with gdal
-        input_file = gdal.OpenEx(self.geometries)
-        # Define format EPSG:epsg 
-        srs = 'EPSG:' + epsg
-        # Define gdal.VectorTranslateOptions
-        gdal_options = gdal.VectorTranslateOptions(format = "ESRI Shapefile", srcSRS=srs, dstSRS=srs)
-        # Run gdal.VectorTranslate
-        gdal.VectorTranslate(destNameOrDestDS=output, srcDS=input_file, options=gdal_options)
-        # Empty input file from memory
-        input_file = None
-        logging.info('Shapefile conversion completed!')
+        return tiles
 
-    def gpkg_to_shp(self, output, layer):
-        """ converts the layer from input gpkg file into shapefile for processing. This function is used with geopackages with more than one layer.
-        Parameters
-        ----------
-        output: str
-            the name of the output file (basename.shp)
-        layer: str
-            the name of the layer in geopackage to convert
+    def read_tiles(self, platform):
+        """Read Sentinel-2 tiles into a Geodataframe.
+
+        Returns:
+        --------
+        tileframe: GeoDataframe
+            geodataframe containing the Sentinel-2 tiles
         """
-        logging.info('Converting geopackage layer to a shapefile...')
-        # Open the layer with Fiona
-        with fiona.open(self.geometries, layer = layer) as input:          
-            # Create and open another file with shapefile driver, inheriting schema and crs from input geometries
-            with fiona.open(output, "w", driver = "ESRI Shapefile", schema = input.schema, crs = input.crs) as output_shp:
-                # Write input contents into a shapefile 
-                output_shp.writerecords(input)
-        logging.info('Shapefile conversion completed!')
+        # Build tilepath
+        if platform == "s2":
+            tilepath = os.path.join(
+                os.getcwd(), "sentinel2_tiles_world", "sentinel2_tiles_world.shp"
+            )
+        elif platform == "ls8":
+            tilepath = os.path.join(
+                os.getcwd(), "landsat8_tiles_world", "WRS2_descending.shp"
+            )
+        # Read into a geodataframe
+        tileframe = gpd.read_file(tilepath)
+
+        return tileframe
+
+    def reproject_geodataframe(self, geodataframe, crs):
+        """Reproject GeoDataframe to another crs.
+
+        Parameters:
+        ----------
+        geodataframe: GeoDataframe
+            geodataframe to reproject
+        crs: crs
+            crs to reproject the geodataframe into
+
+        Returns:
+        -------
+        reprojected: GeoDataframe
+            the original geodataframe reprojected to crs
+        """
+        logging.info(" Reprojecting geodataframe...")
+        reprojected = geodataframe.to_crs(crs)
+        logging.info(" Reprojection completed.\n")
+
+        return reprojected
+
+    def filter_geodataframe(self, vectorframe, tileframe, tile, idname, platform):
+        """Filter features of geodataframe that can be found in the area of one Sentinel-2 tile.
+
+        Parameters:
+        ----------
+        vectorframe: GeoDataframe
+            geodataframe containing the polygon features
+        tileframe: GeoDataframe
+            geodataframe containing the Sentinel-2 tiles
+        tile: str
+            Sentinel-2 tilecode
+        idname: str
+            identifier of features in vectorframe
+
+        Returns:
+        --------
+        overlay_result: GeoDataframe
+            geodataframe containing the features that are completely in area of given tile - features crossing the tile edges are excluded
+        """
+        # Select only one tile based on colum Name
+        if platform == "s2":
+            tileframe_tile = tileframe[tileframe["Name"] == tile]
+        elif platform == "ls8":
+            path = int(tile[0:3])
+            row = int(tile[3:6])
+            tileframe_tile = tileframe[
+                (tileframe["PATH"] == path) & (tileframe["ROW"] == row)
+            ]
+        # Run overlay analysis for vectorframe and one tile
+        overlay_result = vectorframe.overlay(tileframe_tile, how="intersection")
+        # Compare geometries
+        overlay_result = self.compare_geometries(
+            overlay_result, self.geometries, idname
+        )
+
+        return overlay_result
+
+    def gdf_from_bbox(self, bbox, crs, idname):
+        """Build a Polygon from Raster boundingbox. Used with TIFs.
+
+        Parameters:
+        -----------
+        bbox: BoundingBox
+            the bounding box of raster
+        crs: crs
+            the crs of raster
+        idname: string
+            the identifier field name in self.geometries
+
+        """
+        # Build a Polygon from bounding box coordinates.
+        polygon = Polygon(
+            [
+                (bbox[0], bbox[1]),
+                (bbox[2], bbox[1]),
+                (bbox[2], bbox[3]),
+                (bbox[0], bbox[3]),
+            ]
+        )
+        # Turn Polygon into a GeoDataframe
+        polyframe = gpd.GeoDataFrame(crs=crs, geometry=[polygon])
+        # Reproject self.geometries
+        reprojected = self.geometries.to_crs(crs)
+        # Clip
+        clipped_geodataframe = gpd.clip(reprojected, polyframe)
+        # Compare geometries
+        clipped_geodataframe = self.compare_geometries(
+            clipped_geodataframe, reprojected, idname, align=True
+        )
+
+        return clipped_geodataframe
+
+    def compare_geometries(
+        self, manipulated_geodataframe, original_geodataframe, idname, align=False
+    ):
+        """Compare geometries between geodataframes and exclude ones not matching (ie. that have been changed during clipping or intersection).
+
+        Parameters:
+        -----------
+        manipulated_geodataframe: GeoDataframe
+            geodataframe that has been clipped/overlaid from the original geodataframe
+        original_geodataframe: GeoDataframe
+            the geodataframe from which the manipulated_geodataframe was processed
+        idname: string
+            Name of idenfifier field in geodataframes
+
+        Returns:
+        --------
+        manipulated_geodataframe: GeoDataframe
+            manipulated_geodataframe from which the altered geometries have been removed
+        """
+        # List IDs in manipulated_geodataframe
+        ids = list(manipulated_geodataframe[idname])
+        # Filter original geodataframe to contain only same IDs
+        gdf = original_geodataframe[original_geodataframe[idname].isin(ids)]
+        # Create boolean column 'equal_geom' and compare geometries of matching IDs between manipulated and original geodataframes
+        manipulated_geodataframe["equal_geom"] = manipulated_geodataframe.sort_values(
+            by=idname
+        )["geometry"].geom_equals(gdf.sort_values(by=idname)["geometry"], align=align)
+        # Filter out rows where 'equal_geom' is False
+        manipulated_geodataframe = manipulated_geodataframe[
+            manipulated_geodataframe["equal_geom"] == True
+        ]
+        # Drop the column after it's no longer needed.
+        manipulated_geodataframe = manipulated_geodataframe.drop(columns="equal_geom")
+
+        return manipulated_geodataframe

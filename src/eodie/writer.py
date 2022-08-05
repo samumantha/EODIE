@@ -35,7 +35,6 @@ class Writer(object):
         outdir,
         date,
         tile,
-        extractedarrays,
         index,
         platform,
         orbit,
@@ -43,7 +42,7 @@ class Writer(object):
         crs=None,
     ):
         """Initialize writer object.
-        
+
         Parameters
         -----------
         outdir: str
@@ -70,9 +69,10 @@ class Writer(object):
             self.outpath = os.path.join(
                 outdir, index + "_" + date + "_" + tile + "_orbit_" + str(orbit)
             )
+        elif platform == "ls8":
+            self.outpath = os.path.join(outdir, index + "_" + date + "_" + tile)
         else:
             self.outpath = os.path.join(outdir, index)
-        self.extractedarrays = extractedarrays
         self.tile = tile
         self.statistics = statistics
         self.crs = crs
@@ -80,7 +80,7 @@ class Writer(object):
         self.outdir = outdir
         self.index = index
 
-    def write_format(self, format):
+    def write_format(self, format, extractedarray):
         """Run own class method based on format given.
 
         Parameters
@@ -94,9 +94,9 @@ class Writer(object):
 
         """
         default = "Unavailable format"
-        return getattr(self, "write_" + format, lambda: default)()
+        return getattr(self, "write_" + format, lambda: default)(extractedarray)
 
-    def write_database(self):
+    def write_database(self, extractedarray):
         """Write statistics results from json into sqlite3 database."""
         # Defining output path - all data is stored into same .db file, so no separate file naming is needed.
         self.outdir = self.outdir + "/EODIE_results.db"
@@ -125,46 +125,52 @@ class Writer(object):
         # Define command for inserting values into database
         insert_SQL = "INSERT INTO " + self.index + " VALUES (" + question_marks + ")"
         # Loop through keys in extractedarray
-        for key in self.extractedarrays.keys():
-            # Define one row
-            onerow = [key] + self.extractedarrays[key]
-            # Add the date to the 2nd slot of the list
-            onerow.insert(1, self.date)
-            # Add the tile to the 3rd slot of the list
-            onerow.insert(2, self.tile)
-            # Run insert_SQL
-            cursor.execute(insert_SQL, onerow)
+        for key in extractedarray.keys():
+            if None in extractedarray[key]:
+                continue
+            else:
+                # Define one row
+                onerow = [key] + extractedarray[key]
+                # Add the date to the 2nd slot of the list
+                onerow.insert(1, self.date)
+                # Add the tile to the 3rd slot of the list
+                onerow.insert(2, self.tile)
+                # Run insert_SQL
+                cursor.execute(insert_SQL, onerow)
 
         # Commit changes
         connection.commit()
         # Close connection
         connection.close()
 
-    def write_statistics(self):
+    def write_statistics(self, extractedarray):
         """Write statistics results from json into csv."""
         self.outpath = self.outpath + "_statistics.csv"
         logging.info("stat to csv in: " + self.outpath)
         with open(self.outpath, mode="w") as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=",")
             csv_writer.writerow(["id"] + ["orbit"] + self.statistics)
-            for key in self.extractedarrays.keys():
-                onerow = [int(key)] + self.extractedarrays[key]
-                csv_writer.writerow(onerow)
+            for key in extractedarray.keys():
+                if None in extractedarray[key]:
+                    continue
+                else:
+                    onerow = [int(key)] + extractedarray[key]
+                    csv_writer.writerow(onerow)
+            
 
-    def write_array(self):
+    def write_array(self, extractedarray):
         """Write extracted arrays to pickle."""
         self.outpath = self.outpath + "_array.pickle"
-        logging.info("arrays to pickle in: " + self.outpath)
+        logging.info(" Arrays to pickle in: " + self.outpath)
         with open(self.outpath, mode="wb") as pkl_file:
-            pickle.dump(self.extractedarrays, pkl_file)
+            pickle.dump(extractedarray, pkl_file)
 
-    def write_geotiff(self):
+    def write_geotiff(self, extractedarray):
         """Write extracted arrays to geotiff file."""
         self.outpath = self.outpath + "_array"
-        logging.info("arrays to geotiff in: " + self.outpath)
-        for key in self.extractedarrays.keys():
-            logging.info("arrays to geotiff in: " + self.outpath)
-            data = self.extractedarrays[key]
+        logging.info(" Arrays to geotiff in: " + self.outpath)
+        for key in extractedarray.keys():
+            data = extractedarray[key]
             nrows, ncols = data["array"].shape
             # this may happen with external tif file, int64 is not supported
             if data["array"].dtype == "int64":
@@ -209,10 +215,7 @@ class Writer(object):
             IDs = []
             with fiona.open(shapefile) as shp:
                 for polygon in shp:
-                    IDs.append(polygon['properties'][idname])
-            with open(lookup, 'a') as f:
-                f.write(self.tile + ':' + ','.join(str(id) for id in IDs) + "\n")
-            logging.info(' Appended tile ' + self.tile + ' to lookup table')
-
-
-
+                    IDs.append(polygon["properties"][idname])
+            with open(lookup, "a") as f:
+                f.write(self.tile + ":" + ",".join(str(id) for id in IDs) + "\n")
+            logging.info(" Appended tile " + self.tile + " to lookup table")

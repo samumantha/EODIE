@@ -63,14 +63,6 @@ eodie.test\_all module
    :undoc-members:
    :show-inheritance:
 
-eodie.tilesplitter module
--------------------------
-
-.. automodule:: eodie.tilesplitter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 eodie.userinput module
 ----------------------
 
@@ -91,6 +83,14 @@ eodie.vectordata module
 -----------------------
 
 .. automodule:: eodie.vectordata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+eodie.workflow module
+-----------------------
+
+.. automodule:: eodie.workflow
    :members:
    :undoc-members:
    :show-inheritance:
