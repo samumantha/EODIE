@@ -72,7 +72,7 @@ means it has succeeded. Red color indicates that the job has failed.
   :width: 400
   :alt: Figure 4. Advanced options.
 
-.. |pic4b| image:: galaxy_fig4b.jpg
+.. |pic4b| image:: galaxy_fig4b.png
   :width: 400
   :alt: Figure 4. Advanced options. 
 
