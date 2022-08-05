@@ -30,7 +30,7 @@ Workflow:
 and upload the shapefile and all related auxiliary files (.shx, .dbf and .prj in this example).
 Use option “Regular” for satellite data. 
 
-.. image:: upload_galaxy2.png
+.. image:: galaxy_fig1.png
   :width: 600
   :alt: Figure 1. Uploading data to Galaxy.    
 
