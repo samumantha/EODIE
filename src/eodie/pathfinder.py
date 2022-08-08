@@ -51,6 +51,7 @@ class Pathfinder(object):
         elif self.cfg["platform"] == "tif":
             self.tile = ""
             self.imgpath = self.rasterdir
+            self.filename = os.path.splitext(os.path.split(self.imgpath)[1])[0]
             self.date = ""
             self.orbit = 0
         elif self.cfg["platform"] == "ls8":
