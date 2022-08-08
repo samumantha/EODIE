@@ -242,6 +242,14 @@ class UserInput(object):
 
         self.array_out = args.array_out
         self.indexlist = args.indexlist
+
+        # Change indices to lower range in case they were written uppercase
+        for i in range(len(self.indexlist)):
+            if self.indexlist[i].startswith("B"):
+                continue
+            else:
+                self.indexlist[i] = self.indexlist[i].lower()
+        
         # Add count to statistics in case it's missing
         if not "count" in args.statistics:
             self.statistics = ["count"] + args.statistics
