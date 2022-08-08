@@ -110,10 +110,10 @@ https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files
 
 The workflow follows Sentinel-instructions (see Figures 1-4 above):
 
-1.	Upload input files to Galaxy.
+1. Upload input files to Galaxy.
 
-2.	Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type
-    and specify the name of the id column.
+2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and 
+specify the name of the id column.
 
 3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".  
 
