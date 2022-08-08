@@ -378,7 +378,7 @@ class Workflow(object):
             self.inputs.outpath,
             pathfinderobject.date,
             pathfinderobject.tile,
-            self.inputs.config["name"] + "_band_" + str(band),
+            pathfinderobject.filename + "_band_" + str(band),
             self.inputs.platform,
             pathfinderobject.orbit,
             self.inputs.statistics,
