@@ -229,7 +229,7 @@ class Validator(object):
         cwd = os.getcwd()
         if platform == "ls8":
             if not os.path.isdir(os.path.join(cwd, "landsat8_tiles_world")):
-                quit("No tiling grid for Landsat 8 was found. Please download the tiling grid from https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files and use helper script 'unzip_ls8_grid.py'.")
+                quit("No tiling grid for Landsat 8 was found. Please download the descending (daytime) tiling grid from https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files and use helper script 'unzip_ls8_grid.py'.")
         elif platform == "s2":
             if not os.path.isdir(os.path.join(cwd, "sentinel2_tiles_world")):
                 quit("No tiling grid for Sentinel-2 was found. Please download the tiling grid from https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products and use helper script 'tilegrid_to_shp.py'.")
