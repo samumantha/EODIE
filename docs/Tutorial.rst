@@ -191,7 +191,9 @@ Case 1: Growing season mean NDVI timeseries of agricultural fieldparcels of area
 1. Downloading Landsat 8 data from Earth Explorer results to .tar files, from which the imagery needs to be extracted. The goal is to create a directory with the name of the tar file and extract files into the directory.
 This can be achieved with some basic software, but in helper scripts there is also script ``extract_from_tar.py`` to do this task for all (Landsat 8) tars in a given directory. 
 
-2. After extracting the data, EODIE can be called. Call is basically same as with Sentinel-2 data, but arguments --platform and --rasterdir need to be changed.
+2. In addition to Landsat 8 imagery, the tiling grid is required. It can be downloaded `here [Descending (daytime)] <https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files>`_. After downloading, manually unzip and relocate the shapefile to EODIE's source directory or use auxiliary script unzip_ls8_grid.py.
+
+3. After extracting the data, EODIE can be called. Call is basically same as with Sentinel-2 data, but arguments --platform and --rasterdir need to be changed.
 ``python eodie_process.py --platform ls8 --rasterdir dir/with/extracted/Landsat8/folders/ --vector full/path/to/shapefile.shp --out ./results --id PlotID --database_out --index ndvi --statistics mean median std range``
 
 Case 2: As Case 1 but processing done on HPC environment with SLURM
