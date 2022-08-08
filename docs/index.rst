@@ -105,11 +105,18 @@ Changelog
 2.0.0
 ^^^^^^
 
-* Rewrote eodie_process.py 
+* Added dependency on dask
+* Rewrote eodie_process.py and moved majority of code to workflow.py
 * Defined separate workflows for supported platforms (s2, ls8, tif)
-* Implemented process parallelization with dask to replace array jobs in high-performance computing environments
-* Introduced geopandas GeoDataframes to replace tilesplitting
-* Added helper script unzip_ls8_grid.py
+* Implemented process parallelization with dask 
+* Raster validation, cloudmasking and index extraction are individually parallelized steps - in old EODIE these were executed in loops
+* Introduced geopandas GeoDataframe as base format for vector operations
+* Removed command line argument --input_type, --keep_splitted_shp and --exclude_splitbytile
+* Userinput --vector now requires full path to the vectorfile (extension included)
+* Moved content of user_config.yml to userinput and platform-related configuration files
+* Added userinput --maxcloudcover to allow user manipulate raster validation
+* Added userinput --resampling_method
+* Added helper script unzip_ls8_grid.py for unzipping and relocating Landsat 8 tiling grid
 
 1.1.0
 ^^^^^^
