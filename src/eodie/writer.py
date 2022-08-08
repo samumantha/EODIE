@@ -104,7 +104,7 @@ class Writer(object):
         logging.info("Statistics to database in: " + self.outdir)
 
         # Connecting to the database. If it does not exists already, it will be created.
-        connection = sqlite3.connect(self.outdir)
+        connection = sqlite3.connect(self.outdir, timeout = 60)
         # Activating cursor for editing database.
         cursor = connection.cursor()
         # Defining database table column names from statistics.
