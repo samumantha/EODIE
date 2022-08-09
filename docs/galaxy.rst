@@ -71,7 +71,7 @@ When all inputs are defined, click “Execute” at the bottom of the tool windo
 ..
 
 
-The progress of the job can be followed in the History-panel (Fig. 4). Grey color means that the job is in queue,
+4. The progress of the job can be followed in the History-panel (Fig. 4). Grey color means that the job is in queue,
 orange indicates that it is running, and green color means it has succeeded. Red color indicates that the job has
 failed. 
 
