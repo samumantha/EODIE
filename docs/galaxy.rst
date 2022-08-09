@@ -118,14 +118,14 @@ https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files
 
 The workflow follows Sentinel-instructions (see Figures 1-4 above):
 
-| 1. Upload input files to Galaxy.
+1. Upload input files to Galaxy.
 
-| 2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and specify the 
-| name of the id  column.
+2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and specify the
+name of the id  column.
 
-| 3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
+3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
 
-| 4. Follow the progress of the job in the History-panel. Different colors indicate the status of the job:
+4. Follow the progress of the job in the History-panel. Different colors indicate the status of the job:
 Grey = job is in queue, Red = job has failed, orange = job is running, green = job has succeeded.
 
 
