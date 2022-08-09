@@ -67,7 +67,7 @@ When all inputs are defined, click “Execute” at the bottom of the tool windo
   :width: 500
   :alt: Figure 3. Advanced options.
 
-   Figure 3. Advanced options.
+  Figure 3. Advanced options.
 ..
 
 
