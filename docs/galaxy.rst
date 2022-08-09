@@ -17,11 +17,11 @@ Sentinel-2 Tutorial
 In this tutorial we will run EODIE with one Sentinel-2 image and calculate the mean NDVI of the
 test polygons. The Sentinel-2 tiling grid can be downloaded here in .kml format: 
 https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products. 
-Note that the file must be converted to .shp format. 
+Note that the file must be converted to .shp format before running EODIE. 
 
 | Inputs:
 
-- Sentinel-2 data in tar or .zip format
+- Sentinel-2 data in .tar or .zip format
 - Sentinel 2 tiling in .shp format
 - Vector polygons in .shp format
 
@@ -122,7 +122,7 @@ The workflow follows Sentinel-instructions (see Figures 1-4 above):
 1. Upload input files to Galaxy.
 
 2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and specify the
-name of the id  column.
+name of the id column.
 
 3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
 
