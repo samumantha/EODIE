@@ -101,7 +101,7 @@ Landsat-8 Tutorial
 Eodie can be run with Landsat 8 images, as well. Tool settings for Landsat images are otherwise the same
 as for Sentinel images, except that “platform of the input data” is set to "Landsat 8". 
 
-| Inputs
+| Inputs:
 
 - Landsat image in .tar or .zip format
 - Shapefile with polygons
@@ -111,7 +111,7 @@ The Landsat tile shapefiles can be downloaded here:
 https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files 
 (“Landsat WRS 2 Descending Path Row Shapefile” is used in this example.)
 
-| Outputs
+| Outputs:
 
 - Index statistics per polygon in .csv format
 - Index statistics in GeoTiff format
@@ -120,8 +120,8 @@ The workflow follows Sentinel-instructions (see Figures 1-4 above):
 
 | 1. Upload input files to Galaxy.
 
-| 2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and 
-specify the name of the id column.
+| 2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and specify the 
+| name of the id  column.
 
 | 3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
 
