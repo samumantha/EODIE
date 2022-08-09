@@ -38,13 +38,12 @@ auxiliary files (.shx, .dbf and .prj in this example). Use option “Regular” 
 
 
 .. figure:: galaxy_fig1.png
-    :width: 500
-    :alt: Figure 1. Uploading data to Galaxy.
-    :align: center
-    :figclass: align-center
+   :width: 500
+   :alt: Figure 1. Uploading data to Galaxy.
+   :align: center
+   :figclass: align-center
  
-    Figure 1. *Uploading data to Galaxy*.   
-..
+   Figure 1. *Uploading data to Galaxy*.   
 
 
 2. Search for "EODIE" in the "Tools" search box and select the EODIE-tool. Specify platform, Sentinel-2 in this 
