@@ -39,7 +39,9 @@ auxiliary files (.shx, .dbf and .prj in this example). Use option “Regular” 
 
 .. figure:: galaxy_fig1.png
   :width: 500
-  :alt: Figure 1. Uploading data to Galaxy.    
+  :alt: Figure 1. Uploading data to Galaxy.
+
+  Figure 1. Uploading data to Galaxy.    
 ..
 
 
@@ -51,6 +53,8 @@ refers to the name of the shapefile column that contains polygon ids.
 .. figure:: Galaxy_fig2.jpg
   :width: 500
   :alt: Figure 2. Define inputs in the tool window.
+
+  Figure 2. Define inputs in the tool window.
 ..
     
 
@@ -62,6 +66,8 @@ When all inputs are defined, click “Execute” at the bottom of the tool windo
 .. figure:: galaxy_fig3.jpg
   :width: 500
   :alt: Figure 3. Advanced options.
+
+   Figure 3. Advanced options.
 ..
 
 
@@ -75,6 +81,8 @@ failed.
 .. |pic4a| image:: galaxy_fig4.jpg
   :width: 400
   :alt: Figure 4. Advanced options.
+
+   Figure 4. Advanced options.
 
 .. |pic4b| image:: galaxy_fig4b.png
   :width: 400
@@ -110,20 +118,23 @@ https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files
 
 The workflow follows Sentinel-instructions (see Figures 1-4 above):
 
-1. Upload input files to Galaxy.
+|1. Upload input files to Galaxy.
 
-2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and 
+|2. Select EODIE-tool and define inputs (Fig. 5). Remember to select "Landsat-8" as platform type and 
 specify the name of the id column.
 
-3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
+|3. Choose time frame, indices and statistics under "Advanced options" and click "Execute".
 
-4. Follow the progress of the job in the History-panel. Different colors indicate the status of the job:
+|4. Follow the progress of the job in the History-panel. Different colors indicate the status of the job:
 Grey = job is in queue, Red = job has failed, orange = job is running, green = job has succeeded.
 
 
 .. figure:: landsat_galaxy.png
   :width: 500
   :alt: Figure 5. Landsat example.
+  
+  Figure 5. Landsat example.
+
 ..
 
 
