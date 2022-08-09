@@ -38,11 +38,11 @@ auxiliary files (.shx, .dbf and .prj in this example). Use option “Regular” 
 
 
 .. figure:: galaxy_fig1.png
-  :width: 500
-  :alt: Figure 1. Uploading data to Galaxy.
-  :align: center
+    :width: 500
+    :alt: Figure 1. Uploading data to Galaxy.
+    :align: center
  
-  Figure 1. *Uploading data to Galaxy*.   
+    Figure 1. *Uploading data to Galaxy*.   
 ..
 
 
