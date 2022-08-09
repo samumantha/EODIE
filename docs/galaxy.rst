@@ -55,7 +55,7 @@ refers to the name of the shapefile column that contains polygon ids.
   :width: 500
   :alt: Figure 2. Define inputs in the tool window.
 
-  Figure 2. Define inputs in the tool window.
+  Figure 2. *Define inputs in the tool window*.
 ..
     
 
@@ -68,7 +68,7 @@ When all inputs are defined, click “Execute” at the bottom of the tool windo
   :width: 500
   :alt: Figure 3. Advanced options.
 
-  Figure 3. Advanced options.
+  Figure 3. *Advanced options*.
 ..
 
 
@@ -79,15 +79,15 @@ failed.
 
 |pic4a|  |pic4b|
 
-Figure 4. Advanced options. 
+Figure 4. *Follow the progress of the job in the History-panel*. 
 
 .. |pic4a| image:: galaxy_fig4.jpg
   :width: 400
-  :alt: Figure 4. Advanced options.
+  :alt: Figure 4. History-panel
 
 .. |pic4b| image:: galaxy_fig4b.png
   :width: 400
-  :alt: Figure 4. Advanced options. 
+  :alt: Figure 4. History-panel 
 ..
 
 
@@ -134,7 +134,7 @@ Grey = job is in queue, Red = job has failed, orange = job is running, green = j
   :width: 500
   :alt: Figure 5. Landsat example.
   
-  Figure 5. Landsat example.
+  Figure 5. *Landsat example*.
 
 ..
 
