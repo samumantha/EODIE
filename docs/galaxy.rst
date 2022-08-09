@@ -42,8 +42,7 @@ auxiliary files (.shx, .dbf and .prj in this example). Use option “Regular” 
   :alt: Figure 1. Uploading data to Galaxy.
 
   .. class:: center 
-  Figure 1. Uploading data to Galaxy. 
-  ..   
+  Figure 1. Uploading data to Galaxy.   
 ..
 
 
