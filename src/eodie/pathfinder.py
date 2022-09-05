@@ -46,8 +46,7 @@ class Pathfinder(object):
         if self.cfg["platform"] == "s2":
             self.get_imgpath()
             self.get_tileinfo()
-            self.get_dateinfo()
-            self.get_orbit()
+            self.get_dateinfo()            
         elif self.cfg["platform"] == "tif":
             self.tile = ""
             self.imgpath = self.rasterdir
