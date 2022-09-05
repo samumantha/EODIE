@@ -252,10 +252,12 @@ class UserInput(object):
                     self.indexlist[i] = self.indexlist[i].lower()
         
         # Add count to statistics in case it's missing
-        if not "count" in args.statistics:
-            self.statistics = ["count"] + args.statistics
-        else:
-            self.statistics = args.statistics
+        default_statistics = ["std", "median", "mean", "count"]
+        for stat in default_statistics:
+            if stat not in args.statistics:
+                args.statistics.insert(0, stat)
+
+        self.statistics = args.statistics      
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.database_out = args.database_out
