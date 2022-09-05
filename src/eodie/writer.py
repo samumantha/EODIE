@@ -103,8 +103,8 @@ class Writer(object):
         # Creating a logging entry
         logging.info("Statistics to database in: " + self.outdir)
 
-        # Connecting to the database. If it does not exists already, it will be created. Timeout value of 60 seconds prevents database getting locked if multiple processes try to write simultaneously. 
-        connection = sqlite3.connect(self.outdir, timeout = 60)
+        # Connecting to the database. If it does not exists already, it will be created. Timeout value of 300 seconds prevents database getting locked if multiple processes try to write simultaneously. 
+        connection = sqlite3.connect(self.outdir, timeout = 300)
         # Activating cursor for editing database.
         cursor = connection.cursor()
         # Defining database table column names from statistics.
