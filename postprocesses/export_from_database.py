@@ -7,6 +7,10 @@ from datetime import datetime
 
 """ 
 Script for exporting csv-files from .db file created as EODIE output. Script will filter the database based on user inputs and write a csv of the filtered features. 
+
+Author: Arttu Kivimäki (FGI), Summer 2022
+
+Usage: python export_from_database.py --help 
 """
 
 # Create argument parser
@@ -202,7 +206,8 @@ for index in args.index:
     else:
         if not args.filter:   
             print("Table {} exists, writing to csv...".format(index))     
-            df = pd.read_sql_query("""SELECT * FROM {}""".format(index), connection)
+            # Read all data from index table to a pandas dataframe ordered by ID and Date
+            df = pd.read_sql_query("""SELECT * FROM {} ORDER BY id, date""".format(index), connection)
             # Build outputpath with index name and user-defined output
             outputpath = os.path.join(args.output, "{}.csv".format(index))
             # Write dataframe to csv
