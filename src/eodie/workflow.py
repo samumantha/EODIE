@@ -122,6 +122,8 @@ class Workflow(object):
             Cloudmask array for safedir
         """
         if not self.inputs.nomask:
+            if self.inputs.platform == "s2":
+                pathfinderobject.get_imgpath()                
             # Initialize class Mask
             mask = Mask(pathfinderobject.imgpath, self.inputs.resampling_method, config)
             # Create cloudmask
