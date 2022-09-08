@@ -122,6 +122,8 @@ class Workflow(object):
             Cloudmask array for safedir
         """
         if not self.inputs.nomask:
+            if self.inputs.platform == "s2":
+                pathfinderobject.get_imgpath()                
             # Initialize class Mask
             mask = Mask(pathfinderobject.imgpath, self.inputs.resampling_method, config)
             # Create cloudmask
@@ -162,7 +164,11 @@ class Workflow(object):
             array = vegindex.mask_array(array, cloudmask)
         # Reproject input geodataframe to the same CRS with vegindex
         geodataframe_reprojected = geodataframe.to_crs(vegindex.crs)
-
+        
+        # Read orbit number if platform is Sentinel-2
+        if self.inputs.platform == "s2":
+            pathfinderobject.get_orbit()
+        
         # Initialize class Extractor
         extractorobject = Extractor(
             array,
@@ -378,7 +384,7 @@ class Workflow(object):
             self.inputs.outpath,
             pathfinderobject.date,
             pathfinderobject.tile,
-            self.inputs.config["name"] + "_band_" + str(band),
+            pathfinderobject.filename + "_band_" + str(band),
             self.inputs.platform,
             pathfinderobject.orbit,
             self.inputs.statistics,

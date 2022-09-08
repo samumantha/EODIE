@@ -242,11 +242,22 @@ class UserInput(object):
 
         self.array_out = args.array_out
         self.indexlist = args.indexlist
+
+        # Change indices to lower range in case they were written uppercase
+        if self.indexlist:
+            for i in range(len(self.indexlist)):
+                if self.indexlist[i].startswith("B"):
+                    continue
+                else:
+                    self.indexlist[i] = self.indexlist[i].lower()
+        
         # Add count to statistics in case it's missing
-        if not "count" in args.statistics:
-            self.statistics = ["count"] + args.statistics
-        else:
-            self.statistics = args.statistics
+        default_statistics = ["std", "median", "mean", "count"]
+        for stat in default_statistics:
+            if stat not in args.statistics:
+                args.statistics.insert(0, stat)
+
+        self.statistics = args.statistics      
         self.startdate = args.startdate
         self.enddate = args.enddate
         self.database_out = args.database_out

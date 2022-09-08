@@ -43,14 +43,14 @@ class Pathfinder(object):
         self.cfg = cfg
         self.rasterdir = rasterdir
 
-        if self.cfg["platform"] == "s2":
-            self.get_imgpath()
+        if self.cfg["platform"] == "s2": 
+            self.get_safedir()                      
             self.get_tileinfo()
-            self.get_dateinfo()
-            self.get_orbit()
-        elif self.cfg["platform"] == "tif":
+            self.get_dateinfo()            
+        if self.cfg["platform"] == "tif":
             self.tile = ""
             self.imgpath = self.rasterdir
+            self.filename = os.path.splitext(os.path.split(self.imgpath)[1])[0]
             self.date = ""
             self.orbit = 0
         elif self.cfg["platform"] == "ls8":
@@ -63,21 +63,23 @@ class Pathfinder(object):
         """Create the path to the raster data band files based on path given in bandlocation."""
         bandlocation = os.path.join(*self.cfg["bandlocation"])
         patternimg = os.path.join(self.rasterdir, bandlocation)
-        self.imgpath = glob.glob(patternimg)[0]
+        try:    
+            self.imgpath = glob.glob(patternimg)[0]
+        except:
+            print("The rasterdir structure is invalid!")
 
     def get_tileinfo(self):
         """Extract tilename from filename according to pattern from config."""
         tilepattern = r"%s" % self.cfg["tilepattern"]
-        self.tile = re.search(tilepattern, self.imgpath).group(0)
+        self.tile = re.search(tilepattern, self.safedir).group(0)
         if self.tile.endswith("_"):
             self.tile = self.tile[0:6]
 
     def get_dateinfo(self):
         """Extract date from filename according to pattern from config."""
         datepattern = r"%s" % self.cfg["datepattern"]
-        if self.cfg["platform"] == "s2":
-            splitted_imgpath = self.imgpath.split(os.sep)[-5]
-            self.date = re.search(datepattern, splitted_imgpath).group(0)
+        if self.cfg["platform"] == "s2":           
+            self.date = re.search(datepattern, self.safedir).group(0)
         if self.cfg["platform"] == "ls8":
             self.date = re.search(datepattern, self.imgpath).group(0)
 
@@ -89,3 +91,7 @@ class Pathfinder(object):
             doc.getElementsByTagName("SENSING_ORBIT_NUMBER")[0].firstChild.data
         )
         self.orbit = orbit_number
+        
+    def get_safedir(self):
+        """Extract Sentinel-2 .SAFE structure from full path"""
+        self.safedir = self.rasterdir.split(os.sep)[-1]

@@ -35,6 +35,8 @@ class Validator(object):
             self.index_check(args.config, args.indexlist)
         self.csv_check(args.vectorbase, args.epsg_for_csv)
         self.gpkg_check(args.vectorbase, args.gpkg_layer)
+        self.check_tiling_grid(args.platform)
+        self.check_indexlist(args.platform, args.indexlist)
         self.list_inputs(args)
 
     def input_amount_check(self, dir, file):
@@ -215,3 +217,33 @@ class Validator(object):
         for key in vars(userinput).keys():
             logging.info(" {}: {}".format(key, str(vars(userinput)[key])))
         logging.info("\n")
+
+    def check_tiling_grid(self, platform):
+        """Check if tiling grid for given platform exists.
+
+        Parameters:
+        -----------
+        platform: str
+            platform given by user
+        """
+        cwd = os.getcwd()
+        if platform == "ls8":
+            if not os.path.isdir(os.path.join(cwd, "landsat8_tiles_world")):
+                quit("No tiling grid for Landsat 8 was found. Please download the descending (daytime) tiling grid from https://www.usgs.gov/landsat-missions/landsat-shapefiles-and-kml-files and use helper script 'unzip_ls8_grid.py'.")
+        elif platform == "s2":
+            if not os.path.isdir(os.path.join(cwd, "sentinel2_tiles_world")):
+                quit("No tiling grid for Sentinel-2 was found. Please download the tiling grid from https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products and use helper script 'tilegrid_to_shp.py'.")
+
+    def check_indexlist(self, platform, indexlist):
+        """Check that list of indices was given if platform is not tif.
+
+        Parameters:
+        -----------
+        platform: str
+            platform given by user
+        indexlist: list
+            List of indices to calculate
+        """
+        if platform != "tif":
+            if indexlist is None:
+                quit("Please provide at least one index or band with platform {}.".format(platform))

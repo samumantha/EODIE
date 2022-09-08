@@ -100,6 +100,10 @@ Note that some parameters have options, some have defaults and some are optional
 | **type:** integer YYYYMMDD
 | **default:** todays date
 
+| ``--delete_invalid_geometries``
+| Flag to indicate that invalid geometries should be excluded from further processing. Does not necessarily work on all 
+| **type**: flag
+
 | ``--exclude_border``
 | Flag to indicate that border pixels (within the polygon) should be excluded from statistics calculations / array extraction
 | **type:** flag
