@@ -14,6 +14,8 @@ How to export results from the database?
 A postprocessing script ``export_from_database.py`` is provided in ``postprocesses`` for filtering and exporting the data into csv-files. Please use ``python export_from_database.py --help`` for detailed instructions. 
 The data is in a generic .db file, which can also be opened in other softwares or tools based on user expertise. 
 
+For instance, if you wish to export the data in R software, please see `an example on using RQSlite library <https://gist.github.com/jwolfson/72bc7d7fd8d339955b38>`_.
+
 Potential issues with databases
 ===============================
 
