@@ -12,7 +12,7 @@ be run simultaneously in Galaxy. However, it is recommended to use EODIE via the
 processing a large number of images. 
 
 Sentinel-2 Tutorial
-====================
+-------------------
     
 In this tutorial we will run EODIE with one Sentinel-2 image and calculate the mean NDVI of the
 test polygons. The Sentinel-2 tiling grid can be downloaded here in .kml format: 
@@ -97,7 +97,7 @@ Mean is the average NDVI of polygon features and count is the number of valid pi
 
 
 Landsat-8 Tutorial
-====================
+------------------
     
 Eodie can be run with Landsat 8 images, as well. Tool settings for Landsat images are otherwise the same
 as for Sentinel images, except that “platform of the input data” is set to "Landsat 8". 
