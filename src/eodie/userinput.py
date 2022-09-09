@@ -79,7 +79,7 @@ class UserInput(object):
         parser.add_argument(
             "--statistics",
             dest="statistics",
-            default=["count"],
+            default = ["count", "mean", "median", "std"],
             help="statistics to be extracted",
             nargs="*",
         )
