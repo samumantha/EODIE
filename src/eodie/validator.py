@@ -194,7 +194,7 @@ class Validator(object):
     def vector_exists(self, vectorfile):
         """Check that given vectorfile exists.
 
-        Parameters:
+        Parameters
         -----------
         vectorfile:
             path to user-given vectorfile
@@ -208,7 +208,7 @@ class Validator(object):
     def list_inputs(self, userinput):
         """List all inputs into log file.
 
-        Parameters:
+        Parameters
         -----------
         userinput: class UserInput()
             Userinputs
@@ -221,7 +221,7 @@ class Validator(object):
     def check_tiling_grid(self, platform):
         """Check if tiling grid for given platform exists.
 
-        Parameters:
+        Parameters
         -----------
         platform: str
             platform given by user
@@ -237,7 +237,7 @@ class Validator(object):
     def check_indexlist(self, platform, indexlist):
         """Check that list of indices was given if platform is not tif.
 
-        Parameters:
+        Parameters
         -----------
         platform: str
             platform given by user

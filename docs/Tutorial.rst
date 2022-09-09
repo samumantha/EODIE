@@ -7,11 +7,11 @@ On this page are examples of running EODIE in different environments (your own c
 Tutorials for Landsat 8 can be found below Sentinel-2 tutorials.
 
 Sentinel-2 tutorials
-=====================
+--------------------
 
 
 Case 1: growing season mean NDVI timeseries of agricultural fieldparcels of area x (larger than one Sentinel-2 tile)
----------------------------------------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on computer:
 
@@ -33,7 +33,7 @@ This results into a single SQLite database file (.db) containing results in a ta
 2. (optional) Use export_from_database.py script in postprocesses to extract values from database into a single .csv file.
 
 Case 2: As Case 1 but field parcel array timeseries are the desired output
----------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on computer:
 
@@ -54,7 +54,7 @@ Case 2: As Case 1 but field parcel array timeseries are the desired output
 2. (optional) Use arrayplot.py in postprocesses to show/save timeseries plots from wished ids.
 
 Case 3: As Case 1 but processing done on HPC environment with SLURM
-------------------------------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on supercomputer:
 
@@ -97,7 +97,7 @@ Case 3: As Case 1 but processing done on HPC environment with SLURM
 3. call ``sbatch name_of_above_script.sh``
 
 Case 4: As Case 3 but with data on objectstorage
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on objectstorage:
 
@@ -172,10 +172,12 @@ Case 4: As Case 3 but with data on objectstorage
 3. Call ``bash download_and_eodie.sh startdate enddate tile1 tile2 tile3`` with dates in YYYYMMDD format and tilenames in XX000 format. In this case the tilenames need to be identified beforehand. This will launch the script in step 1 that will proceed to launch EODIE for each tile and year requested. 
 
 Landsat 8 Tutorials
-===================
+-------------------
+
+Please note: EODIE currently works only with Landsat 8 Collection 2 data.
 
 Case 1: Growing season mean NDVI timeseries of agricultural fieldparcels of area x (larger than one Landsat 8 tile)
----------------------------------------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on computer:
 
@@ -197,7 +199,7 @@ This can be achieved with some basic software, but in helper scripts there is al
 ``python eodie_process.py --platform ls8 --rasterdir dir/with/extracted/Landsat8/folders/ --vector full/path/to/shapefile.shp --out ./results --id PlotID --database_out --index ndvi --statistics mean median std range``
 
 Case 2: As Case 1 but processing done on HPC environment with SLURM
-------------------------------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Available on supercomputer:
 

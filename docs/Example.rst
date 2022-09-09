@@ -1,13 +1,16 @@
 .. _Example:
 
+Examples
+========
+
 Small example 
-==============
+-------------
 
 To test if the script runs as intended in your machine and to get familiar with the basic usage, please follow the instructions below:
 (Commands provided for UNIX based OS)
 
 0. If you have not done so yet, follow the installation instructions to install EODIE and activate the eodie environment.
-1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/EODIE_Galaxy_testfiles.zip`` and unzip ``unzip EODIE_Galaxy_testfiles.zip`` to a place of your choice.
+1. Download the testfiles ``wget <https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/EODIE_Galaxy_testfiles.zip>`` and unzip ``unzip EODIE_Galaxy_testfiles.zip`` to a place of your choice.
 2. Run the following command (with your adjusted paths to where you stored the unzipped testfiles) from within your EODIE/src directory :
 
 ``python eodie_process.py --platform tif --rasterfile /path/to/your/EODIE_Galaxy_testfiles/smaller_area_20100401.tif --vector /path/to/your/EODIE_Galaxy_testfiles/test_polygons.shp --id id --statistics_out --statistics mean std median ``
@@ -21,11 +24,11 @@ with:
 * ``--statistics_out`` to get statistics as output
 * ``--statistics mean std median`` which statistics to process for each polygon in ``--vector``
 
-6. This should create file ``testrgb_20100401__statistics.csv`` in ./results directory.
-7. If not, please check your installation and that the testfiles were downloaded correctly.
+3. This should create file ``testrgb_20100401__statistics.csv`` in ./results directory.
+4. If not, please check your installation and that the testfiles were downloaded correctly.
 
 Larger example using Sentinel-2 data
-======================================
+------------------------------------
 
 0. If you have not done so yet, follow the installation instructions to install EODIE and activate the eodie environment.
 1. Download the testfiles ``wget https://a3s.fi/swift/v1/AUTH_4df394386a5c4f8581f8a0cc34ba5b9a/2001106_eodie_testfiles/testfiles.zip`` and unzip ``unzip testfiles.zip`` to a place of your choice, this may take a moment.
@@ -51,12 +54,12 @@ with:
 
 
 Examples on using different vector input formats
-================================================
+------------------------------------------------
 
 EODIE can directly read vector file formats supported by `fiona <https://fiona.readthedocs.io/en/latest/manual.html>`_. With GeoPackage and Comma-Separated Value files there are some extra steps. 
 
 GeoPackage
-----------
+^^^^^^^^^^
 
 GeoPackages can contain one or several vector layers, which complicates things a bit.
 
@@ -73,7 +76,7 @@ The call would then be
 If you do not know, how many layers your GeoPackage contains and what the layer names are, you can examine the GeoPackage with auxiliary script ``examine_geopackage.py`` (see also :ref:`auxfiles`).
 
 CSV 
----
+^^^
 
 To be used with EODIE, CSV file needs to contain the spatial information in one column as well-known text (WKT). Currently columns with x & y point coordinates are not supported.
 Additionally, EODIE has to know in which EPSG-code the spatial information is provided. This EPSG-code will be defined with another input parameter --epsg_for_csv. If --epsg_for_csv is not defined, EODIE will throw an error. 

@@ -177,6 +177,7 @@ class RasterData(object):
 
         if self.cfg["platform"] == "ls8":
             reflectance = np.multiply(array, self.cfg["quantification_value"]) - 0.2
+            reflectance = self.clip_to_valid_range(reflectance)
 
         return reflectance
 
@@ -254,12 +255,12 @@ class RasterData(object):
     def clip_to_valid_range(self, array):
         """Clips the values to valid range ([0,1] in case of Sentinel-2), other values are NoData.
 
-        Parameters:
+        Parameters
         -----------
         array: array
             array to be clipped
 
-        Returns:
+        Returns
         --------
         array: array
             result of clipping

@@ -47,7 +47,7 @@ class RasterValidatorS2(object):
     def check_integrity(self):
         """Check the integrity of the SAFE directory. Images for all bands and metadata XML file should be found.
 
-        Returns:
+        Returns
         --------
         Integrity: boolean
             integrity of the file, true if all necessary files can be found
@@ -141,12 +141,12 @@ class RasterValidatorS2(object):
     def check_datacover(self, convex_hull):
         """Check hat there is data within the convexhull of the given shapefile.
 
-        Parameters:
+        Parameters
         -----------
         geometryobject: VectorData
             Polygons of areas of interest
 
-        Returns:
+        Returns
         --------
         boolean
             whether there is raster data on the area(s) of interest

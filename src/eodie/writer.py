@@ -145,7 +145,11 @@ class Writer(object):
 
     def write_statistics(self, extractedarray):
         """Write statistics results from json into csv."""
-        self.outpath = self.outpath + "_statistics.csv"
+        # Check if path exists; if yes, add 'duplicate' to the end of filename. If not, continue with default.
+        if os.path.exists(self.outpath + "_statistics.csv"):
+            self.outpath = self.outpath + "_statistics_duplicate.csv"
+        else:
+            self.outpath = self.outpath + "_statistics.csv"        
         logging.info("stat to csv in: " + self.outpath)
         with open(self.outpath, mode="w") as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=",")
