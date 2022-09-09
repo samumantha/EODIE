@@ -255,12 +255,12 @@ class RasterData(object):
     def clip_to_valid_range(self, array):
         """Clips the values to valid range ([0,1] in case of Sentinel-2), other values are NoData.
 
-        Parameters:
+        Parameters
         -----------
         array: array
             array to be clipped
 
-        Returns:
+        Returns
         --------
         array: array
             result of clipping
