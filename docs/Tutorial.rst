@@ -174,6 +174,8 @@ Case 4: As Case 3 but with data on objectstorage
 Landsat 8 Tutorials
 ===================
 
+Please note: EODIE currently works only with Landsat 8 Collection 2 data.
+
 Case 1: Growing season mean NDVI timeseries of agricultural fieldparcels of area x (larger than one Landsat 8 tile)
 ---------------------------------------------------------------------------------------------------------------------
 
