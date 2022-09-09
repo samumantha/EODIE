@@ -71,7 +71,10 @@ class Pathfinder(object):
     def get_tileinfo(self):
         """Extract tilename from filename according to pattern from config."""
         tilepattern = r"%s" % self.cfg["tilepattern"]
-        self.tile = re.search(tilepattern, self.safedir).group(0)
+        if self.cfg["platform"] == "s2":
+            self.tile = re.search(tilepattern, self.safedir).group(0)
+        elif self.cfg["platform"] == "ls8":
+            self.tile = re.search(tilepattern, self.imgpath).group(0)
         if self.tile.endswith("_"):
             self.tile = self.tile[0:6]
 
