@@ -414,7 +414,7 @@ class Workflow(object):
         tiles = geoobject.clip_vector(
             userinput.input, ls8tiles, userinput.idname, userinput.platform
         )
-
+        
         ####################
         ### CLOUDMASKING ###
         ####################
@@ -432,7 +432,7 @@ class Workflow(object):
 
         # Run delayed computation with dask
         cloudmask_results = self.execute_delayed(cloudmasks)
-
+        
         #########################
         ### INDEX CALCULATION ###
         #########################
@@ -444,6 +444,7 @@ class Workflow(object):
         geodataframe = geoobject.reproject_geodataframe(
             geoobject.geometries, ls8tiles.crs
         )
+
         for pathfinderobject, cloudmask in cloudmask_results[0]:
             vegindex = Index(pathfinderobject.imgpath, userinput.resampling_method, userinput.config)
             filtered_geodataframe = geoobject.filter_geodataframe(
@@ -453,14 +454,18 @@ class Workflow(object):
                 userinput.idname,
                 userinput.platform,
             )
-            for index in userinput.indexlist:
-                # Add delayed function calls to the list of index calculations
-                index_calculations.append(
-                    delayed(self.extract_index)(
-                        vegindex, cloudmask, index, filtered_geodataframe, pathfinderobject
-                    )
-                )
 
+            if not filtered_geodataframe.empty:
+                for index in userinput.indexlist:
+                    # Add delayed function calls to the list of index calculations
+                    index_calculations.append(
+                        delayed(self.extract_index)(
+                            vegindex, cloudmask, index, filtered_geodataframe, pathfinderobject
+                        )
+                    )
+            if len(index_calculations) == 0:
+                logging.error("There is no raster data from the area(s) of interest! Exiting...")
+                exit()
         logging.info(" Calculating indices and extracting results...")
         # Process index calculations with dask
         self.execute_delayed(index_calculations)
