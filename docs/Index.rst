@@ -150,10 +150,9 @@ Changelog
    Example
    Use
    Tutorial
+   Galaxy
    Inner_workings
    More
-   modules
-   
-
-
-
+   Database
+   Index_table
+   Modules
