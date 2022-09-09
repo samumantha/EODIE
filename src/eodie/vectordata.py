@@ -43,7 +43,7 @@ class VectorData(object):
         self.geometries = self.read_geodataframe(geometries)
         if epsg_for_csv is not None:
             self.geometries.crs = "EPSG:" + epsg_for_csv
-        self.geometries = self.check_validity(drop)
+        self.geometries = self.check_validity(self.geometries, drop)
 
     def read_geodataframe(self, geometries):
         """Read input vectorfile into a geopandas GeoDataframe.
@@ -144,7 +144,7 @@ class VectorData(object):
         else:
             logging.info(" All features have geometries!\n")
 
-    def check_validity(self, drop):
+    def check_validity(self, gdf, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
 
         Parameters:
@@ -157,7 +157,7 @@ class VectorData(object):
         valid_geom: GeoDataframe
             geodataframe with only valid geometries - if all geometries are valid, returns original geodataframe
         """
-        geodataframe = self.geometries
+        geodataframe = gdf
         # Check empty geometries
         self.check_empty(geodataframe)
 
@@ -188,9 +188,11 @@ class VectorData(object):
         if drop:
             # Filter only valid geometries
             valid_geom = with_geom.loc[with_geom["validity"] == True].copy()
-            self.geometries = valid_geom
+            returngdf = valid_geom
+        else:
+            returngdf = self.geometries
 
-        return self.geometries
+        return returngdf
 
     def clip_vector(self, rasters, tileframe, idname, platform):
         """Clip vector based on data in input directory.
@@ -235,6 +237,8 @@ class VectorData(object):
             tileframe = tileframe[(tileframe["PR"].isin(prs))]
         # Reproject vector geodataframe to EPSG:4326
         gdf = self.reproject_geodataframe(self.geometries, "EPSG:4326")
+        logging.info(" Checking validity of reprojected features...")
+        gdf = self.check_validity(gdf, True)
         # Clip
         self.geometries = gpd.clip(gdf, tileframe)
         # Compare geometries
@@ -283,8 +287,7 @@ class VectorData(object):
         """
         logging.info(" Reprojecting geodataframe...")
         reprojected = geodataframe.to_crs(crs)
-        logging.info(" Reprojection completed.\n")
-
+        logging.info(" Reprojection completed.\n")        
         return reprojected
 
     def filter_geodataframe(self, vectorframe, tileframe, tile, idname, platform):
@@ -320,7 +323,7 @@ class VectorData(object):
         # Compare geometries
         overlay_result = self.compare_geometries(
             overlay_result, self.geometries, idname
-        )
+        )        
 
         return overlay_result
 
