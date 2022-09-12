@@ -37,7 +37,7 @@ Note that some parameters have options, some have defaults and some are optional
 | ``--vector``
 | Absolute path to the vector file to be used for processing.
 | **type:** String
-|| The given vector defines the area of interest. Internally, EODIE reads the vector file into a geopandas GeoDataFrame.
+| The given vector defines the area of interest. Internally, EODIE reads the vector file into a geopandas GeoDataFrame.
 
 | ``--out``
 | Absolute path to the directory where the results shall be stored. Will be created if it does not exist.
