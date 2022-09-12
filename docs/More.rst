@@ -53,6 +53,8 @@ The following parameters need to be included in a config_x.yml file to be used i
     B11: 
     B12: 
 
+.. _landsat_cloudmasking:
+
 Landsat - Cloudmasking
 -----------------------
 
@@ -77,6 +79,8 @@ the pixel value has bit on the chosen index set as 1 and False if not. Testing t
 to mask, and setting the pixel's "mask value" as 1 if any of them is True and 0 if all of them are False.
 In createbitmask we have vectorized checkbits so it maps through numpy arrays, thus creating a mask array
 with same 2D shape as the array received from the Quality Assessment .TIF.
+
+.. _database:
 
 Database instructions
 ---------------------
