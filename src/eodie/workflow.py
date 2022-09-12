@@ -41,8 +41,8 @@ class Workflow(object):
     def __init__(self, userinput):
         """Initialize Workflow object.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         userinput: Userinput object
             All processing inputs given by user.
         """
@@ -53,13 +53,13 @@ class Workflow(object):
     def execute_delayed(self, input_list):
         """Execute given processes with dask.delayed.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         input_list: list
             list of delayed functions to be executed
 
-        Returns:
-        --------
+        Returns
+        -------
         results: tuple
             outputs of executed functions
         """
@@ -74,8 +74,8 @@ class Workflow(object):
     def validate_safedir(self, safedir, cloudcover, convex_hull):
         """Validate .SAFE directories with RasterValidatorS2.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         safedir: str
             path to SAFE directory to validate
         cloudcover: int
@@ -83,8 +83,8 @@ class Workflow(object):
         convex_hull: GeoDataframe
             combined convex hull of all vectorfile features
 
-        Returns:
-        --------
+        Returns
+        -------
         safedir: str
             if safedir is valid for further processing; else None
         """
@@ -107,15 +107,15 @@ class Workflow(object):
     def cloudmask_creation(self, pathfinderobject, config):
         """Create cloudmask from S2 SCL.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         pathfinderobject: Pathfinder()
             class Pathfinder
         config: dict
             configuration parameters
 
-        Returns:
-        --------
+        Returns
+        -------
         pathfinderobject: class Pathfinder()
             class Pathfinder initialized with safedir
         cloudmask: array
@@ -137,8 +137,8 @@ class Workflow(object):
     def extract_index(self, vegindex, cloudmask, index, geodataframe, pathfinderobject):
         """Calculate given index, extract zonal statistics and write results.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         vegindex: class Index()
             Class for calculating the indices or extracting arrays
         cloudmask: array
@@ -150,8 +150,8 @@ class Workflow(object):
         pathfinderobject: class Pathfinder
             object containing information of S2 directory
 
-        Returns:
-        --------
+        Returns
+        -------
         None, but writes the results to given output directory in given output formats.
         """
         # Calculate index or extract band values for the whole tile
@@ -349,7 +349,7 @@ class Workflow(object):
     def extract_from_tif(self, path, gdf, raster, band, pathfinderobject):
         """Extract zonal statistics from a GeoTIFF and write results accordingly.
 
-        Parameters:
+        Parameters
         ----------
         path: str
             path to GeoTIFF
@@ -364,8 +364,8 @@ class Workflow(object):
         pathfinderobject: Pathfinder
             object containing tif paths
 
-        Returns:
-        --------
+        Returns
+        -------
         None but writes the results in given output formats.
         """
         # Initialize Extractor
