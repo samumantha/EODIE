@@ -152,7 +152,6 @@ Changelog
    Tutorial
    Galaxy
    Inner_workings
-   More
-   Database
+   More   
    Index_table
    Modules
