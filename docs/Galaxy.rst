@@ -1,4 +1,4 @@
-.. _galaxy:
+.. _Galaxy:
 
 EODIE Galaxy -tool tutorials  
 =============================
