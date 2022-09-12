@@ -48,12 +48,12 @@ class VectorData(object):
     def read_geodataframe(self, geometries):
         """Read input vectorfile into a geopandas GeoDataframe.
 
-        Parameters:
+        Parameters
         -----------
         geometries: str
             path to input vectorfile
 
-        Returns:
+        Returns
         --------
         geodataframe: GeoDataframe
             input vector read into a geodataframe
@@ -79,12 +79,12 @@ class VectorData(object):
     def get_convex_hull(self, geodataframe):
         """Extract convex hull of all features of geodataframe that are located in the area of input data.
 
-        Parameters:
+        Parameters
         -----------
         geodataframe: GeoDataframe
             geodataframe for the features to extract convex hull from
 
-        Returns:
+        Returns
         --------
         convexhull: GeoDataframe
             GeoDataframe consisting of one feature, the convex hull
@@ -125,10 +125,11 @@ class VectorData(object):
     def check_empty(self, vectorfile):
         """Check for empty geometries in vectorfile.
 
-        Parameters:
+        Parameters
         -----------
             vectorfile: geodataframe the user-defined vectorfile
-        Returns:
+
+        Returns
         --------
             None; prints the rows with non-existent geometries.
         """
@@ -147,12 +148,12 @@ class VectorData(object):
     def check_validity(self, gdf, drop):
         """Check the validity of each polygon in the vectorfile. Invalid geometries will be excluded from the calculations; saves a new shapefile without the invalid polygons, if any exist.
 
-        Parameters:
+        Parameters
         -----------
         drop: boolean
             flag to indicate if invalid geometries should be dropped.
 
-        Returns:
+        Returns
         --------
         valid_geom: GeoDataframe
             geodataframe with only valid geometries - if all geometries are valid, returns original geodataframe
@@ -197,15 +198,15 @@ class VectorData(object):
     def clip_vector(self, rasters, tileframe, idname, platform):
         """Clip vector based on data in input directory.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         rasters: list
             list of input files
         tileframe: GeoDataframe
             a geodataframe containing tile grid (for either Landsat8 or Sentinel-2)
 
-        Returns:
-        --------
+        Returns
+        -------
         tiles: list
             Sentinel-2 or Landsat8 tiles that were found in input raster directory
 
@@ -251,8 +252,8 @@ class VectorData(object):
     def read_tiles(self, platform):
         """Read Sentinel-2 tiles into a Geodataframe.
 
-        Returns:
-        --------
+        Returns
+        -------
         tileframe: GeoDataframe
             geodataframe containing the Sentinel-2 tiles
         """
@@ -273,14 +274,14 @@ class VectorData(object):
     def reproject_geodataframe(self, geodataframe, crs):
         """Reproject GeoDataframe to another crs.
 
-        Parameters:
+        Parameters
         ----------
         geodataframe: GeoDataframe
             geodataframe to reproject
         crs: crs
             crs to reproject the geodataframe into
 
-        Returns:
+        Returns
         -------
         reprojected: GeoDataframe
             the original geodataframe reprojected to crs
@@ -293,7 +294,7 @@ class VectorData(object):
     def filter_geodataframe(self, vectorframe, tileframe, tile, idname, platform):
         """Filter features of geodataframe that can be found in the area of one Sentinel-2 tile.
 
-        Parameters:
+        Parameters
         ----------
         vectorframe: GeoDataframe
             geodataframe containing the polygon features
@@ -304,8 +305,8 @@ class VectorData(object):
         idname: str
             identifier of features in vectorframe
 
-        Returns:
-        --------
+        Returns
+        -------
         overlay_result: GeoDataframe
             geodataframe containing the features that are completely in area of given tile - features crossing the tile edges are excluded
         """
@@ -330,7 +331,7 @@ class VectorData(object):
     def gdf_from_bbox(self, bbox, crs, idname):
         """Build a Polygon from Raster boundingbox. Used with TIFs.
 
-        Parameters:
+        Parameters
         -----------
         bbox: BoundingBox
             the bounding box of raster
@@ -367,8 +368,8 @@ class VectorData(object):
     ):
         """Compare geometries between geodataframes and exclude ones not matching (ie. that have been changed during clipping or intersection).
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         manipulated_geodataframe: GeoDataframe
             geodataframe that has been clipped/overlaid from the original geodataframe
         original_geodataframe: GeoDataframe
@@ -376,8 +377,8 @@ class VectorData(object):
         idname: string
             Name of idenfifier field in geodataframes
 
-        Returns:
-        --------
+        Returns
+        -------
         manipulated_geodataframe: GeoDataframe
             manipulated_geodataframe from which the altered geometries have been removed
         """
