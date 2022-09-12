@@ -1,8 +1,7 @@
-"""
-Class to run the actual processing based on given data platform. Based on old eodie_process.py by Samantha Wittke et al. 
+r"""
+Class to run the actual processing based on given data platform. Based on old eodie_process.py by Samantha Wittke et al.
 
-Author: Arttu Kivimäki (FGI) - July 2022. 
-
+Author: Arttu Kivimäki (FGI) - July 2022.
 """
 
 import glob
