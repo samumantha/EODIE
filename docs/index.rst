@@ -78,7 +78,7 @@ Projects, enabled by EODIE or where EODIE or a derivative of EODIE has been used
 * Two projects related to crop and crop yield monitoring funded by Eurostat (CROPYIELD (https://www.luke.fi/projektit/cropyield/) and BIGDATA&EO (https://www.luke.fi/projektit/bigdataeo/),
 * A Business Finland co-creation project, working with Finnish companies in EO-business to find business opportunities (EODIE: 5332/31/2018),
 * Three projects  related to forest phenology and crop monitoring funded by the Academy of Finland (AICropPro (publication https://doi.org/10.1371/journal.pone.0251952), decision numbers 315896 and 316172  (https://www.luke.fi/projektit/ai-croppro/) , BigData, grant-number: 295047, E. Puttonen fellowship, grant-number: 316096),
-* Multiple larger national agriculture related projects (such as DIGITALIS (https://www.luke.fi/projektit/digitalis-01/), Peltopiste (https://www.luke.fi/projektit/peltopiste/), Ikivihreä (https://www.luke.fi/projektit/ikivihrea-2/).
+* Multiple larger national agriculture related projects (such as DIGITALIS (https://www.luke.fi/projektit/digitalis-01/), Peltopiste (https://www.luke.fi/projektit/peltopiste/), Ikivihreä (https://www.luke.fi/fi/projektit/ikivihrea).
 
 
 Contribution guide 
