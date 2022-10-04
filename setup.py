@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://eodie.readthedocs.io/en/latest/",
-    packages=setuptools.find_packages(where="src"),
+    packages=setuptools.find_packages(where="src/eodie"),
     package_data={"config":["*.yml"]}
     install_requires=[
         "numpy",
