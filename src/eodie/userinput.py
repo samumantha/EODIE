@@ -197,14 +197,13 @@ class UserInput(object):
         args = parser.parse_args()
 
         self.platform = args.platform
-        configfile = "../config_" + self.platform + ".yml"
+        configfile = "config/config_" + self.platform + ".yml"
 
         # loading config files and merging into one dict
         with open(configfile, "r") as ymlfile:
             platform_cfg = yaml.safe_load(ymlfile)
 
-        # starting python 3.9: platform_cfg | user_cfg also works
-        self.config = {**platform_cfg}
+        self.config = platform_cfg
 
         self.rasterdir = args.rasterdir
         self.rasterfile = args.rasterfile

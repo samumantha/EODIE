@@ -5,14 +5,15 @@ with open("../README.md", "r") as fh:
 
 setuptools.setup(
     name="EODIE",
-    version="1.0.2",
+    version="2.0.0",
     author="Samantha Wittke",
     author_email="samantha.wittke@nls.fi",
     description="Earth Observation Data Information Extractor",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://eodie.readthedocs.io/en/latest/",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(where="src"),
+    package_data={"config":["*.yml"]}
     install_requires=[
         "numpy",
         "shapely",
@@ -23,6 +24,8 @@ setuptools.setup(
         "pyyaml",
         "pytest",
         "matplotlib",
+        "geopandas",
+        "dask"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
