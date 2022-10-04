@@ -36,7 +36,7 @@ class RasterData(object):
         affine transformation of the raster product
     """
 
-    def __init__(self, inpath:str, resampling_method, cfg:dict, test=False):
+    def __init__(self, inpath:str, resampling_method, cfg:dict={}, test=False):
         """Initialize the raster object.
 
         Parameters

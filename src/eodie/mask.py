@@ -22,7 +22,7 @@ class Mask(RasterData):
     """
 
     def __init__(
-        self, inpath: str, resampling_method: str, cfg: dict, test=False, external=None
+        self, inpath: str, resampling_method: str, cfg: dict={}, test=False, external=None
     ):
         """Initialize the mask object.
 
