@@ -36,7 +36,7 @@ class Index(RasterData):
         "ndwi",
     ]
 
-    def __init__(self, inpath=".", resampling_method=None, cfg="test_config.yml", test=False):
+    def __init__(self, inpath:str=".", resampling_method=None, cfg:dict, test=False):
         """Initialize the index object.
 
         Parameters
