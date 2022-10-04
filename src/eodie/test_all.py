@@ -26,7 +26,7 @@ import fiona
 
 class TestAll(object):
     def test_cloud(self):
-        with open("test_config.yml", "r") as ymlfile:
+        with open("src/config/test_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
@@ -51,7 +51,7 @@ class TestAll(object):
         del cloudmask
 
     def test_index(self):
-        with open("test_config.yml", "r") as ymlfile:
+        with open("src/config/test_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
@@ -83,7 +83,7 @@ class TestAll(object):
         del indexobject
 
     def test_band(self):
-        with open("test_config.yml", "r") as ymlfile:
+        with open("src/config/test_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
         # for os independence in these mixed paths
@@ -124,7 +124,7 @@ class TestAll(object):
         del geometryobject
 
     def test_extractor(self):
-        with open("test_config.yml", "r") as ymlfile:
+        with open("src/config/test_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         geometries = "testfiles/shp/test_parcels_32635.shp"
         inpath = "testfiles/S2/S2B_MSIL2A_20200626T095029_N0214_R079_T34VFN_20200626T123234.SAFE/GRANULE/L2A_T34VFN_A017265_20200626T095032/IMG_DATA"
@@ -158,7 +158,7 @@ class TestAll(object):
         del maskedarray
 
     def test_writer(self):
-        with open("test_config.yml", "r") as ymlfile:
+        with open("src/config/test_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
         tmpdir = "testfiles/temp"
         # for os independence in these mixed paths
