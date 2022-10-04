@@ -14,6 +14,11 @@ setuptools.setup(
     url="https://eodie.readthedocs.io/en/latest/",
     packages=setuptools.find_packages(where="src/eodie"),
     package_data={"config":["*.yml"]}
+    entry_points={
+        'console_scripts': [
+            'eodie_process = src:eodie_process',
+        ]
+    }
     install_requires=[
         "numpy",
         "shapely",
