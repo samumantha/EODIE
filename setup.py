@@ -1,6 +1,6 @@
 import setuptools
 
-with open("../README.md", "r") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://eodie.readthedocs.io/en/latest/",
-    packages=setuptools.find_packages(where="src/eodie"),
+    packages=setuptools.find_packages(where="src"),
     package_data={"config":["*.yml"]},
     entry_points={
         'console_scripts': [
