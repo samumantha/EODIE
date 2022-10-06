@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://eodie.readthedocs.io/en/latest/",
-    packages=setuptools.find_namespace_packages(where='src'),
+    packages=setuptools.find_namespace_packages(),
     package_data={"config":["*.yml"]},
     entry_points={
         'console_scripts': [
