@@ -16,7 +16,7 @@ setuptools.setup(
     package_data={"config":["*.yml"]},
     entry_points={
         'console_scripts': [
-            'eodie_process = ./eodie_process',
+            'eodie_process = eodie_process',
         ]
     },
     install_requires=[
