@@ -18,4 +18,5 @@ __pycache__
 *.aux
 *.xml
 *.pickle
-
+*.egg-info
+*/build*

@@ -198,7 +198,6 @@ class UserInput(object):
 
         self.platform = args.platform
         configfile = "config/config_" + self.platform + ".yml"
-	
 
         # loading config files and merging into one dict
         with open(configfile, "r") as ymlfile:
