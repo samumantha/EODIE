@@ -37,8 +37,8 @@ in the .tar or .zip file. For shapefiles, use upload option “Composite” and 
 auxiliary files (.shx, .dbf and .prj in this example). Use option “Regular” for satellite data. 
 
 
-.. figure:: galaxy_fig1.png
-   :width: 500
+.. figure:: figure1.png
+   :width: 800
    :alt: Figure 1. Uploading data to Galaxy.
    :align: center
    :figclass: align-center
@@ -51,8 +51,8 @@ example, and input files under corresponding headers in the tool window (Fig. 2)
 refers to the name of the shapefile column that contains polygon ids.
     
 
-.. figure:: Galaxy_fig2.jpg
-  :width: 500
+.. figure:: figure2.png
+  :width: 800
   :alt: Figure 2. Define inputs in the tool window.
 
   Figure 2. *Define inputs in the tool window*.
@@ -64,8 +64,8 @@ more indices and statistics: here we selected ndvi and mean. Available output op
 When all inputs are defined, click “Execute” at the bottom of the tool window.
     
 
-.. figure:: galaxy_fig3.jpg
-  :width: 500
+.. figure:: figure3.png
+  :width: 800
   :alt: Figure 3. Advanced options.
 
   Figure 3. *Advanced options*.
@@ -79,14 +79,14 @@ failed.
 
 |pic4a|  |pic4b|
 
-Figure 4. *Follow the progress of the job in the History-panel*. 
+Figure 4. *Follow the progress of the job in the History-panel*. *Below is the resulted NDVI csv*.
 
-.. |pic4a| image:: galaxy_fig4.jpg
+.. |pic4a| image:: figure4.png
   :width: 400
   :alt: Figure 4. History-panel
 
 .. |pic4b| image:: galaxy_fig4b.png
-  :width: 400
+  :width: 800
   :alt: Figure 4. History-panel 
 ..
 
@@ -131,7 +131,7 @@ Grey = job is in queue, Red = job has failed, orange = job is running, green = j
 
 
 .. figure:: landsat_galaxy.png
-  :width: 500
+  :width: 800
   :alt: Figure 5. Landsat example.
   
   Figure 5. *Landsat example*.
