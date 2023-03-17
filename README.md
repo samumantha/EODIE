@@ -1,5 +1,7 @@
 # EODIE - Earth Observation Data Information Extractor 
 
+Mirror of https://gitlab.com/fgi_nls/public/EODIE ; please refer to the gitlab repository for issues, PRs etc. Version 2.0.0 published: https://doi.org/10.5281/zenodo.7467514
+
 ## Purpose 
 
 EODIE is a toolkit ot extract object based timeseries information from Sentinel-2 Earth Observation data.
